@@ -28,7 +28,6 @@ passport.use(
 
         if (!user) {
           user = new User({
-            googleId: profile.id,
             name: profile.displayName,
             email: profile.emails[0].value,
             profilePicture: profile.photos[0].value // Save the profile picture URL

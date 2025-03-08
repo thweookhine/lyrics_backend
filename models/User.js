@@ -18,14 +18,13 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String
     },
-    googleId: {
-        tyep: String
-    },
     profilePicture:{
         type: String
-    },
-    LastLoginTime: {
-        type: Date,
+    }, 
+    role: {
+        type: String,
+        enum: ['admin','free-user','premium-user'],
+        default: 'user'
     }
 },{timestamps: true});
 

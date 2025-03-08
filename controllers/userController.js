@@ -25,7 +25,11 @@ const registerUser = async (req,res) => {
 
         await user.save();
 
-        return res.status(201).json({token: generateToken(user, "1h")})
+        // Remove password field
+        const userObj = user.toObject();
+        delete userObj.password
+
+        return res.status(201).json({user: userObj, token: generateToken(user, "1h")})
     }catch (err) {
         return res.status(500).json({error: err.message})
     }
@@ -44,8 +48,12 @@ const loginUser = async (req,res) => {
         if(!isValidPw) {
             return res.status(400).json({error: 'Invalid Email or Password!'})
         }
+
+        // Remove password field
+        const userObj = user.toObject();
+        delete userObj.password
     
-        return res.status(200).json({token: generateToken(user, rememberMe? "30d" : "1h")})
+        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1h")})
     }catch(err) {
         return res.status(500).json({error: err.message})
     }
