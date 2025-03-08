@@ -17,7 +17,6 @@ app.use(cors());
 connectDB();
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: true }));
 
-
 // Initialize passport.js
 require('./config/passport'); // Ensure passport is required here
 app.use(passport.initialize());  // Initialize passport before using it in routes
