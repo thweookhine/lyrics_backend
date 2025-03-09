@@ -147,6 +147,29 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const changeUserRole = async (req,res) => {
+    try {
+        const {userId, userRole} = req.body;
+        const user = await User.findById(userId);
+
+        if(!user) {
+            return res.status(400).json({error: 'User not found!'})
+        }
+
+        if(!user.isActive) {
+            return res.status(400).json({error: 'That user has been already Deleted!'})
+        }
+
+        user.role = userRole;
+        await user.save();
+
+        return res.status(200).json({message: "Successfully change role"})
+
+    }catch (err) {
+        return res.status(500).json({error: err.message})
+    }
+}
+
 // const uploadProfilePhoto = async ()
 
-module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser}
+module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole}

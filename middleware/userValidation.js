@@ -27,4 +27,20 @@ const validateUserLogin = [
     }
 ];
 
-module.exports = { validateUserRegister, validateUserLogin };
+const validateChangeUserRole = [
+    body('userId').notEmpty().withMessage('UserID is required!'),
+    body("userRole")
+    .notEmpty()
+    .withMessage("User role is required!")
+    .isIn(["free-user", "premium-user"]) 
+    .withMessage("Invalid role! Allowed values: 'free-user' or 'premium-user'."),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
+module.exports = { validateUserRegister, validateUserLogin, validateChangeUserRole };
