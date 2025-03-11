@@ -67,16 +67,21 @@ const loginUser = async (req,res) => {
 const getUserProfile = async (req, res) => {
     try {
         const id = req.params.id;
-        const existingUser = await User.findOne({ _id: id, isActive: true });
-        if(!existingUser) {
-            return res.status(400).json({error: 'User not found!'})
+
+        if (req.user.role == 'admin' || req.user.id === id ) {
+            const existingUser = await User.findOne({ _id: id, isActive: true });
+            if(!existingUser) {
+                return res.status(400).json({error: 'User not found!'})
+            }
+
+            // Remove Password
+            const userData = existingUser.toObject()
+            delete userData.password
+
+            return res.status(200).json({user: userData})
+        }else {
+            return res.status(403).json({error: 'Access Denied'})
         }
-
-        // Remove Password
-        const userData = existingUser.toObject()
-        delete userData.password
-
-        return res.status(200).json({user: userData})
 
     }catch (err) {
         return res.status(500).json({error: err.message})
@@ -170,6 +175,27 @@ const changeUserRole = async (req,res) => {
     }
 }
 
+const searchUser = async (req,res) => {
+    try {
+        const keyword = req.query.keyword;
+        if(!keyword) {
+            const users = await User.find();
+            return res.status(200).json(users)
+        }
+
+        const users = await User.find({
+            $or: [
+                {name: {$regex: keyword, $options: "i"}},
+                {email: {$regex: keyword, $options: "i"}}
+            ]
+        })
+
+        return res.status(200).json(users)
+    }catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
 // const uploadProfilePhoto = async ()
 
-module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole}
+module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole, searchUser}
