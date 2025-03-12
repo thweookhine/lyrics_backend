@@ -1,12 +1,12 @@
 const express = require('express');
-const connectDB = require('./config/db');
+const {connectDB} = require('./config/db');
 const { default: mongoose } = require('mongoose');
 const userRouter = require('./routes/userRouter');
 const cors = require('cors');
 const googleAuthRouter = require('./routes/googleAuthRoute');
 const passport = require('passport');
 const session = require('express-session');
-
+const lyricsRouter = require('./routes/lyricsRouter');
 
 require("dotenv").config()
 const app = express();
@@ -22,10 +22,10 @@ require('./config/passport'); // Ensure passport is required here
 app.use(passport.initialize());  // Initialize passport before using it in routes
 app.use(passport.session());  // This is for session-based auth
 
-
 app.use(express.json());
 app.use("/api/users", userRouter)
 app.use('/auth', googleAuthRouter)
+app.use('/api/lyrics', lyricsRouter)
 
 // Run server
 const PORT = process.env.PORT || 3000;
