@@ -1,6 +1,12 @@
 const { cloudinary } = require("../config/cloudinaryStorage");
 const Lyrics = require("../models/Lyrics");
 
+
+function getPublicIdFromUrl(url) {
+  return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
+}
+
+
 const createLyrics = async (req,res) => {
   try{
     const {title, artist, featureArtist, writer, majorKey} = req.body;
@@ -35,6 +41,8 @@ const updateLyricsById = async (req,res) => {
       return res.status(400).json({error: "Lyrics not found!"})
     }
 
+    const existingPublicID = getPublicIdFromUrl(existingLyrics.lyricsPhoto)
+
     existingLyrics.title = title;
     existingLyrics.artist = artist;
     existingLyrics.featureArtist = featureArtist;
@@ -43,6 +51,8 @@ const updateLyricsById = async (req,res) => {
     existingLyrics.lyricsPhoto = req.file.path
 
     await existingLyrics.save()
+
+    await cloudinary.uploader.destroy(existingPublicID);
 
     return res.status(200).json({message: "Lyrics updated successfully."})
   } catch(err) {
@@ -100,10 +110,6 @@ const getAllLyrics = async (req,res) => {
   } catch (err) {
     return res.status(500).json({error: err.msg})
   }
-}
-
-function getPublicIdFromUrl(url) {
-  return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
 }
 
 const deleteLyrics = async (req,res) => {
