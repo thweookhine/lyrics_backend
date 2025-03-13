@@ -26,8 +26,9 @@ const LyricsSchema = new mongoose.Schema({
         default: 0
     },
     lyricsPhoto: { 
-        type: Buffer, 
-        required: true }, 
+        type: String, 
+        required: true 
+    }
 }, {timestamps: true});
 
 const Lyrics = mongoose.model('Lyrics', LyricsSchema);

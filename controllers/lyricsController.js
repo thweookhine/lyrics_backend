@@ -6,7 +6,7 @@ const createLyrics = async (req,res) => {
 
     const newLyrics = new Lyrics({
       title,artist,featureArtist,writer,majorKey,
-      lyricsPhoto: req.file.buffer
+      lyricsPhoto: req.file.path
   });
 
   await newLyrics.save();
@@ -34,16 +34,12 @@ const updateLyricsById = async (req,res) => {
       return res.status(400).json({error: "Lyrics not found!"})
     }
 
-    // existingLyrics = {
-    //   title,artist, featureArtist, writer, majorKey, lyricsPhoto: req.file.buffer
-    // }
-
     existingLyrics.title = title;
     existingLyrics.artist = artist;
     existingLyrics.featureArtist = featureArtist;
     existingLyrics.writer = writer;
     existingLyrics.majorKey = majorKey;
-    existingLyrics.lyricsPhoto = req.file.buffer
+    existingLyrics.lyricsPhoto = req.file.path
 
     await existingLyrics.save()
 
@@ -66,19 +62,7 @@ const getLyricsId = async (req, res) => {
       return res.status(400).json({error: "Lyrics Not Found"})
     }
 
-    const imageBase64 = lyrics.lyricsPhoto? lyrics.lyricsPhoto.toString('base64') : null; 
-
-    const lyricsPhotoResponse = imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : null;
-
-    return res.status(200).json({
-      title: lyrics.title,
-      artist: lyrics.artist,
-      featureArtist: lyrics.featureArtist,
-      writer: lyrics.writer,
-      majorKey: lyrics.majorKey,
-      viewCount: lyrics.viewCount,
-      lyricsPhoto: lyricsPhotoResponse
-    })
+    return res.status(200).json(lyrics)
   }catch (err) {
     res.status(500).json({error: err.msg})
   }

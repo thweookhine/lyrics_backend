@@ -19,6 +19,11 @@ const validateLyrics = [
         if(!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
         }
+         // Validate file type
+         const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+         if (!allowedTypes.includes(req.file.mimetype)) {
+             return res.status(400).json({ message: "Only PNG, JPG, and JPEG files are allowed" });
+         }
         next();
     }
 ]
