@@ -49,6 +49,29 @@ const updateLyricsById = async (req,res) => {
   }
 }
 
+const addViewCount = async (req,res) => {
+  const id = req.params.id;
+  if(!id) {
+    return res.status(400).json({error: "ID is required!"})
+  }
+
+  try{
+    const lyrics = await Lyrics.findById(id);
+
+    if(!lyrics) {
+      return res.status(400).json({error: "Lyrics Not Found!"})
+    }
+  
+    lyrics.viewCount = lyrics.viewCount + 1;
+  
+    await lyrics.save();
+  
+    return res.status(200).json({message: "Successfully added view count!"})
+  }catch(err) {
+    return res.status(500).json({error: err.msg})
+  }
+}
+
 const getLyricsId = async (req, res) => {
   try {
     const id = req.params.id;
@@ -68,4 +91,14 @@ const getLyricsId = async (req, res) => {
   }
 }
 
-module.exports = {createLyrics, updateLyricsById, getLyricsId}
+const getAllLyrics = async (req,res) => {
+  try {
+    const lyrics = await Lyrics.find();
+
+    return res.status(200).json(lyrics)
+  } catch (err) {
+    return res.status(500).json({error: err.msg})
+  }
+}
+
+module.exports = {createLyrics, updateLyricsById, addViewCount, getLyricsId, getAllLyrics}
