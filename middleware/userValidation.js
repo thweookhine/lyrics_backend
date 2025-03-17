@@ -14,6 +14,18 @@ const validateUserRegister = [
     }
 ];
 
+const validateUserUpdate = [
+    body('name').notEmpty().withMessage('Username is required!'),
+    body('email').isEmail().withMessage('Email must be valid'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+]
+
 // Validation rules for creating a user
 const validateUserLogin = [
     body('email').isEmail().withMessage('Email must be valid'),
@@ -43,4 +55,4 @@ const validateChangeUserRole = [
     }
 ]
 
-module.exports = { validateUserRegister, validateUserLogin, validateChangeUserRole };
+module.exports = { validateUserRegister, validateUserUpdate, validateUserLogin, validateChangeUserRole };

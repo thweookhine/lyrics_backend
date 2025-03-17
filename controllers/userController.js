@@ -89,9 +89,10 @@ const getUserProfile = async (req, res) => {
 }
 
 const updateUser = async (req,res) => {
+
     try{
         const id = req.params.id
-        const {name,email,password} = req.body;
+        const {name,email,oldPassword, newPassword} = req.body;
 
         if(id !== req.user.id) {
             return res.status(401).json({error: "You don't have permission to update this user"})
@@ -112,8 +113,20 @@ const updateUser = async (req,res) => {
 
         user.name = name;
         user.email = email;
-        const hashPassword = await bcrypt.hash(password, 10);
-        user.password = hashPassword;
+
+        if(oldPassword ) {
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if(!isMatch) {
+                return res.status(400).json({ message: "Incorrect old password" });
+            }
+
+            if(!newPassword) {
+                return res.status(400).json({ message: "Require to define new Password!" });
+            }
+
+            const hashPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashPassword;
+        }
 
         await user.save();
 
@@ -125,6 +138,7 @@ const updateUser = async (req,res) => {
     }catch (err) {
         return res.status(500).json({error: err.message})
     }
+
 }
 
 const deleteUser = async (req, res) => {
@@ -178,24 +192,34 @@ const changeUserRole = async (req,res) => {
 const searchUser = async (req,res) => {
     try {
         const keyword = req.query.keyword;
-        if(!keyword) {
-            const users = await User.find();
-            return res.status(200).json(users)
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page -1) * limit;
+
+        let query = {}
+
+        if(keyword) {
+            query = {
+                $or: [
+                    {name: {$regex: keyword, $options: "i"}},
+                    {email: {$regex: keyword, $options: "i"}}
+                ]
+            };
         }
 
-        const users = await User.find({
-            $or: [
-                {name: {$regex: keyword, $options: "i"}},
-                {email: {$regex: keyword, $options: "i"}}
-            ]
-        })
+        const users = await User.find(query).skip(skip).limit(limit);
+        const totalCount = await User.countDocuments(query);
 
-        return res.status(200).json(users)
-    }catch (err) {
+        return res.status(200).json({
+            users,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: page,
+            totalCount
+        })
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 }
 
-// const uploadProfilePhoto = async ()
 
 module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole, searchUser}

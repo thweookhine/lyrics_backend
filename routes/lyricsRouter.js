@@ -6,12 +6,12 @@ const { createLyrics, updateLyricsById, getLyricsId, addViewCount, getAllLyrics,
 const { upload } = require('../config/upload');
 const lyricsRouter = express.Router();
 
-lyricsRouter.post('/', upload.single('lyricsPhoto'), validateLyrics, authenticateUser, checkRole(['admin']),createLyrics);
-lyricsRouter.put('/:id', upload.single('lyricsPhoto'), validateLyrics, authenticateUser, checkRole(['admin']), updateLyricsById)
+lyricsRouter.post('/createLyrics', upload.single('lyricsPhoto'), validateLyrics, authenticateUser, checkRole(['admin']),createLyrics);
+lyricsRouter.put('/updateLyrics:id', upload.single('lyricsPhoto'), validateLyrics, authenticateUser, checkRole(['admin']), updateLyricsById)
 lyricsRouter.get('/addViewCount/:id', authenticateUser, addViewCount)
 lyricsRouter.get('/getLyricsById/:id',authenticateUser, getLyricsId)
 lyricsRouter.get('/',authenticateUser, getAllLyrics)
-lyricsRouter.delete('/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
+lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
 
 module.exports = lyricsRouter
 

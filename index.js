@@ -7,6 +7,7 @@ const googleAuthRouter = require('./routes/googleAuthRoute');
 const passport = require('passport');
 const session = require('express-session');
 const lyricsRouter = require('./routes/lyricsRouter');
+const artistRouter = require('./routes/artistRouter');
 
 require("dotenv").config()
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use("/api/users", userRouter)
 app.use('/auth', googleAuthRouter)
 app.use('/api/lyrics', lyricsRouter)
+app.use('/api/artists', artistRouter)
 
 // Run server
 const PORT = process.env.PORT || 3000;

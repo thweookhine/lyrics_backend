@@ -1,11 +1,9 @@
 const { cloudinary } = require("../config/cloudinaryStorage");
 const Lyrics = require("../models/Lyrics");
 
-
 function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
 }
-
 
 const createLyrics = async (req,res) => {
   try{
@@ -19,8 +17,8 @@ const createLyrics = async (req,res) => {
   await newLyrics.save();
   res.status(200).json({message: "Uploaded Lyrics Successfully!"})
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({error: err.msg})
   }
 
