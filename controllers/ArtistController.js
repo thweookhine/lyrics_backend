@@ -1,22 +1,22 @@
 const Artist = require("../models/Artist");
 
 const createArtist = async(req,res) => {
-    const {name, photoLink} = req.body;
+    const {name, photoLink, type} = req.body;
     
     try {
         const artist = new Artist({
-            name, photoLink
+            name, photoLink, type
         })
     
         await artist.save();
         return res.status(201).json({artist})
     } catch (err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({error: err.message})
     }
 }
 
 const updateArtist = async(req,res) => {
-    const {name, photoLink} = req.body;
+    const {name, photoLink, type} = req.body;
     const id = req.params.id;
     if(!id) {
         return res.status(400).json({error: "ID is required to update artist!"})
@@ -29,13 +29,14 @@ const updateArtist = async(req,res) => {
 
         existingArtist.name = name;
         existingArtist.photoLink = photoLink;
+        existingArtist.type = type;
 
         await existingArtist.save();
 
         return res.status(200).json({existingArtist})
 
     } catch(err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({error: err.message})
     }
 }
 
@@ -56,7 +57,7 @@ const deleteArtistById = async(req,res) => {
         return res.status(200).json({message: "Successfully Deleted!"});
 
     }catch(err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({error: err.message})
     }
 }
 
@@ -91,7 +92,7 @@ const getArtistById = async (req,res) => {
 
         return res.status(200).json(artist)
     } catch (err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({error: err.message})
     }
 }
 
@@ -123,16 +124,16 @@ const searchArtists = async (req, res) => {
             totalCount
         })
     } catch(err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({error: err.message})
     }
 }
 
 const getTopArtists = async (req,res) => {
     try{
-        const topArtists = await Artist.find.sort({searchCount: -1}).limit(10);
+        const topArtists = await Artist.find({searchCount: { $gt: 0 } }).sort({searchCount: -1}).limit(10);
         return res.status(200).json({topArtists});
     }   catch(err) {
-            return res.status(500).json({error: err.msg})
+            return res.status(500).json({error: err.message})
     }
 }
 

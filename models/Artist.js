@@ -12,6 +12,11 @@ const ArtistSchema = new mongoose.Schema({
     searchCount: {
         type: Number,
         default: 0
+    },
+    type: {
+        type: String,
+        enum: ['artist', 'writer', 'both'],
+        default: 'artist'
     }
 }, {
     timestamps: true
