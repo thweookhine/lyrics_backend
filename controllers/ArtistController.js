@@ -98,7 +98,8 @@ const getArtistById = async (req,res) => {
 
 const searchArtists = async (req, res) => {
 
-    const keyword = req.query.keyword;
+    const {keyword, type} = req.query
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
@@ -106,12 +107,12 @@ const searchArtists = async (req, res) => {
     let query = {}
 
     if(keyword) {
-        query = {
-            $or: [
-                {name: {$regex: keyword, $options: "i"}}
-            ]
-        };
+        query.name = { $regex: keyword, $options: "i" };
     } 
+
+    if(type) {
+        query.type =  { $in: [type, "both"] }
+    }
 
     try {
         const artists = await Artist.find(query).skip(skip).limit(limit);
