@@ -5,6 +5,9 @@ const ArtistSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Name is required!']
     },
+    bio: {
+        type: String,
+    },
     photoLink: {
         type: String,
         required: [true, 'Photo Link is required!']
@@ -17,7 +20,12 @@ const ArtistSchema = new mongoose.Schema({
         type: String,
         enum: ['artist', 'writer', 'both'],
         default: 'artist'
-    }
+    },
+    lyrics: [
+        {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Lyric'}
+    ]
 }, {
     timestamps: true
 })

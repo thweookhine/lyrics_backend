@@ -1,11 +1,11 @@
 const Artist = require("../models/Artist");
 
 const createArtist = async(req,res) => {
-    const {name, photoLink, type} = req.body;
+    const {name, bio, photoLink, type} = req.body;
     
     try {
         const artist = new Artist({
-            name, photoLink, type
+            name, bio, photoLink, type
         })
     
         await artist.save();
@@ -16,7 +16,7 @@ const createArtist = async(req,res) => {
 }
 
 const updateArtist = async(req,res) => {
-    const {name, photoLink, type} = req.body;
+    const {name, bio, photoLink, type} = req.body;
     const id = req.params.id;
     if(!id) {
         return res.status(400).json({error: "ID is required to update artist!"})
@@ -28,6 +28,7 @@ const updateArtist = async(req,res) => {
         }
 
         existingArtist.name = name;
+        existingArtist.bio = bio;
         existingArtist.photoLink = photoLink;
         existingArtist.type = type;
 
@@ -133,9 +134,18 @@ const getTopArtists = async (req,res) => {
     try{
         const topArtists = await Artist.find({searchCount: { $gt: 0 } }).sort({searchCount: -1}).limit(10);
         return res.status(200).json({topArtists});
-    }   catch(err) {
+    } catch(err) {
             return res.status(500).json({error: err.message})
     }
 }
 
-module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount}
+const getArtistIdAndNames = async (req,res) => {
+    try{
+        const artists = await Artist.find().select('name');
+        return res.status(200).json({artists});
+    } catch(err) {
+        return res.status(500).json({error: err.message})
+    }
+}
+
+module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount, getArtistIdAndNames}
