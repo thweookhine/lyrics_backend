@@ -9,8 +9,7 @@ const ArtistSchema = new mongoose.Schema({
         type: String,
     },
     photoLink: {
-        type: String,
-        required: [true, 'Photo Link is required!']
+        type: String
     },
     searchCount: {
         type: Number,
