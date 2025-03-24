@@ -19,12 +19,7 @@ const ArtistSchema = new mongoose.Schema({
         type: String,
         enum: ['artist', 'writer', 'both'],
         default: 'artist'
-    },
-    lyrics: [
-        {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'Lyric'}
-    ]
+    }
 }, {
     timestamps: true
 })

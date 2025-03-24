@@ -1,21 +1,40 @@
 const { cloudinary } = require("../config/cloudinaryStorage");
 const Lyrics = require("../models/Lyrics");
+const Artist = require("../models/Artist");
+const { default: mongoose } = require("mongoose");
 
 function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
 }
 
 const createLyrics = async (req,res) => {
+
   try{
-    const {title, artist, featureArtist, writer, majorKey} = req.body;
+    const {title, artists, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre} = req.body;
 
-    const newLyrics = new Lyrics({
-      title,artist,featureArtist,writer,majorKey,
+    // Collect all unique artist IDs
+    let allArtists;
+    if(featureArtists) {
+      allArtists = [...new Set([...writers, ...artists, ...featureArtists])];
+    }else {
+      allArtists = [...new Set([...writers, ...artists])];
+    }
+    
+    // Validate each artist ID
+    for (const artistId of allArtists) {
+      const foundArtist = await Artist.findById(artistId);
+      if (!foundArtist) {
+        return res.status(400).json({ message: `Artist ID ${artistId} is invalid.` });
+      }
+    }
+
+    const newLyric = new Lyrics({
+      title, artists, featureArtists, writers, majorKey, albumName, genre,
       lyricsPhoto: req.file.path
-  });
+    });
 
-  await newLyrics.save();
-  res.status(200).json({message: "Uploaded Lyrics Successfully!"})
+    await newLyric.save();
+    res.status(200).json({lyric: newLyric})
 
   } catch (err) {
     console.error(err);

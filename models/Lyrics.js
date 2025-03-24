@@ -1,28 +1,29 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
+const validator = require('validator');
+const { genreArray, keyList, genreList } = require('../utils/Constants');
 
 const LyricsSchema = new mongoose.Schema({
     title: {
         type: String,
         required: [true, 'Title is required!']
     },
-    artist: [{
+    artists: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist',
         required: [true, 'Artist is required!']
     }],
-    featureArtist: [{
+    featureArtists: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist'
     }],
-    writer: [{
+    writers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist',
         required: [true, 'Writer is required!']
     }],
     majorKey: {
         type: String,
-        enum: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+        enum: keyList,
         required: [true, 'Major Key is required!']
     },
     viewCount: {
@@ -38,9 +39,7 @@ const LyricsSchema = new mongoose.Schema({
     },
     genre: {
         type: [String], 
-        enum: [
-          'Pop', 'Rock', 'Hip-Hop', 'Classical', 'Jazz', 'Electronic', 'R&B', 'Country', 'Reggae', 'Blues'
-        ],
+        enum: genreList,
         required: [true, 'Genre is required!']
       },
 }, {timestamps: true});
