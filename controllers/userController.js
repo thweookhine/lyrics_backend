@@ -238,10 +238,13 @@ const getCountDiff = async (req, res) => {
         const lastPrevDay = new Date(now.getFullYear(), now.getMonth(), 1);
 
         const prevCount = await User.countDocuments({
+            isActive: true,
             createdAt: {$lt: lastPrevDay}
         })
         
-        const currCount = await User.countDocuments();
+        const currCount = await User.countDocuments({
+            isActive: true
+        });
 
         const countDiff = currCount - prevCount;
 
