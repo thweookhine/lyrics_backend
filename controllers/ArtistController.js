@@ -148,4 +148,34 @@ const getArtistIdAndNames = async (req,res) => {
     }
 }
 
-module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount, getArtistIdAndNames}
+const getArtistCount = async (req,res) => {
+    try {
+        const count = await Artist.countDocuments();
+        return res.status(200).json({count})
+    }catch(err) {
+        return res.status(500).json({error: err.msg})
+    }
+}
+
+const getCountDiff = async (req, res) => {
+    try {
+        const now = new Date();
+        
+        // Getting count of previous month
+        const lastPrevDay = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const prevCount = await Artist.countDocuments({
+            createdAt: {$lt: lastPrevDay}
+        })
+        
+        const currCount = await Artist.countDocuments();
+
+        const countDiff = currCount - prevCount;
+
+        return res.status(200).json({countDiff})
+    } catch (err) {
+        return res.status(500).json({error: err.msg})
+    }
+}
+
+module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount, getArtistIdAndNames, getCountDiff, getArtistCount}
