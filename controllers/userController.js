@@ -221,5 +221,34 @@ const searchUser = async (req,res) => {
     }
 }
 
+const getUserCount = async (req,res) => {
+    try {
+        const count = await User.countDocuments();
+        return res.status(200).json({count})
+    }catch(err) {
+        return res.status(500).json({error: err.msg})
+    }
+}
 
-module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole, searchUser}
+const getCountDiff = async (req, res) => {
+    try {
+        const now = new Date();
+        
+        // Getting count of previous month
+        const lastPrevDay = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const prevCount = await User.countDocuments({
+            createdAt: {$lt: lastPrevDay}
+        })
+        
+        const currCount = await User.countDocuments();
+
+        const countDiff = currCount - prevCount;
+
+        return res.status(200).json({countDiff})
+    } catch (err) {
+        return res.status(500).json({error: err.msg})
+    }
+}
+
+module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole, searchUser, getUserCount, getCountDiff}
