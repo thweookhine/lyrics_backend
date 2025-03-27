@@ -12,7 +12,7 @@ const createArtist = async(req,res) => {
         return res.status(201).json({artist})
     } catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -24,24 +24,17 @@ const updateArtist = async(req,res) => {
                 {message: "ID is required to update artist!"}]})
     }
     try {
-        const existingArtist = await Artist.findById(id);
-        if(!existingArtist) {
+        const updatedArtist = await Artist.findByIdAndUpdate(id,{name, bio,photoLink,type},{new: true})
+        if(!updatedArtist) {
             return res.status(400).json({errors: [
                 {message: "No Artist Found"}]})
         }
 
-        existingArtist.name = name;
-        existingArtist.bio = bio;
-        existingArtist.photoLink = photoLink;
-        existingArtist.type = type;
-
-        await existingArtist.save();
-
-        return res.status(200).json({existingArtist})
+        return res.status(200).json({artist: updatedArtist})
 
     } catch(err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -65,7 +58,7 @@ const deleteArtistById = async(req,res) => {
 
     }catch(err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -104,7 +97,7 @@ const getArtistById = async (req,res) => {
         return res.status(200).json(artist)
     } catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -138,7 +131,7 @@ const searchArtists = async (req, res) => {
         })
     } catch(err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -148,7 +141,7 @@ const getTopArtists = async (req,res) => {
         return res.status(200).json({topArtists});
     } catch(err) {
             return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -158,7 +151,7 @@ const getArtistIdAndNames = async (req,res) => {
         return res.status(200).json({artists});
     } catch(err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -168,7 +161,7 @@ const getArtistCount = async (req,res) => {
         return res.status(200).json({count})
     }catch(err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -190,7 +183,7 @@ const getCountDiff = async (req, res) => {
         return res.status(200).json({countDiff})
     } catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 

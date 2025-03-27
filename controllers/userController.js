@@ -33,7 +33,7 @@ const registerUser = async (req,res) => {
         return res.status(201).json({user: userObj, token: generateToken(user, "1h")})
     }catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -67,7 +67,7 @@ const loginUser = async (req,res) => {
         return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1h")})
     }catch(err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -94,7 +94,7 @@ const getUserProfile = async (req, res) => {
 
     }catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -152,7 +152,7 @@ const updateUser = async (req,res) => {
         return res.status(200).json({user: userObj})
     }catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 
 }
@@ -182,7 +182,7 @@ const deleteUser = async (req, res) => {
         return res.status(204).json({message: "Successfully Deleted"})
     }catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
@@ -208,7 +208,7 @@ const changeUserRole = async (req,res) => {
 
     }catch (err) {
         return res.status(500).json({errors: [
-                {message: err.msg}]})
+                {message: err.message}]})
     }
 }
 
