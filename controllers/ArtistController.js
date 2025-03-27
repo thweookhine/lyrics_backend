@@ -145,13 +145,25 @@ const getTopArtists = async (req,res) => {
     }
 }
 
-const getArtistIdAndNames = async (req,res) => {
-    try{
-        const artists = await Artist.find().select('name');
-        return res.status(200).json({artists});
-    } catch(err) {
+// const getArtistIdAndNames = async (req,res) => {
+//     try{
+//         const artists = await Artist.find().select('name');
+//         return res.status(200).json({artists});
+//     } catch(err) {
+//         return res.status(500).json({errors: [
+//                 {message: err.message}]})
+//     }
+// }
+
+const getArtistsByType = async (req,res) => {
+    try {
+        const type = req.query.type;
+        const query = { type: { $in: [type, "both"] } };
+        const artists = await Artist.find(query).select('name').select('type');
+        return res.status(200).json({artists})
+    } catch (err) {
         return res.status(500).json({errors: [
-                {message: err.message}]})
+            {message: err.message}]})
     }
 }
 
@@ -187,4 +199,4 @@ const getCountDiff = async (req, res) => {
     }
 }
 
-module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount, getArtistIdAndNames, getCountDiff, getArtistCount}
+module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount, getArtistsByType, getCountDiff, getArtistCount}
