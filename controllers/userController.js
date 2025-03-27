@@ -16,7 +16,8 @@ const registerUser = async (req,res) => {
         const {name,email,password} = req.body;
         const isExist = await User.findOne({email}) 
         if(isExist) {
-            return res.status(400).json({error: `User with email (${email}) already exists`})
+            return res.status(400).json({errors: [
+                {message:  `User with email (${email}) already exists`}]})
         } 
         const hashPassword = await bcrypt.hash(password, 10)
         const user = new User({
@@ -31,7 +32,8 @@ const registerUser = async (req,res) => {
 
         return res.status(201).json({user: userObj, token: generateToken(user, "1h")})
     }catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -41,17 +43,21 @@ const loginUser = async (req,res) => {
         const user = await User.findOne({email});
     
         if(!user) {
-            return res.status(400).json({error: 'Invalid Email or Password!'})
+            return res.status(400).json({errors: [
+                {message:'Invalid Email or Password!'}]})
         }
 
         if(!user.isActive) {
-            return res.status(403).json({ message: 'Your account has been deactivated by an admin.' });
+            return res.status(403).json({errors: [
+                {message: 'Your account has been deactivated by an admin.' }]});
         }
 
         const isValidPw = await bcrypt.compare(password, user.password)
     
         if(!isValidPw) {
-            return res.status(400).json({error: 'Invalid Email or Password!'})
+            return res.status(400).json({errors: [
+                {message: 'Invalid Email or Password!'}
+            ]})
         }
 
         // Remove password field
@@ -60,7 +66,8 @@ const loginUser = async (req,res) => {
     
         return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1h")})
     }catch(err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -71,7 +78,8 @@ const getUserProfile = async (req, res) => {
         if (req.user.role == 'admin' || req.user.id === id ) {
             const existingUser = await User.findOne({ _id: id, isActive: true });
             if(!existingUser) {
-                return res.status(400).json({error: 'User not found!'})
+                return res.status(400).json({errors: [
+                {message:'User not found!'}]})
             }
 
             // Remove Password
@@ -80,11 +88,13 @@ const getUserProfile = async (req, res) => {
 
             return res.status(200).json({user: userData})
         }else {
-            return res.status(403).json({error: 'Access Denied'})
+            return res.status(403).json({errors: [
+                {message:'Access Denied'}]})
         }
 
     }catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -95,19 +105,22 @@ const updateUser = async (req,res) => {
         const {name,email,oldPassword, newPassword} = req.body;
 
         if(id !== req.user.id) {
-            return res.status(401).json({error: "You don't have permission to update this user"})
+            return res.status(401).json({errors: [
+                {message:"You don't have permission to update this user"}]})
         }
 
         const user = await User.findById(id)
 
         if(!user) {
-            return res.status(400).json({error: 'User not found'})
+            return res.status(400).json({errors: [
+                {message:'User not found'}]})
         }
 
         if(email && email != user.email) {
             const existingUser = await User.findOne({ email });
             if (existingUser) {
-                return res.status(400).json({ message: "Email already in use by another account" });
+                return res.status(400).json({errors: [
+                {message:"Email already in use by another account" }]});
             }
         }
 
@@ -117,11 +130,13 @@ const updateUser = async (req,res) => {
         if(oldPassword ) {
             const isMatch = await bcrypt.compare(oldPassword, user.password);
             if(!isMatch) {
-                return res.status(400).json({ message: "Incorrect old password" });
+                return res.status(400).json({errors: [
+                {message:"Incorrect old password" }]});
             }
 
             if(!newPassword) {
-                return res.status(400).json({ message: "Require to define new Password!" });
+                return res.status(400).json({errors: [
+                {message:"Require to define new Password!" }]});
             }
 
             const hashPassword = await bcrypt.hash(newPassword, 10);
@@ -136,7 +151,8 @@ const updateUser = async (req,res) => {
 
         return res.status(200).json({user: userObj})
     }catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 
 }
@@ -146,15 +162,18 @@ const deleteUser = async (req, res) => {
         const id = req.params.id;
         const existingUser = await User.findById(id);
         if(!existingUser) {
-            return res.status(400).json({error: 'User not found!'})
+            return res.status(400).json({errors: [
+                {message:'User not found!'}]})
         }
 
         if(existingUser.role == 'admin') {
-            return res.status(400).json({error: 'Cannot delete Admin'})
+            return res.status(400).json({errors: [
+                {message: 'Cannot delete Admin'}]})
         }
 
         if(existingUser.isActive === false) {
-            return res.status(400).json({error: 'Already Deleted!'})
+            return res.status(400).json({errors: [
+                {message:'Already Deleted!'}]})
         }
 
         existingUser.isActive = false;
@@ -162,7 +181,8 @@ const deleteUser = async (req, res) => {
 
         return res.status(204).json({message: "Successfully Deleted"})
     }catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -172,11 +192,13 @@ const changeUserRole = async (req,res) => {
         const user = await User.findById(userId);
 
         if(!user) {
-            return res.status(400).json({error: 'User not found!'})
+            return res.status(400).json({errors: [
+                {message:'User not found!'}]})
         }
 
         if(!user.isActive) {
-            return res.status(400).json({error: 'That user has been already Deleted!'})
+            return res.status(400).json({errors: [
+                {message:'That user has been already Deleted!'}]})
         }
 
         user.role = userRole;
@@ -185,7 +207,8 @@ const changeUserRole = async (req,res) => {
         return res.status(200).json({message: "Successfully change role"})
 
     }catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -217,7 +240,8 @@ const searchUser = async (req,res) => {
             totalCount
         })
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({errors: [
+                {message: err.message }]});
     }
 }
 
@@ -226,7 +250,8 @@ const getUserCount = async (req,res) => {
         const count = await User.countDocuments();
         return res.status(200).json({count})
     }catch(err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({errors: [
+            {message: err.message }]})
     }
 }
 
@@ -250,7 +275,8 @@ const getCountDiff = async (req, res) => {
 
         return res.status(200).json({countDiff})
     } catch (err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({errors: [
+            {message: err.message }]})
     }
 }
 

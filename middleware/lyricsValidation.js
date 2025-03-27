@@ -26,7 +26,7 @@ const validateLyrics = [
        // Validate file type
        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
        if (!allowedTypes.includes(req.file.mimetype)) {
-           return res.status(400).json({ message: "Only PNG, JPG, and JPEG files are allowed" });
+        return res.status(400).json({ errors: errors.array().map(err => ({ message: err.msg })) });
        }
       next();
   }

@@ -11,7 +11,8 @@ const createArtist = async(req,res) => {
         await artist.save();
         return res.status(201).json({artist})
     } catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -19,12 +20,14 @@ const updateArtist = async(req,res) => {
     const {name, bio, photoLink, type} = req.body;
     const id = req.params.id;
     if(!id) {
-        return res.status(400).json({error: "ID is required to update artist!"})
+        return res.status(400).json({errors: [
+                {message: "ID is required to update artist!"}]})
     }
     try {
         const existingArtist = await Artist.findById(id);
         if(!existingArtist) {
-            return res.status(400).json({error: "No Artist Found"})
+            return res.status(400).json({errors: [
+                {message: "No Artist Found"}]})
         }
 
         existingArtist.name = name;
@@ -37,20 +40,23 @@ const updateArtist = async(req,res) => {
         return res.status(200).json({existingArtist})
 
     } catch(err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
 const deleteArtistById = async(req,res) => {
     const id = req.params.id;
     if(!id) {
-        return res.status(400).json({error: "ID is required to delete artist"})
+        return res.status(400).json({errors: [
+                {message: "ID is required to delete artist"}]})
     }
 
     try {
         const existingArtist = await Artist.findById(id);
         if(!existingArtist) {
-            return res.status(400).json({error: "No Artist Found"})
+            return res.status(400).json({errors: [
+                {message: "No Artist Found"}]})
         }
 
         await Artist.findByIdAndDelete(id)
@@ -58,20 +64,23 @@ const deleteArtistById = async(req,res) => {
         return res.status(200).json({message: "Successfully Deleted!"});
 
     }catch(err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
 const addSearchCount = async (req,res) => {
     const id = req.params.id;
     if(!id) {
-        return res.status(400).json({error: "ID is required!"})
+        return res.status(400).json({errors: [
+                {message: "ID is required!"}]})
     }
 
     try {
         const artist = await Artist.findById(id);
         if(!artist) {
-            return res.status(400).json({error: "No Artist found!"})
+            return res.status(400).json({errors: [
+                {message: "No Artist found!"}]})
         }
 
         artist.searchCount = artist.searchCount + 1;
@@ -88,12 +97,14 @@ const getArtistById = async (req,res) => {
     try {
         const artist = await Artist.findById(id);
         if(!artist) {
-            return res.status(400).json({error: "No Artist Found!"})
+            return res.status(400).json({errors: [
+                {message: "No Artist Found!"}]})
         }
 
         return res.status(200).json(artist)
     } catch (err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -126,7 +137,8 @@ const searchArtists = async (req, res) => {
             totalCount
         })
     } catch(err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -135,7 +147,8 @@ const getTopArtists = async (req,res) => {
         const topArtists = await Artist.find({searchCount: { $gt: 0 } }).sort({searchCount: -1}).limit(10);
         return res.status(200).json({topArtists});
     } catch(err) {
-            return res.status(500).json({error: err.message})
+            return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -144,7 +157,8 @@ const getArtistIdAndNames = async (req,res) => {
         const artists = await Artist.find().select('name');
         return res.status(200).json({artists});
     } catch(err) {
-        return res.status(500).json({error: err.message})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -153,7 +167,8 @@ const getArtistCount = async (req,res) => {
         const count = await Artist.countDocuments();
         return res.status(200).json({count})
     }catch(err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 
@@ -174,7 +189,8 @@ const getCountDiff = async (req, res) => {
 
         return res.status(200).json({countDiff})
     } catch (err) {
-        return res.status(500).json({error: err.msg})
+        return res.status(500).json({errors: [
+                {message: err.msg}]})
     }
 }
 

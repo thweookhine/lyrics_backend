@@ -24,7 +24,8 @@ const createLyrics = async (req,res) => {
     for (const artistId of allArtists) {
       const foundArtist = await Artist.findById(artistId);
       if (!foundArtist) {
-        return res.status(400).json({ message: `Artist ID ${artistId} is invalid.` });
+        return res.status(400).json({errors: [
+      {message: `Artist ID ${artistId} is invalid.` }]});
       }
     }
 
@@ -38,7 +39,8 @@ const createLyrics = async (req,res) => {
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({error: err.msg})
+    res.status(500).json({errors: [
+      {message: err.msg}]})
   }
 
 }
@@ -48,7 +50,8 @@ const updateLyricsById = async (req,res) => {
     const id = req.params.id;
 
     if(!id) {
-      return res.status(400).json({ error: "ID is required" });
+      return res.status(400).json({errors: [
+                {message: "ID is required" }]});
     }
 
     const {title, artist, featureArtist, writer, majorKey} = req.body;
@@ -105,7 +108,8 @@ const getLyricsId = async (req, res) => {
     const id = req.params.id;
 
     if(!id) {
-      return res.status(400).json({ error: "ID is required" });
+      return res.status(400).json({errors: [
+                {message: "ID is required" }]});
     }
 
     const lyrics = await Lyrics.findById(id);
