@@ -230,7 +230,7 @@ const searchUser = async (req,res) => {
             };
         }
 
-        const users = await User.find(query).skip(skip).limit(limit);
+        const users = await User.find(query).skip(skip).limit(limit).select('-password');
         const totalCount = await User.countDocuments(query);
 
         return res.status(200).json({
