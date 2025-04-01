@@ -181,4 +181,59 @@ const getAllLyrics = async (req,res) => {
   }
 }
 
-module.exports = {createLyrics, updateLyricsById, addViewCount, getLyricsId, getAllLyrics, deleteLyrics}
+const searchLyrics = async (req,res) => {
+  const {type} = req.query
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  let query = {};
+
+  try {
+    if(type == "lyrics") {
+      // Search with Lyrics
+      const {lyricsId} = req.query
+      if(lyricsId) {
+        query._id = lyricsId
+      }
+    } else if (type == "artist") {
+      // Search with artist
+      const {artistId} = req.query
+      if(artistId) {
+        query = {
+          $or: [
+            {artists: new mongoose.Types.ObjectId(artistId) },
+            {featureArtists: new mongoose.Types.ObjectId(artistId)}
+          ]
+        }
+      }
+    } else if(type == "writer") {
+      // Search with writer
+      const {writerId} = req.query
+      if(writerId) {
+        query.writers = new mongoose.Types.ObjectId(writerId);
+      }
+
+    } else if(type == "key") {
+      // Search with key
+      const {keyValue} = req.query;
+      if(keyValue) {
+        query.majorKey = keyValue;
+      }
+    } 
+
+    const lyrics = await Lyrics.find(query).skip(skip).limit(limit);
+    const totalCount = await Lyrics.countDocuments(query)
+
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount,
+      lyrics
+    })
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+module.exports = {createLyrics, updateLyricsById, addViewCount, getLyricsId, getAllLyrics, deleteLyrics, searchLyrics}
