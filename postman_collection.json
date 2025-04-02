@@ -1,0 +1,1515 @@
+{
+	"info": {
+		"_postman_id": "d6aef559-ba81-48b5-ae3f-a56cdb7178b7",
+		"name": "lyrics",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17632364"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "delete-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2M1OTI0OGYwYTJjNGQyMmIwZTYyNiIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaXNBY3RpdmUiOnRydWUsImlhdCI6MTc0MTQ0Nzg4MSwiZXhwIjoxNzQxNDUxNDgxfQ.KywoY8hpqLGyvzYydhHm8q04FYsxyfYQ1124R0mOvZU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"TestUser\",\n    \"email\": \"test5@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/67cc61f38173d9506ed3d888",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"67cc61f38173d9506ed3d888"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign-up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"test1\",\n    \"email\": \"test25@gmail.com\",\n    \"password\": \"test1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/registerUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"registerUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDgzNzdiZTRjZGU3ZGVlZDQ1YzU5MyIsImlhdCI6MTc0MjIyNDI1MCwiZXhwIjoxNzQyMjI3ODUwfQ.6bb1C2tYiAkzOmwTejoe2gSEESv3KVdN0FTUqiKNgMQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"TestUser\",\n    \"email\": \"testlastupdate@g.com\",\n    \"oldPassword\": \"test1\",\n    \"newPassword\": \"newPassword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/67d8377be4cde7deed45c593",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"67d8377be4cde7deed45c593"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchUser",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MzA1NTExMiwiZXhwIjoxNzQzMDU4NzEyfQ.U25e-cicFqmeN2SsF2kYXeKOqHP0mxt-7UnzusgJj-I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/loginUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"loginUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUserProfile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjkxNDUyMCwiZXhwIjoxNzQyOTE4MTIwfQ.hz7Je99IsNCFl9LVvrSIwcs48SAXL-9HjF_VtVDiUsw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/userProfile/67cfb08c79815e0bd1628970",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"userProfile",
+								"67cfb08c79815e0bd1628970"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjkxNzMzMSwiZXhwIjoxNzQyOTIwOTMxfQ.BbNiJEE7eDONBqfZi9baHhCFYiWukG7sEOaF4hNHb_k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/getCount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"getCount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Count Diff",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjkxNDUyMCwiZXhwIjoxNzQyOTE4MTIwfQ.hz7Je99IsNCFl9LVvrSIwcs48SAXL-9HjF_VtVDiUsw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/getCount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"getCount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changeUserRole",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2Q4MWM2MTJmYjkxZjE4MTZjMWE4MyIsImlhdCI6MTc0MTY2MzM5MiwiZXhwIjoxNzQxNjY2OTkyfQ.MDKBHLkVQhTfzI7ZsqPtKpzOhyQdvo7_i4gJBGwl-tA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"67cfabe49925f86f0ee35381\",\n    \"userRole\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/changeUserRole",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"changeUserRole"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/google",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"google"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lyrics",
+			"item": [
+				{
+					"name": "getLyricsById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MTg1NTU5NywiZXhwIjoxNzQxODU5MTk3fQ.AIafxLeNMgwSnJJqU7oZO6dawXzTf7EZNh-6cOhqU38",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getLyricsById/67d29b85ad28dae54e1f54f8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getLyricsById",
+								"67d29b85ad28dae54e1f54f8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search lyrics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MTg1NTU5NywiZXhwIjoxNzQxODU5MTk3fQ.AIafxLeNMgwSnJJqU7oZO6dawXzTf7EZNh-6cOhqU38",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=key&limit=3&page=2&keyValue=C",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"searchLyrics"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "key"
+								},
+								{
+									"key": "limit",
+									"value": "3"
+								},
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "keyValue",
+									"value": "C"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lyrics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MzA4NTkwNSwiZXhwIjoxNzQzMDg5NTA1fQ.JAuocjE4jMtS2fnBtks1Cobiz1qpDFjhBQmbAKuXEfc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/67e549d19f64fec8121c7243",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"67e549d19f64fec8121c7243"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllLyrics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MTg1MTMyNSwiZXhwIjoxNzQxODU0OTI1fQ.EseTxlosI4YFf-uUn5Zs5Bkfsz5kuyX3ePAgDxCilSw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add view count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MTg0NTMyNSwiZXhwIjoxNzQxODQ4OTI1fQ.QxcLV8jpv2hHTnEgCCiuUJB3CmyGgLbPEfZYs4WH2nM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/addViewCount/67d2745ac8f0b7f9ff76af29",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"addViewCount",
+								"67d2745ac8f0b7f9ff76af29"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createLyrics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MzUxOTA3MSwiZXhwIjoxNzQzNTIyNjcxfQ.vZgy1Y78T8yXTaFX4LjhLK9awbyO30TKpf6q9Cb8HuM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Lyrics with 2 artist",
+									"type": "text"
+								},
+								{
+									"key": "artists[]",
+									"value": "artist",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "writers[]",
+									"value": "67ebffe1da73f66510116334",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "majorKey",
+									"value": "C#",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Downloads/download.jpeg"
+								},
+								{
+									"key": "writers[]",
+									"value": "67ebfda5da73f66510116304",
+									"type": "text"
+								},
+								{
+									"key": "artists[]",
+									"value": "67ebfdeeda73f66510116307",
+									"type": "text"
+								},
+								{
+									"key": "artists[]",
+									"value": "67ebfe4dda73f66510116310",
+									"type": "text"
+								},
+								{
+									"key": "featureArtists[]",
+									"value": "67ebfda5da73f66510116304",
+									"type": "text"
+								},
+								{
+									"key": "genre",
+									"value": "Rock",
+									"type": "text"
+								},
+								{
+									"key": "featureArtists[]",
+									"value": "67ebfffcda73f6651011633a",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/createLyrics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"createLyrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lyrics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MzA4NTkwNSwiZXhwIjoxNzQzMDg5NTA1fQ.JAuocjE4jMtS2fnBtks1Cobiz1qpDFjhBQmbAKuXEfc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "updated title2",
+									"type": "text"
+								},
+								{
+									"key": "artists[]",
+									"value": "artist",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "writers[]",
+									"value": "abc",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "majorKey",
+									"value": "C#",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Downloads/download.jpeg"
+								},
+								{
+									"key": "writers[]",
+									"value": "67e00f1fcd78409b247793cb",
+									"type": "text"
+								},
+								{
+									"key": "artists[]",
+									"value": "acv",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "artists[]",
+									"value": "67df9f54866f6414b01bbf0b",
+									"type": "text"
+								},
+								{
+									"key": "featureArtists[]",
+									"value": "67dc316672487a4361bfe7ca",
+									"type": "text"
+								},
+								{
+									"key": "genre",
+									"value": "Rock",
+									"type": "text"
+								},
+								{
+									"key": "featureArtists",
+									"value": "67dc316672487a4361bfe7ca",
+									"type": "text"
+								},
+								{
+									"key": "featureArtists[]",
+									"value": "67dc316672487a4361bfe7ca",
+									"type": "text"
+								},
+								{
+									"key": "genre",
+									"value": "Pop",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/updateLyrics/67e549d19f64fec8121c7243",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"updateLyrics",
+								"67e549d19f64fec8121c7243"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "test",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2025-03-07 14-28-46.png"
+								},
+								{
+									"key": "title",
+									"value": "tea",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/upload",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDA1OGMyYzNjMjhjYjY2MDgxODcxYSIsImlhdCI6MTc0MTcwNzgyOSwiZXhwIjoxNzQxNzExNDI5fQ.-LlJM18goS3_hlO_n2v8_DwZo6f-2mDXUC91zj9HnMo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/67d1055d456dda6f09504242",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"67d1055d456dda6f09504242"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Artists",
+			"item": [
+				{
+					"name": "create artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MzUxOTA3MSwiZXhwIjoxNzQzNTIyNjcxfQ.vZgy1Y78T8yXTaFX4LjhLK9awbyO30TKpf6q9Cb8HuM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"featureWriter2\",\n    \"photoLink\": \"featureWriter2 PhotoLink\",\n    \"type\": \"writer\",\n    \"bio\": \"Famous featureWriter2 in Korean\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/createArtist",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"createArtist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MzUxOTA3MSwiZXhwIjoxNzQzNTIyNjcxfQ.vZgy1Y78T8yXTaFX4LjhLK9awbyO30TKpf6q9Cb8HuM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"IU\",\n    \"photoLink\": \"IU PhotoLink\",\n    \"type\": \"both\",\n    \"bio\": \"Famous in Korean\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/updateArtist/67ebfda5da73f66510116304",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"updateArtist",
+								"67ebfda5da73f66510116304"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search artist",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjIyMzE0OCwiZXhwIjoxNzQyMjI2NzQ4fQ.wOobRy9JBT8YBwY4FjuUCFHGnlLofBoq2VCoBh3H8Nk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/search?keyword=&type=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "type",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get top artists",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjIyMzE0OCwiZXhwIjoxNzQyMjI2NzQ4fQ.wOobRy9JBT8YBwY4FjuUCFHGnlLofBoq2VCoBh3H8Nk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/getTopArtists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"getTopArtists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get artists by type",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjIyMzE0OCwiZXhwIjoxNzQyMjI2NzQ4fQ.wOobRy9JBT8YBwY4FjuUCFHGnlLofBoq2VCoBh3H8Nk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/getArtistsByType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"getArtistsByType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete artist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjcwODQ0NywiZXhwIjoxNzQyNzEyMDQ3fQ.s92UkgzGE7MM8OhAv_UA2JMYrQGrxzE5NN5BXAsuMO8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"john\",\n    \"photoLink\": \"updatedlink@g.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/deleteArtist/67dfa005cc27e52586287c0f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"deleteArtist",
+								"67dfa005cc27e52586287c0f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add search count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjIyNDcxOSwiZXhwIjoxNzQyMjI4MzE5fQ.C5u4dyk6hcsrSmvoo1QQuNaHUMq1wYMEFj555IUr7ak",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"john\",\n    \"photoLink\": \"updatedlink@g.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/addSearchCount/67dc35be880a2cf1a24ba856",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"addSearchCount",
+								"67dc35be880a2cf1a24ba856"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get artist by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjIyNDcxOSwiZXhwIjoxNzQyMjI4MzE5fQ.C5u4dyk6hcsrSmvoo1QQuNaHUMq1wYMEFj555IUr7ak",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"john\",\n    \"photoLink\": \"updatedlink@g.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/getArtistById/67dc316672487a4361bfe7ca",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"getArtistById",
+								"67dc316672487a4361bfe7ca"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get artist count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjkxNDUyMCwiZXhwIjoxNzQyOTE4MTIwfQ.hz7Je99IsNCFl9LVvrSIwcs48SAXL-9HjF_VtVDiUsw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"john\",\n    \"photoLink\": \"updatedlink@g.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/getCount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"getCount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get count diff",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDI3MzQ0Y2QxMWE4ZTcxMTA0N2VkYyIsImlhdCI6MTc0MjkxNDUyMCwiZXhwIjoxNzQyOTE4MTIwfQ.hz7Je99IsNCFl9LVvrSIwcs48SAXL-9HjF_VtVDiUsw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"john\",\n    \"photoLink\": \"updatedlink@g.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/artists/getCountDiff",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"artists",
+								"getCountDiff"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
