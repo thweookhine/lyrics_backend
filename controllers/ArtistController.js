@@ -62,28 +62,6 @@ const deleteArtistById = async(req,res) => {
     }
 }
 
-const addSearchCount = async (req,res) => {
-    const id = req.params.id;
-    if(!id) {
-        return res.status(400).json({errors: [
-                {message: "ID is required!"}]})
-    }
-
-    try {
-        const artist = await Artist.findById(id);
-        if(!artist) {
-            return res.status(400).json({errors: [
-                {message: "No Artist found!"}]})
-        }
-
-        artist.searchCount = artist.searchCount + 1;
-        await artist.save();
-        return res.status(200).json({})
-    } catch (err) {
-        return res.status(500).json({ error: err.message });
-    }
-}
-
 const getArtistById = async (req,res) => {
     const id = req.params.id;
 
@@ -199,4 +177,4 @@ const getCountDiff = async (req, res) => {
     }
 }
 
-module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, addSearchCount, getArtistsByType, getCountDiff, getArtistCount}
+module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, getArtistsByType, getCountDiff, getArtistCount}

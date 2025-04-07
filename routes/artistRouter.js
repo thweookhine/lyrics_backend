@@ -13,7 +13,6 @@ artistRouter.delete('/deleteArtist/:id', validateArtist, authenticateUser, check
 
 // TODO delete this searchArtists if not required!
 artistRouter.get('/search', searchArtists);
-artistRouter.get('/addSearchCount/:id', addSearchCount)
 artistRouter.get('/getArtistById/:id', getArtistById)
 artistRouter.get('/getTopArtists', getTopArtists)
 artistRouter.get('/getArtistsByType', getArtistsByType)

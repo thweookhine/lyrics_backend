@@ -7,6 +7,11 @@ function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
 }
 
+const addSearchCount = async (id) => {
+  const artist = await Artist.findById(id);
+  await Artist.findByIdAndUpdate(id, {searchCount: artist.searchCount+1})
+}
+
 const createLyrics = async (req,res) => {
 
   try{
@@ -205,6 +210,7 @@ const searchLyrics = async (req,res) => {
             {featureArtists: new mongoose.Types.ObjectId(artistId)}
           ]
         }
+        await addSearchCount(artistId)
       }
     } else if(type == "writer") {
       // Search with writer
@@ -212,6 +218,8 @@ const searchLyrics = async (req,res) => {
       if(writerId) {
         query.writers = new mongoose.Types.ObjectId(writerId);
       }
+
+      await addSearchCount(writerId)
 
     } else if(type == "key") {
       // Search with key
@@ -221,7 +229,7 @@ const searchLyrics = async (req,res) => {
       }
     } 
 
-    const lyrics = await Lyrics.find(query).skip(skip).limit(limit);
+    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit);
     const totalCount = await Lyrics.countDocuments(query)
 
     return res.status(200).json({
