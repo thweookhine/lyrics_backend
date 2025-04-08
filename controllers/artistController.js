@@ -100,12 +100,15 @@ const searchArtists = async (req, res) => {
     try {
         const artists = await Artist.find(query).skip(skip).limit(limit);
         const totalCount = await Artist.countDocuments(query);
+        const totalArtistCount = await Artist.countDocuments({...query, type: 'artist'})
+        const totalWrtierCount = await Artist.countDocuments({...query, type: 'writer'})
+        const totalBothCount = await Artist.countDocuments({...query, type: 'both'})
 
         return res.status(200).json({
             artists,
             totalPages: Math.ceil(totalCount / limit),
             currentPage: page,
-            totalCount
+            totalCount, totalArtistCount, totalWrtierCount, totalBothCount
         })
     } catch(err) {
         return res.status(500).json({errors: [

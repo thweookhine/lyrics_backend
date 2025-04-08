@@ -232,12 +232,15 @@ const searchUser = async (req,res) => {
 
         const users = await User.find(query).skip(skip).limit(limit).select('-password');
         const totalCount = await User.countDocuments(query);
+        const totalAdminUsersCount = await User.countDocuments({...query, role: 'admin'});
+        const totalFreeUsersCount = await User.countDocuments({...query, role: 'free-user'});
+        const totalPremiumUsersCount = await User.countDocuments({...query, role: 'premium-user'})
 
         return res.status(200).json({
             users,
             totalPages: Math.ceil(totalCount / limit),
             currentPage: page,
-            totalCount
+            totalCount, totalAdminUsersCount, totalFreeUsersCount, totalPremiumUsersCount
         })
     } catch (err) {
         res.status(500).json({errors: [

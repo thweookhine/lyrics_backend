@@ -1,6 +1,6 @@
 
 const express = require('express');
-const { createArtist, updateArtist, deleteArtistById, getAllArtists, getTopArtists, searchArtists, addSearchCount, getArtistById, getArtistIdAndNames, getArtistCount, getCountDiff, getArtistsByType } = require('../controllers/ArtistController');
+const { createArtist, updateArtist, deleteArtistById, getAllArtists, getTopArtists, searchArtists, addSearchCount, getArtistById, getArtistIdAndNames, getArtistCount, getCountDiff, getArtistsByType } = require('../controllers/artistController');
 const { validateArtist } = require('../middleware/artistValidation');
 const { authenticateUser } = require('../middleware/authenticateUser');
 const checkRole = require('../middleware/checkRole');
