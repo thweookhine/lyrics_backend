@@ -215,6 +215,7 @@ const changeUserRole = async (req,res) => {
 const searchUser = async (req,res) => {
     try {
         const keyword = req.query.keyword;
+        const role = req.query.role;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page -1) * limit;
@@ -228,6 +229,15 @@ const searchUser = async (req,res) => {
                     {email: {$regex: keyword, $options: "i"}}
                 ]
             };
+        }
+
+        if(role != 'all') {
+            query = {
+                $and: [
+                    query,
+                    {role: role}
+                ]
+            }
         }
 
         const users = await User.find(query).skip(skip).limit(limit).select('-password');
