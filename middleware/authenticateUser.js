@@ -18,7 +18,7 @@ const authenticateUser = async (req, res, next) => {
                 {message: "User not found" }]});
         }
 
-        if(!dbUser.isActive) {
+        if(!dbUser.isValid) {
             return res.status(403).json({errors: [
                 {message: 'Your account has been deactivated by an admin.' }]});
         }

@@ -47,7 +47,7 @@ const loginUser = async (req,res) => {
                 {message:'Invalid Email or Password!'}]})
         }
 
-        if(!user.isActive) {
+        if(!user.isValid) {
             return res.status(403).json({errors: [
                 {message: 'Your account has been deactivated by an admin.' }]});
         }
@@ -64,7 +64,7 @@ const loginUser = async (req,res) => {
         const userObj = user.toObject();
         delete userObj.password
     
-        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1h")})
+        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1d")})
     }catch(err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})
@@ -76,7 +76,7 @@ const getUserProfile = async (req, res) => {
         const id = req.params.id;
 
         if (req.user.role == 'admin' || req.user.id === id ) {
-            const existingUser = await User.findOne({ _id: id, isActive: true });
+            const existingUser = await User.findOne({ _id: id, isValid: true });
             if(!existingUser) {
                 return res.status(400).json({errors: [
                 {message:'User not found!'}]})
@@ -171,12 +171,12 @@ const deleteUser = async (req, res) => {
                 {message: 'Cannot delete Admin'}]})
         }
 
-        if(existingUser.isActive === false) {
+        if(existingUser.isValid === false) {
             return res.status(400).json({errors: [
                 {message:'Already Deleted!'}]})
         }
 
-        existingUser.isActive = false;
+        existingUser.isValid = false;
         await existingUser.save();
 
         return res.status(204).json({message: "Successfully Deleted"})
@@ -196,7 +196,7 @@ const changeUserRole = async (req,res) => {
                 {message:'User not found!'}]})
         }
 
-        if(!user.isActive) {
+        if(!user.isValid) {
             return res.status(400).json({errors: [
                 {message:'That user has been already Deleted!'}]})
         }
@@ -258,39 +258,42 @@ const searchUser = async (req,res) => {
     }
 }
 
-const getUserCount = async (req,res) => {
+const getUserOverview = async (req,res) => {
     try {
-        const count = await User.countDocuments();
-        return res.status(200).json({count})
-    }catch(err) {
-        return res.status(500).json({errors: [
-            {message: err.message }]})
-    }
-}
+        const totalCount = await User.countDocuments();
+        const totalAdminUsersCount = await User.countDocuments({role: 'admin'})
+        const totalFreeUsersCount = await User.countDocuments({role: 'free-user'})
+        const totalPremiumUsersCount = await User.countDocuments({role: 'premium-user'})
 
-const getCountDiff = async (req, res) => {
-    try {
         const now = new Date();
         
         // Getting count of previous month
         const lastPrevDay = new Date(now.getFullYear(), now.getMonth(), 1);
 
         const prevCount = await User.countDocuments({
-            isActive: true,
+            isValid: true,
             createdAt: {$lt: lastPrevDay}
         })
         
         const currCount = await User.countDocuments({
-            isActive: true
+            isValid: true
         });
 
         const countDiff = currCount - prevCount;
 
-        return res.status(200).json({countDiff})
-    } catch (err) {
+        return res.status(200).json({
+            totalCount,totalAdminUsersCount,
+            totalFreeUsersCount,totalPremiumUsersCount,
+            countDiff
+        })
+    }catch(err) {
         return res.status(500).json({errors: [
             {message: err.message }]})
     }
 }
 
-module.exports = {registerUser, loginUser, getUserProfile, updateUser, deleteUser, changeUserRole, searchUser, getUserCount, getCountDiff}
+module.exports = {
+    registerUser, loginUser, 
+    getUserProfile, updateUser, 
+    deleteUser, changeUserRole, 
+    searchUser, getUserOverview}

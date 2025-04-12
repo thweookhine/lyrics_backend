@@ -18,6 +18,6 @@ LIMIT=$2
 for ((i=1; i<=LIMIT; i++)); do 
     USER="${UNAME}${i}"
     curl -X POST -H "Content-Type: application/json" \
-        -d "{\"name\": \"${USER}\", \"email\": \"${USER}@gmail.com\", \"password\": \"${USER}\"}" \
+        -d "{\"name\": \"${USER}\", \"email\": \"${USER}@gmail.com\", \"password\": \"${USER}${i}\"}" \
         http://localhost:3000/api/users/registerUser    
 done

@@ -2,7 +2,7 @@
 const express = require('express');
 const userRouter = express.Router();
 const { body, validationResult } = require('express-validator');
-const {registerUser, googleLogin, googleCallback, deleteUser, updateUser, changeUserRole, searchUser, getUserCount, getCountDiff} = require('../controllers/userController');
+const {registerUser, googleLogin, googleCallback, deleteUser, updateUser, changeUserRole, searchUser, getUserCount, getCountDiff, getUserOverview} = require('../controllers/userController');
 const {validateUserRegister, validateUserLogin, validateChangeUserRole, validateUserUpdate } = require('../middleware/userValidation');
 const { loginUser } = require('../controllers/userController');
 const { authenticateUser } = require('../middleware/authenticateUser');
@@ -16,6 +16,5 @@ userRouter.get('/userProfile/:id', authenticateUser ,getUserProfile)
 userRouter.delete('/:id', authenticateUser, checkRole(['admin']), deleteUser)
 userRouter.put('/:id', validateUserUpdate, authenticateUser, updateUser)
 userRouter.post('/changeUserRole', validateChangeUserRole, authenticateUser, checkRole(['admin']), changeUserRole)
-userRouter.get('/getCount', authenticateUser, checkRole(['admin']), getUserCount)
-userRouter.get('/getCountDiff', authenticateUser, checkRole(['admin']), getCountDiff)
+userRouter.get('/getUserOverview', authenticateUser, checkRole(['admin']), getUserOverview)
 module.exports = userRouter

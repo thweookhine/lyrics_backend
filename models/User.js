@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema({
         enum: ['admin','free-user','premium-user'],
         default: 'free-user'
     },
-    isActive: {
+    isValid: {
         type: Boolean,
         default: 'true'
     }
