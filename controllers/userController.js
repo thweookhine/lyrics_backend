@@ -281,10 +281,16 @@ const getUserOverview = async (req,res) => {
 
         const countDiff = currCount - prevCount;
 
+        const totalInvalidCount = await User.countDocuments({
+            isValid: false
+        })
+
         return res.status(200).json({
             totalCount,totalAdminUsersCount,
             totalFreeUsersCount,totalPremiumUsersCount,
-            countDiff
+            countDiff,
+            totalValidCount: currCount,
+            totalInvalidCount
         })
     }catch(err) {
         return res.status(500).json({errors: [
