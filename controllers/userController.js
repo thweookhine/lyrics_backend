@@ -101,8 +101,8 @@ const getUserProfile = async (req, res) => {
 const updateUser = async (req,res) => {
 
     try{
+        const {isOauth} = req.body;
         const id = req.params.id
-        const {name,email,oldPassword, newPassword} = req.body;
 
         if(id !== req.user.id) {
             return res.status(401).json({errors: [
@@ -110,46 +110,53 @@ const updateUser = async (req,res) => {
         }
 
         const user = await User.findById(id)
-
         if(!user) {
             return res.status(400).json({errors: [
                 {message:'User not found'}]})
         }
 
-        if(email && email != user.email) {
-            const existingUser = await User.findOne({ email });
-            if (existingUser) {
-                return res.status(400).json({errors: [
-                {message:"Email already in use by another account" }]});
-            }
-        }
+        if(isOauth == true) {
+            const {name} = req.body;
+            user.name = name;
+        }else {
+            
+            const {name,email,oldPassword, newPassword} = req.body;
 
-        user.name = name;
-        user.email = email;
-
-        if(oldPassword ) {
-            const isMatch = await bcrypt.compare(oldPassword, user.password);
-            if(!isMatch) {
-                return res.status(400).json({errors: [
-                {message:"Incorrect old password" }]});
+            if(email && email != user.email) {
+                const existingUser = await User.findOne({ email });
+                if (existingUser) {
+                    return res.status(400).json({errors: [
+                    {message:"Email already in use by another account" }]});
+                }
             }
 
-            if(!newPassword) {
-                return res.status(400).json({errors: [
-                {message:"Require to define new Password!" }]});
+            user.name = name;
+            user.email = email;
+
+            if(oldPassword) {
+                const isMatch = await bcrypt.compare(oldPassword, user.password);
+                if(!isMatch) {
+                    return res.status(400).json({errors: [
+                    {message:"Incorrect old password" }]});
+                }
+
+                if(!newPassword) {
+                    return res.status(400).json({errors: [
+                    {message:"Require to define new Password!" }]});
+                }
+
+                const hashPassword = await bcrypt.hash(newPassword, 10);
+                user.password = hashPassword;
             }
+            }
+            await user.save();
 
-            const hashPassword = await bcrypt.hash(newPassword, 10);
-            user.password = hashPassword;
-        }
+            // Remove password field
+            const userObj = user.toObject();
+            delete userObj.password
 
-        await user.save();
-
-        // Remove password field
-        const userObj = user.toObject();
-        delete userObj.password
-
-        return res.status(200).json({user: userObj})
+            return res.status(200).json({user: userObj})
+        
     }catch (err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})
