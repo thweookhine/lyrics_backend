@@ -180,10 +180,10 @@ const doActivateAndDeactivate = async (req, res) => {
             
             if(type == 'deactivate') {
         
-                // if(existingUser.role == 'admin') {
-                //     return res.status(400).json({errors: [
-                //         {message: 'Cannot delete Admin'}]})
-                // }
+                if(existingUser.role == 'admin') {
+                    return res.status(400).json({errors: [
+                        {message: 'Cannot delete Admin'}]})
+                }
         
                 if(existingUser.isValid === false) {
                     return res.status(400).json({errors: [
