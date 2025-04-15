@@ -43,8 +43,8 @@ const validateChangeUserRole = [
     body("userRole")
     .notEmpty()
     .withMessage("User role is required!")
-    .isIn(["free-user", "premium-user"]) 
-    .withMessage("Invalid role! Allowed values: 'free-user' or 'premium-user'."),
+    .isIn(["free-user", "premium-user", "admin"]) 
+    .withMessage("Invalid role! Allowed values: 'free-user' or 'premium-user' or 'admin'."),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

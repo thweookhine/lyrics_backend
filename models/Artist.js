@@ -17,8 +17,8 @@ const ArtistSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['artist', 'writer', 'both'],
-        default: 'artist'
+        enum: ['singer', 'writer', 'both'],
+        default: 'singer'
     }
 }, {
     timestamps: true

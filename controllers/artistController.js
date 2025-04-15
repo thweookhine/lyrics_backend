@@ -148,6 +148,8 @@ const getArtistsByType = async (req,res) => {
     }
 }
 
+
+//TODO
 const getArtistCount = async (req,res) => {
     try {
         const count = await Artist.countDocuments();
@@ -158,6 +160,7 @@ const getArtistCount = async (req,res) => {
     }
 }
 
+//TODO
 const getCountDiff = async (req, res) => {
     try {
         const now = new Date();

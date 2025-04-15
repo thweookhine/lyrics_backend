@@ -8,7 +8,7 @@ const checkRole = require('../middleware/checkRole');
 const artistRouter = express.Router();
 
 artistRouter.post('/createArtist', validateArtist, authenticateUser, checkRole(['admin']), createArtist)
-artistRouter.put('/updateArtist/:id', validateArtist, authenticateUser, checkRole(['admin']), updateArtist)
+artistRouter.put('/updateArtist/:id', authenticateUser, checkRole(['admin']), updateArtist)
 artistRouter.delete('/deleteArtist/:id', validateArtist, authenticateUser, checkRole(['admin']), deleteArtistById)
 
 // TODO delete this searchArtists if not required!
