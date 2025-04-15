@@ -11,6 +11,7 @@ const generateToken = (user, expiresIn) => {
     })
     return token;
 }
+
 const registerUser = async (req,res) => {
     try{
         const {name,email,password} = req.body;
@@ -164,29 +165,44 @@ const updateUser = async (req,res) => {
 
 }
 
-const deleteUser = async (req, res) => {
+const doActivateAndDeactivate = async (req, res) => {
     try {
         const id = req.params.id;
-        const existingUser = await User.findById(id);
-        if(!existingUser) {
+        const {type} = req.query;
+
+        if(type == 'deactivate' || type == 'activate') {
+
+            const existingUser = await User.findById(id);
+            if(!existingUser) {
+                return res.status(400).json({errors: [
+                    {message:'User not found!'}]})
+            }
+            
+            if(type == 'deactivate') {
+        
+                // if(existingUser.role == 'admin') {
+                //     return res.status(400).json({errors: [
+                //         {message: 'Cannot delete Admin'}]})
+                // }
+        
+                if(existingUser.isValid === false) {
+                    return res.status(400).json({errors: [
+                        {message:'Already Deleted!'}]})
+                }
+        
+                existingUser.isValid = false;
+                await existingUser.save();
+        
+                return res.status(204).json({message: "Successfully Deactivated!"})
+            } else if (type == 'activate') {
+                existingUser.isValid = true;
+                await existingUser.save();
+                return res.status(204).json({message: "Successfully Reactivate"})
+            }
+        } else {
             return res.status(400).json({errors: [
-                {message:'User not found!'}]})
+                {message:`${type} not allowed!`}]})
         }
-
-        if(existingUser.role == 'admin') {
-            return res.status(400).json({errors: [
-                {message: 'Cannot delete Admin'}]})
-        }
-
-        if(existingUser.isValid === false) {
-            return res.status(400).json({errors: [
-                {message:'Already Deleted!'}]})
-        }
-
-        existingUser.isValid = false;
-        await existingUser.save();
-
-        return res.status(204).json({message: "Successfully Deleted"})
     }catch (err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})
@@ -308,5 +324,5 @@ const getUserOverview = async (req,res) => {
 module.exports = {
     registerUser, loginUser, 
     getUserProfile, updateUser, 
-    deleteUser, changeUserRole, 
+    doActivateAndDeactivate, changeUserRole, 
     searchUser, getUserOverview}
