@@ -148,23 +148,15 @@ const getArtistsByType = async (req,res) => {
     }
 }
 
-
-//TODO
-const getArtistCount = async (req,res) => {
+const getArtistOverview = async(req, res) => {
     try {
-        const count = await Artist.countDocuments();
-        return res.status(200).json({count})
-    }catch(err) {
-        return res.status(500).json({errors: [
-                {message: err.message}]})
-    }
-}
+        const totalCount = await Artist.countDocuments();
+        const totalSingerCount = await Artist.countDocuments({type: 'singer'})
+        const totalWriterCount = await Artist.countDocuments({type: 'writer'})
+        const totalBothCount = await Artist.countDocuments({type: 'both'})
 
-//TODO
-const getCountDiff = async (req, res) => {
-    try {
         const now = new Date();
-        
+
         // Getting count of previous month
         const lastPrevDay = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -176,11 +168,16 @@ const getCountDiff = async (req, res) => {
 
         const countDiff = currCount - prevCount;
 
-        return res.status(200).json({countDiff})
+        return res.status(200).json({
+            totalCount, totalSingerCount,
+            totalWriterCount, totalBothCount,
+            countDiff
+        })
+
     } catch (err) {
-        return res.status(500).json({errors: [
-                {message: err.message}]})
+        res.status(500).json({errors: [
+            {message: err.message }]});
     }
 }
 
-module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, getArtistsByType, getCountDiff, getArtistCount}
+module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, getArtistsByType, getArtistOverview}
