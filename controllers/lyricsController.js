@@ -187,7 +187,7 @@ const searchLyrics = async (req,res) => {
       if(artistId) {
         query = {
           $or: [
-            {artists: new mongoose.Types.ObjectId(artistId) },
+            {singers: new mongoose.Types.ObjectId(artistId) },
             {featureArtists: new mongoose.Types.ObjectId(artistId)}
           ]
         }
@@ -247,12 +247,72 @@ const getLyricsOverview = async (req, res) => {
     }
 }
 
-const getTop10Lyrics = async (req, res) => {
+const getTopLyrics = async (req, res) => {
+  try {
+    const topLyrics = await Lyrics.find({viewCount: {$gt: 0}})
+        .sort({viewCount: -1})
+        .limit(10);
+    return res.status(200).json({topLyrics})
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}
+    ]})
+  }
+}
 
+const getLyricsCountByArtist = async (req, res) => {
+  try {
+    const {artistId} = req.query
+    const query = {
+      $or: [
+        {singers: artistId},
+        {writers: artistId},
+        {featureArtists: artistId}
+      ]
+    }
+   
+    const lyricsCount = await Lyrics.countDocuments(query);
+    return res.status(200).json({
+      lyricsCount: lyricsCount
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}
+    ]})
+  }
+}
+
+const getLyricsByArtist = async (req, res) => {
+  try {
+    const {artistId} = req.query
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page -1) * limit;
+    const query = {
+      $or: [
+        {singers: artistId},
+        {writers: artistId},
+        {featureArtists: artistId}
+      ]
+    }
+    const lyrics = await Lyrics.find(query).skip(skip).limit(limit);
+    const totalCount = await Lyrics.countDocuments(query)
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount, lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}
+    ]})
+  }
 }
 
 module.exports = {
   createLyrics, updateLyricsById, 
   getLyricsId, getAllLyrics, 
-  deleteLyrics, searchLyrics, getLyricsOverview
+  deleteLyrics, searchLyrics, 
+  getLyricsOverview, getTopLyrics,
+  getLyricsCountByArtist, getLyricsByArtist
 }
