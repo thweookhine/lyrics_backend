@@ -9,7 +9,7 @@ const artistRouter = express.Router();
 
 artistRouter.post('/createArtist', validateArtist, authenticateUser, checkRole(['admin']), createArtist)
 artistRouter.put('/updateArtist/:id', authenticateUser, checkRole(['admin']), updateArtist)
-artistRouter.delete('/deleteArtist/:id', validateArtist, authenticateUser, checkRole(['admin']), deleteArtistById)
+artistRouter.delete('/deleteArtist/:id', authenticateUser, checkRole(['admin']), deleteArtistById)
 
 // TODO delete this searchArtists if not required!
 artistRouter.get('/search', searchArtists);

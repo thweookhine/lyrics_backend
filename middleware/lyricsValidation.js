@@ -3,8 +3,8 @@ const {genreList, keyList} = require('../utils/Constants')
 
 const validateLyrics = [
   body('title').notEmpty().withMessage('title is required!'),
-  body('artists').isArray({min: 1}).withMessage('Artists must be a non-empty array'),
-  body('artists.*').isMongoId().withMessage('Invalid Artist ID in artists'),
+  body('singers').isArray({min: 1}).withMessage('Singers must be a non-empty array'),
+  body('singers.*').isMongoId().withMessage('Invalid Artist ID in singers'),
   body('writers').isArray({min: 1}).withMessage('Writers must be a non-empty array'),
   body('writers.*').isMongoId().withMessage('Invalid Artist ID in writers'),
   body('majorKey').isIn(keyList).withMessage("Major key must be valid key!"),
@@ -34,4 +34,4 @@ const validateLyrics = [
   }
 ]
 
-module.exports = { validateLyrics }
+module.exports = { validateLyrics}

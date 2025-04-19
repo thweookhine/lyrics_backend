@@ -7,7 +7,7 @@ const LyricsSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Title is required!']
     },
-    artists: [{
+    singers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist',
         required: [true, 'Artist is required!']

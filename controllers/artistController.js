@@ -163,10 +163,8 @@ const getArtistOverview = async(req, res) => {
         const prevCount = await Artist.countDocuments({
             createdAt: {$lt: lastPrevDay}
         })
-        
-        const currCount = await Artist.countDocuments();
 
-        const countDiff = currCount - prevCount;
+        const countDiff = totalCount - prevCount;
 
         return res.status(200).json({
             totalCount, totalSingerCount,

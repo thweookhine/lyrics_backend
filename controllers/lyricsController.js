@@ -15,14 +15,14 @@ const addSearchCount = async (id) => {
 const createLyrics = async (req,res) => {
 
   try{
-    const {title, artists, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre} = req.body;
+    const {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre} = req.body;
 
     // Collect all unique artist IDs
     let allArtists;
     if(featureArtists) {
-      allArtists = [...new Set([...writers, ...artists, ...featureArtists])];
+      allArtists = [...new Set([...writers, ...singers, ...featureArtists])];
     }else {
-      allArtists = [...new Set([...writers, ...artists])];
+      allArtists = [...new Set([...writers, ...singers])];
     }
     
     // Validate each artist ID
@@ -35,7 +35,7 @@ const createLyrics = async (req,res) => {
     }
 
     const newLyric = new Lyrics({
-      title, artists, featureArtists, writers, majorKey, albumName, genre,
+      title, singers, featureArtists, writers, majorKey, albumName, genre,
       lyricsPhoto: req.file.path
     });
 
@@ -50,6 +50,7 @@ const createLyrics = async (req,res) => {
 }
 
 const updateLyricsById = async (req,res) => {
+
   try {
     const id = req.params.id;
 
@@ -58,14 +59,14 @@ const updateLyricsById = async (req,res) => {
                 {message: "ID is required" }]});
     }
 
-    const {title, artists, featureArtists, writers, majorKey, albumName, genre} = req.body;
+    const {title, singers, featureArtists, writers, majorKey, albumName, genre} = req.body;
     
     // Collect all unique artist IDs
     let allArtists;
     if(featureArtists) {
-      allArtists = [...new Set([...writers, ...artists, ...featureArtists])];
+      allArtists = [...new Set([...writers, ...singers, ...featureArtists])];
     }else {
-      allArtists = [...new Set([...writers, ...artists])];
+      allArtists = [...new Set([...writers, ...singers])];
     }
     
     // Validate each artist ID
@@ -84,7 +85,7 @@ const updateLyricsById = async (req,res) => {
     }
 
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, 
-      {title, artists, featureArtists, writers, majorKey, albumName, lyricsPhoto: req.file.path, genre},
+      {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto: req.file.path, genre},
       {new: true}
     )
 
@@ -96,7 +97,7 @@ const updateLyricsById = async (req,res) => {
     const existingPublicID = getPublicIdFromUrl(existingLyrics.lyricsPhoto)
     await cloudinary.uploader.destroy(existingPublicID);
 
-    return res.status(200).json({artist: updatedLyrics})
+    return res.status(200).json({lyrics: updatedLyrics})
   } catch(err) {
     return res.status(500).json({errors: [
       {message: err.msg}]})
@@ -133,29 +134,6 @@ const deleteLyrics = async (req,res) => {
   }
 }
 
-const addViewCount = async (req,res) => {
-  const id = req.params.id;
-  if(!id) {
-    return res.status(400).json({error: "ID is required!"})
-  }
-
-  try{
-    const lyrics = await Lyrics.findById(id);
-
-    if(!lyrics) {
-      return res.status(400).json({error: "Lyrics Not Found!"})
-    }
-  
-    lyrics.viewCount = lyrics.viewCount + 1;
-  
-    await lyrics.save();
-  
-    return res.status(200).json({message: "Successfully added view count!"})
-  }catch(err) {
-    return res.status(500).json({error: err.msg})
-  }
-}
-
 const getLyricsId = async (req, res) => {
   try {
     const id = req.params.id;
@@ -170,6 +148,10 @@ const getLyricsId = async (req, res) => {
       return res.status(400).json({error: "Lyrics Not Found"})
     }
 
+    lyrics.viewCount = lyrics.viewCount + 1;
+  
+    await lyrics.save();
+
     return res.status(200).json(lyrics)
   }catch (err) {
     res.status(500).json({error: err.msg})
@@ -179,7 +161,6 @@ const getLyricsId = async (req, res) => {
 const getAllLyrics = async (req,res) => {
   try {
     const lyrics = await Lyrics.find();
-
     return res.status(200).json(lyrics)
   } catch (err) {
     return res.status(500).json({error: err.msg})
@@ -200,7 +181,7 @@ const searchLyrics = async (req,res) => {
       if(lyricsId) {
         query._id = lyricsId
       }
-    } else if (type == "artist") {
+    } else if (type == "singer") {
       // Search with artist
       const {artistId} = req.query
       if(artistId) {
@@ -238,10 +219,40 @@ const searchLyrics = async (req,res) => {
       totalCount,
       lyrics
     })
-
   } catch (err) {
     console.log(err)
   }
 }
 
-module.exports = {createLyrics, updateLyricsById, addViewCount, getLyricsId, getAllLyrics, deleteLyrics, searchLyrics}
+const getLyricsOverview = async (req, res) => {
+  try {
+    const totalCount = await Lyrics.countDocuments();
+
+    const now = new Date();
+
+    const lastPrevDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const prevCount = await Lyrics.countDocuments({
+      createdAt: {$lt: lastPrevDay}
+    })
+
+    const countDiff = totalCount - prevCount;
+
+    return res.status(200).json({
+      totalCount,
+      countDiff
+    })
+    } catch (err) {
+      return res.status(500).json({errors: [
+        {message: err.message }]})
+    }
+}
+
+const getTop10Lyrics = async (req, res) => {
+
+}
+
+module.exports = {
+  createLyrics, updateLyricsById, 
+  getLyricsId, getAllLyrics, 
+  deleteLyrics, searchLyrics, getLyricsOverview
+}
