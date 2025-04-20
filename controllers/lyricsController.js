@@ -174,6 +174,11 @@ const searchLyrics = async (req,res) => {
   const skip = (page -1) * limit;
   let query = {};
 
+  if (type != 'all' && type != 'lyrics' && type != 'singer' && type != 'writer' && type != 'key') {
+    return res.status(400).json({errors: [
+      {message: 'Type not allowed!' }]})
+  }
+
   try {
     if(type == "lyrics") {
       // Search with Lyrics
@@ -181,26 +186,24 @@ const searchLyrics = async (req,res) => {
       if(lyricsId) {
         query._id = lyricsId
       }
-    } else if (type == "singer") {
+    } else if (type == "singer" || type == 'writer') {
       // Search with artist
       const {artistId} = req.query
-      if(artistId) {
+      if(!artistId) {
+        return res.status(400).json({errors: [
+          {message: 'artistId is required!' }]})
+      }
+      if(type == 'singer') {
         query = {
           $or: [
             {singers: new mongoose.Types.ObjectId(artistId) },
             {featureArtists: new mongoose.Types.ObjectId(artistId)}
           ]
         }
-        await addSearchCount(artistId)
-      }
-    } else if(type == "writer") {
-      // Search with writer
-      const {writerId} = req.query
-      if(writerId) {
-        query.writers = new mongoose.Types.ObjectId(writerId);
-      }
-
-      await addSearchCount(writerId)
+      } else if (type == 'writer') {
+        query.writers = new mongoose.Types.ObjectId(artistId);
+      }      
+      await addSearchCount(artistId)
 
     } else if(type == "key") {
       // Search with key
@@ -220,7 +223,8 @@ const searchLyrics = async (req,res) => {
       lyrics
     })
   } catch (err) {
-    console.log(err)
+    return res.status(500).json({errors: [
+      {message: err.message }]})
   }
 }
 
