@@ -1,4 +1,6 @@
+const { default: mongoose } = require("mongoose");
 const Artist = require("../models/Artist");
+const Lyrics = require("../models/Lyrics");
 
 const createArtist = async(req,res) => {
     const {name, bio, photoLink, type} = req.body;
@@ -52,11 +54,36 @@ const deleteArtistById = async(req,res) => {
                 {message: "No Artist Found"}]})
         }
 
-        await Artist.findByIdAndDelete(id)
+        const session = await mongoose.startSession();
+        session.startTransaction();
 
+        await Lyrics.updateMany({
+            $or: [
+                {singers: id},
+                {featureArtists: id},
+                {writers: id}
+            ]
+        },
+        {
+            $pull: {
+                artists: id,
+                featureArtists: id,
+                writers: id
+            }
+        },
+        {
+            session
+        }
+        )
+
+        await Artist.findByIdAndDelete(id).session(session)
+        await session.commitTransaction();
+        session.endSession()
         return res.status(200).json({message: "Successfully Deleted!"});
 
     }catch(err) {
+        await session.abortTransaction();
+        session.endSession();
         return res.status(500).json({errors: [
                 {message: err.message}]})
     }

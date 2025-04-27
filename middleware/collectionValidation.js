@@ -1,7 +1,8 @@
-const { validationResult } = require("express-validator")
+const { validationResult, body } = require("express-validator")
 
 const validateCollection = [
   body('lyricsId').notEmpty().withMessage('lyricsId is required!'),
+  body('lyricsId').isMongoId().withMessage('Invalid Lyrics ID!'),
   (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {

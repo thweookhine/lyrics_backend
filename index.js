@@ -8,6 +8,7 @@ const passport = require('passport');
 const session = require('express-session');
 const lyricsRouter = require('./routes/lyricsRouter');
 const artistRouter = require('./routes/artistRouter');
+const collectionRouter = require('./routes/collectionRouter');
 
 require("dotenv").config()
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/users", userRouter)
 app.use('/auth', googleAuthRouter)
 app.use('/api/lyrics', lyricsRouter)
 app.use('/api/artists', artistRouter)
+app.use('/api/collections', collectionRouter)
 
 // Run server
 const PORT = process.env.PORT || 3000;
