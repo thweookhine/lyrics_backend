@@ -54,31 +54,22 @@ const deleteArtistById = async(req,res) => {
                 {message: "No Artist Found"}]})
         }
 
-        const session = await mongoose.startSession();
-        session.startTransaction();
-
-        await Lyrics.updateMany({
-            $or: [
+        const query = {
+            $or:[
                 {singers: id},
                 {featureArtists: id},
                 {writers: id}
             ]
-        },
-        {
-            $pull: {
-                artists: id,
-                featureArtists: id,
-                writers: id
-            }
-        },
-        {
-            session
         }
-        )
 
-        await Artist.findByIdAndDelete(id).session(session)
-        await session.commitTransaction();
-        session.endSession()
+        const lyricsCount = await Lyrics.countDocuments(query)
+
+        if(lyricsCount > 0) {
+            return res.status(400).json({errors: [
+                {message: "Can't Delete this Artist!"}]})
+        }
+
+        await Artist.findByIdAndDelete(id)
         return res.status(200).json({message: "Successfully Deleted!"});
 
     }catch(err) {
