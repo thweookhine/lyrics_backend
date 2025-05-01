@@ -1,7 +1,8 @@
 const { cloudinary } = require("../config/cloudinaryStorage");
 const Lyrics = require("../models/Lyrics");
 const Artist = require("../models/Artist");
-const Collection = require('../models/Collection')
+const Collection = require('../models/Collection');
+const { default: mongoose } = require("mongoose");
 
 function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
@@ -137,6 +138,9 @@ const deleteLyrics = async (req,res) => {
         {message: "ID is required!"}]})
   }
 
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const lyrics = await Lyrics.findById(id);
 
@@ -145,19 +149,25 @@ const deleteLyrics = async (req,res) => {
         {message: "Lyrics not found!"}]})
     }
 
-    await Collection.deleteMany({ lyrics: lyrics._id });
-
+    await Collection.deleteMany({ lyricsId: lyrics.id }, {session});
     // Get public ID from lyricsPhoto of Lyrics
     const publicID = getPublicIdFromUrl(lyrics.lyricsPhoto);
 
-    await Lyrics.findByIdAndDelete(lyrics.id)
+    await Lyrics.findByIdAndDelete(lyrics.id, {session})
 
     await cloudinary.uploader.destroy(publicID);
 
+    // Commit transaction
+    await session.commitTransaction();
+
     return res.status(200).json({message: "Lyrics deleted successfully!"})
   }catch (err) {
+    // Rollback transaction
+    await session.abortTransaction();
     return res.status(500).json({errors: [
       {message: err.message}]}) 
+  } finally {
+    session.endSession();
   }
 }
 
