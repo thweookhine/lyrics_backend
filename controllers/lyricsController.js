@@ -118,6 +118,8 @@ const disableLyrics = async (req, res) => {
   try {
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, {
       isEnable: false
+    }, {
+      new: true
     })
 
     return res.status(200).json({lyrics: updatedLyrics})
@@ -169,6 +171,10 @@ const getLyricsId = async (req, res) => {
     const lyrics = await Lyrics.findById(id);
     if(!lyrics) {
       return res.status(400).json({error: "Lyrics Not Found"})
+    }
+
+    if(!lyrics.isEnable) {
+      return res.status(400).json({error: "This Lyrics has been disabled!"})
     }
 
     lyrics.viewCount = lyrics.viewCount + 1;
@@ -349,9 +355,9 @@ const getLyricsByArtist = async (req, res) => {
 
 module.exports = {
   createLyrics, updateLyricsById, 
-  disableLyrics,
+  disableLyrics, getLyricsOverview,
   getLyricsId, getAllLyrics, 
   deleteLyrics, searchLyrics, 
-  getLyricsOverview, getTopLyrics,
+  getTopLyrics,
   getLyricsCountByArtist, getLyricsByArtist
 }
