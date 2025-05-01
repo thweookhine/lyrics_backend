@@ -1,7 +1,7 @@
 const { cloudinary } = require("../config/cloudinaryStorage");
 const Lyrics = require("../models/Lyrics");
 const Artist = require("../models/Artist");
-const { default: mongoose } = require("mongoose");
+const Collection = require('../models/Collection')
 
 function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
@@ -145,6 +145,8 @@ const deleteLyrics = async (req,res) => {
         {message: "Lyrics not found!"}]})
     }
 
+    await Collection.deleteMany({ lyrics: lyrics._id });
+
     // Get public ID from lyricsPhoto of Lyrics
     const publicID = getPublicIdFromUrl(lyrics.lyricsPhoto);
 
@@ -168,7 +170,7 @@ const getLyricsId = async (req, res) => {
                 {message: "ID is required" }]});
     }
 
-    const lyrics = await Lyrics.findById(id);
+    const lyrics = await Lyrics.findById(id).populate('singers').populate('writers').populate('featureArtists');
     if(!lyrics) {
       return res.status(400).json({error: "Lyrics Not Found"})
     }
@@ -183,16 +185,7 @@ const getLyricsId = async (req, res) => {
 
     return res.status(200).json(lyrics)
   }catch (err) {
-    res.status(500).json({error: err.msg})
-  }
-}
-
-const getAllLyrics = async (req,res) => {
-  try {
-    const lyrics = await Lyrics.find();
-    return res.status(200).json(lyrics)
-  } catch (err) {
-    return res.status(500).json({error: err.msg})
+    res.status(500).json({error: err.message})
   }
 }
 
@@ -271,6 +264,8 @@ const searchLyrics = async (req,res) => {
 const getLyricsOverview = async (req, res) => {
   try {
     const totalCount = await Lyrics.countDocuments();
+    const disabledCount = await Lyrics.countDocuments({isEnable: false})
+    const enabledCount = await Lyrics.countDocuments({isEnable: true})
 
     const now = new Date();
 
@@ -283,7 +278,9 @@ const getLyricsOverview = async (req, res) => {
 
     return res.status(200).json({
       totalCount,
-      countDiff
+      countDiff,
+      disabledCount,
+      enabledCount
     })
     } catch (err) {
       return res.status(500).json({errors: [
@@ -293,32 +290,16 @@ const getLyricsOverview = async (req, res) => {
 
 const getTopLyrics = async (req, res) => {
   try {
-    const topLyrics = await Lyrics.find({viewCount: {$gt: 0}})
+    const topLyrics = await Lyrics.find({
+      isEnable: true,
+      viewCount: { $gt: 0 }
+      })
         .sort({viewCount: -1})
-        .limit(10);
+        .limit(10)
+        .populate('singers')
+        .populate('writers')
+        .populate('featureArtists');
     return res.status(200).json({topLyrics})
-  } catch (err) {
-    return res.status(500).json({errors: [
-      {message: err.message}
-    ]})
-  }
-}
-
-const getLyricsCountByArtist = async (req, res) => {
-  try {
-    const {artistId} = req.query
-    const query = {
-      $or: [
-        {singers: artistId},
-        {writers: artistId},
-        {featureArtists: artistId}
-      ]
-    }
-   
-    const lyricsCount = await Lyrics.countDocuments(query);
-    return res.status(200).json({
-      lyricsCount: lyricsCount
-    })
   } catch (err) {
     return res.status(500).json({errors: [
       {message: err.message}
@@ -339,7 +320,7 @@ const getLyricsByArtist = async (req, res) => {
         {featureArtists: artistId}
       ]
     }
-    const lyrics = await Lyrics.find(query).skip(skip).limit(limit);
+    const lyrics = await Lyrics.find(query).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
     return res.status(200).json({
       totalPages: Math.ceil(totalCount / limit),
@@ -353,11 +334,42 @@ const getLyricsByArtist = async (req, res) => {
   }
 }
 
+// const getLyricsCountByArtist = async (req, res) => {
+//   try {
+//     const {artistId} = req.query
+//     const query = {
+//       $or: [
+//         {singers: artistId},
+//         {writers: artistId},
+//         {featureArtists: artistId}
+//       ]
+//     }
+   
+//     const lyricsCount = await Lyrics.countDocuments(query);
+//     return res.status(200).json({
+//       lyricsCount: lyricsCount
+//     })
+//   } catch (err) {
+//     return res.status(500).json({errors: [
+//       {message: err.message}
+//     ]})
+//   }
+// }
+
+// const getAllLyrics = async (req,res) => {
+//   try {
+//     const lyrics = await Lyrics.find();
+//     return res.status(200).json(lyrics)
+//   } catch (err) {
+//     return res.status(500).json({error: err.msg})
+//   }
+// }
+
 module.exports = {
   createLyrics, updateLyricsById, 
   disableLyrics, getLyricsOverview,
-  getLyricsId, getAllLyrics, 
+  getLyricsId, 
   deleteLyrics, searchLyrics, 
   getTopLyrics,
-  getLyricsCountByArtist, getLyricsByArtist
+  getLyricsByArtist
 }

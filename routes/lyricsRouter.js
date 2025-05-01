@@ -12,12 +12,12 @@ lyricsRouter.get('/getLyricsOverview', authenticateUser, checkRole(['admin']), g
 lyricsRouter.get('/disableLyrics/:id', authenticateUser, checkRole(['admin']), disableLyrics)
 lyricsRouter.get('/getLyricsById/:id', getLyricsId)
 lyricsRouter.get('/getTopLyrics', getTopLyrics)
+lyricsRouter.get('/getLyricsByArtist', getLyricsByArtist)
 
 
 
 lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
-
-lyricsRouter.get('/getLyricsCountByArtist',authenticateUser, checkRole(['admin']), getLyricsCountByArtist)
-lyricsRouter.get('/getLyricsByArtist', getLyricsByArtist)
 lyricsRouter.get('/searchLyrics', searchLyrics)
+
+// lyricsRouter.get('/getLyricsCountByArtist',authenticateUser, checkRole(['admin']), getLyricsCountByArtist)
 module.exports = lyricsRouter
