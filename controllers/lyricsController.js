@@ -84,6 +84,10 @@ const updateLyricsById = async (req,res) => {
       return res.status(400).json({ errors: [{ message: "No Lyrics Found" }] });
     }
 
+    if(!existingLyrics.isEnable) {
+      return res.status(400).json({ errors: [{ message: "Lyrics has been disabled!" }] });
+    }
+
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, 
       {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto: req.file.path, genre},
       {new: true}
@@ -101,6 +105,25 @@ const updateLyricsById = async (req,res) => {
   } catch(err) {
     return res.status(500).json({errors: [
       {message: err.msg}]})
+  }
+}
+
+const disableLyrics = async (req, res) => {
+  const id = req.params.id;
+  if(!id) {
+    return res.status(400).json({errors: [
+        {message: "ID is required!"}]})
+  }
+
+  try {
+    const updatedLyrics = await Lyrics.findByIdAndUpdate(id, {
+      isEnable: false
+    })
+
+    return res.status(200).json({lyrics: updatedLyrics})
+  }catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}]}) 
   }
 }
 
@@ -211,7 +234,18 @@ const searchLyrics = async (req,res) => {
       if(keyValue) {
         query.majorKey = keyValue;
       }
-    } 
+    } else if(type == "all") {
+      const {keyword} = req.query;
+
+      if(keyword) {
+        query = {
+          $or: [
+            {title: {$regex: keyword, $options: "i"}},
+            {album: {$regex: keyword, $options: "i"}}
+          ]
+        }
+      }
+    }
 
     const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit);
     const totalCount = await Lyrics.countDocuments(query)
@@ -315,6 +349,7 @@ const getLyricsByArtist = async (req, res) => {
 
 module.exports = {
   createLyrics, updateLyricsById, 
+  disableLyrics,
   getLyricsId, getAllLyrics, 
   deleteLyrics, searchLyrics, 
   getLyricsOverview, getTopLyrics,

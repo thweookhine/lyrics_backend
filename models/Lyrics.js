@@ -41,7 +41,12 @@ const LyricsSchema = new mongoose.Schema({
         type: [String], 
         enum: genreList,
         required: [true, 'Genre is required!']
-      },
+    },
+    isEnable: {
+        type: Boolean,
+        default: true
+    }
+
 }, {timestamps: true});
 
 const Lyrics = mongoose.model('Lyrics', LyricsSchema);
