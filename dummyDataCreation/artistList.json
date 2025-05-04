@@ -1,75 +1,63 @@
 {
   "artists": [
     {
-      "name": "Lay Phyu",
-      "type": "singer"
-    },
-    {
-      "name": "Zaw Win Htut",
-      "type": "singer"
-    },
-    {
-      "name": "R Zarni",
-      "type": "singer"
-    },
-    {
-      "name": "Ni Ni Khin Zaw",
+      "name": "RM",
       "type": "both"
     },
     {
-      "name": "Sai Sai Kham Leng",
+      "name": "Baekhyun",
+      "type": "singer"
+    },
+    {
+      "name": "Zico",
       "type": "both"
     },
     {
-      "name": "Phyu Phyu Kyaw Thein",
+      "name": "Heize",
       "type": "singer"
     },
     {
-      "name": "Ah Moon",
-      "type": "singer"
-    },
-    {
-      "name": "G-Fatt",
-      "type": "singer"
-    },
-    {
-      "name": "L Sai",
-      "type": "writer"
-    },
-    {
-      "name": "Ludu Daw Amar",
-      "type": "writer"
-    },
-    {
-      "name": "Min Lu",
-      "type": "writer"
-    },
-    {
-      "name": "Maung Thura (Zarganar)",
-      "type": "writer"
-    },
-    {
-      "name": "Nu Nu Yi (Inwa)",
-      "type": "writer"
-    },
-    {
-      "name": "Khet Mar",
-      "type": "writer"
-    },
-    {
-      "name": "Jewel",
-      "type": "singer"
-    },
-    {
-      "name": "Bunny Phyoe",
+      "name": "Suga",
       "type": "both"
     },
     {
-      "name": "Hlwan Paing",
+      "name": "Tablo",
+      "type": "writer"
+    },
+    {
+      "name": "Younha",
+      "type": "singer"
+    },
+    {
+      "name": "J-Hope",
       "type": "both"
     },
     {
-      "name": "Sai Htee Saing",
+      "name": "Lee Hi",
+      "type": "singer"
+    },
+    {
+      "name": "Kim Namjoon",
+      "type": "writer"
+    },
+    {
+      "name": "Changmo",
+      "type": "both"
+    },
+    {
+      "name": "Sunmi",
+      "type": "singer"
+    },
+    {
+      "name": "Jay Park",
+      "type": "both"
+    },
+    {
+      "name": "Bang Yong-guk",
+      "type": "both"
+    },
+    {
+      "name": "B.I",
       "type": "both"
     }
   ]
