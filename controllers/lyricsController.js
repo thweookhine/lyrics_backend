@@ -204,19 +204,23 @@ const searchLyrics = async (req,res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page -1) * limit;
-  let query = {};
+  let query = { isEnable: true };
 
-  if (type != 'all' && type != 'lyrics' && type != 'singer' && type != 'writer' && type != 'key') {
+  const allowdTypes = ['lyrics','singer','writer','key'];
+
+  if(!allowdTypes.includes(type)) {
     return res.status(400).json({errors: [
       {message: 'Type not allowed!' }]})
   }
 
   try {
     if(type == "lyrics") {
-      // Search with Lyrics
-      const {lyricsId} = req.query
-      if(lyricsId) {
-        query._id = lyricsId
+      const {keyword} = req.query
+      if(keyword) {
+        query.$or = [
+          {title: {$regex: keyword, $options: 'i'}},
+          {albumName: {$regex: keyword, $options: 'i'}}
+        ]
       }
     } else if (type == "singer" || type == 'writer') {
       // Search with artist
@@ -225,6 +229,12 @@ const searchLyrics = async (req,res) => {
         return res.status(400).json({errors: [
           {message: 'artistId is required!' }]})
       }
+
+      const artist = await Artist.findById(artistId);
+      if(!artist) {
+        return res.status(400).json({errors: [
+          {message: 'Artist Not Found!' }]})
+      }
       if(type == 'singer') {
         query = {
           $or: [
@@ -232,7 +242,7 @@ const searchLyrics = async (req,res) => {
             {featureArtists: new mongoose.Types.ObjectId(artistId)}
           ]
         }
-      } else if (type == 'writer') {
+      } else {
         query.writers = new mongoose.Types.ObjectId(artistId);
       }      
       await addSearchCount(artistId)

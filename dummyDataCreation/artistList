@@ -1,0 +1,76 @@
+{
+  "artists": [
+    {
+      "name": "Lay Phyu",
+      "type": "singer"
+    },
+    {
+      "name": "Zaw Win Htut",
+      "type": "singer"
+    },
+    {
+      "name": "R Zarni",
+      "type": "singer"
+    },
+    {
+      "name": "Ni Ni Khin Zaw",
+      "type": "both"
+    },
+    {
+      "name": "Sai Sai Kham Leng",
+      "type": "both"
+    },
+    {
+      "name": "Phyu Phyu Kyaw Thein",
+      "type": "singer"
+    },
+    {
+      "name": "Ah Moon",
+      "type": "singer"
+    },
+    {
+      "name": "G-Fatt",
+      "type": "singer"
+    },
+    {
+      "name": "L Sai",
+      "type": "writer"
+    },
+    {
+      "name": "Ludu Daw Amar",
+      "type": "writer"
+    },
+    {
+      "name": "Min Lu",
+      "type": "writer"
+    },
+    {
+      "name": "Maung Thura (Zarganar)",
+      "type": "writer"
+    },
+    {
+      "name": "Nu Nu Yi (Inwa)",
+      "type": "writer"
+    },
+    {
+      "name": "Khet Mar",
+      "type": "writer"
+    },
+    {
+      "name": "Jewel",
+      "type": "singer"
+    },
+    {
+      "name": "Bunny Phyoe",
+      "type": "both"
+    },
+    {
+      "name": "Hlwan Paing",
+      "type": "both"
+    },
+    {
+      "name": "Sai Htee Saing",
+      "type": "both"
+    }
+  ]
+}
