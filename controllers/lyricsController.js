@@ -206,7 +206,7 @@ const searchLyrics = async (req,res) => {
   const skip = (page -1) * limit;
   let query = { isEnable: true };
 
-  const allowdTypes = ['lyrics','singer','writer','key'];
+  const allowdTypes = ['lyrics','singer','writer','key','all'];
 
   if(!allowdTypes.includes(type)) {
     return res.status(400).json({errors: [
@@ -260,7 +260,7 @@ const searchLyrics = async (req,res) => {
         query = {
           $or: [
             {title: {$regex: keyword, $options: "i"}},
-            {album: {$regex: keyword, $options: "i"}}
+            {albumName: {$regex: keyword, $options: "i"}}
           ]
         }
       }
