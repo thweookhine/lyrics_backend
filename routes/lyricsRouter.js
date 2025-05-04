@@ -13,9 +13,6 @@ lyricsRouter.get('/disableLyrics/:id', authenticateUser, checkRole(['admin']), d
 lyricsRouter.get('/getLyricsById/:id', getLyricsId)
 lyricsRouter.get('/getTopLyrics', getTopLyrics)
 lyricsRouter.get('/getLyricsByArtist', getLyricsByArtist)
-
-
-
 lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
 lyricsRouter.get('/searchLyrics', searchLyrics)
 
