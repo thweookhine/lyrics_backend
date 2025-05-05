@@ -20,7 +20,7 @@ const addToCollection = async (req,res) => {
       if(user.role == 'free-user') {
         const count = await Collection.countDocuments({userId: user._id});
         // 1.1. If count is 20, send response with 400 status code
-        if(count > 20) {
+        if(count >= 20) {
           return res.status(400).json({errors: [
             {
               message: 'You can add only 20 collections'

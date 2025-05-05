@@ -266,7 +266,7 @@ const searchLyrics = async (req,res) => {
       }
     }
 
-    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit);
+    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
 
     return res.status(200).json({
@@ -376,14 +376,14 @@ const getLyricsByArtist = async (req, res) => {
 //   }
 // }
 
-// const getAllLyrics = async (req,res) => {
-//   try {
-//     const lyrics = await Lyrics.find();
-//     return res.status(200).json(lyrics)
-//   } catch (err) {
-//     return res.status(500).json({error: err.msg})
-//   }
-// }
+const getAllLyrics = async (req,res) => {
+  try {
+    const lyrics = await Lyrics.find().populate('singers').populate('writers').populate('featureArtists');
+    return res.status(200).json(lyrics)
+  } catch (err) {
+    return res.status(500).json({error: err.msg})
+  }
+}
 
 module.exports = {
   createLyrics, updateLyricsById, 
@@ -391,5 +391,5 @@ module.exports = {
   getLyricsId, 
   deleteLyrics, searchLyrics, 
   getTopLyrics,
-  getLyricsByArtist
+  getLyricsByArtist,getAllLyrics
 }

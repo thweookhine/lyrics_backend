@@ -15,6 +15,8 @@ lyricsRouter.get('/getTopLyrics', getTopLyrics)
 lyricsRouter.get('/getLyricsByArtist', getLyricsByArtist)
 lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
 lyricsRouter.get('/searchLyrics', searchLyrics)
+lyricsRouter.get('/getAllLyrics', authenticateUser, checkRole(['admin']), getAllLyrics)
+
 
 // lyricsRouter.get('/getLyricsCountByArtist',authenticateUser, checkRole(['admin']), getLyricsCountByArtist)
 module.exports = lyricsRouter
