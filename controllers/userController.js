@@ -31,7 +31,7 @@ const registerUser = async (req,res) => {
         const userObj = user.toObject();
         delete userObj.password
 
-        return res.status(201).json({user: userObj, token: generateToken(user, "1h")})
+        return res.status(201).json({user: userObj, token: generateToken(user, "1d")})
     }catch (err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})
@@ -65,7 +65,7 @@ const loginUser = async (req,res) => {
         const userObj = user.toObject();
         delete userObj.password
     
-        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1d")})
+        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "5m")})
     }catch(err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})

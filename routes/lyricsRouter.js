@@ -2,7 +2,7 @@ const express = require('express');
 const { validateLyrics, validateUpdateLyrics } = require('../middleware/lyricsValidation');
 const { authenticateUser } = require('../middleware/authenticateUser');
 const checkRole = require('../middleware/checkRole');
-const { createLyrics, updateLyricsById, getLyricsId, addViewCount, getAllLyrics, deleteLyrics, searchLyrics, getLyricsOverview, getTopLyrics, getLyricsCountByArtist, getLyricsByArtist, disableLyrics } = require('../controllers/lyricsController');
+const { createLyrics, updateLyricsById, getLyricsId, addViewCount, getAllLyrics, deleteLyrics, searchLyrics, getLyricsOverview, getTopLyrics, getLyricsCountByArtist, getLyricsByArtist, disableLyrics, getDisableLyrics, getEnableLyrics } = require('../controllers/lyricsController');
 const { upload } = require('../config/upload');
 const lyricsRouter = express.Router();
 
@@ -16,6 +16,8 @@ lyricsRouter.get('/getLyricsByArtist', getLyricsByArtist)
 lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
 lyricsRouter.get('/searchLyrics', searchLyrics)
 lyricsRouter.get('/getAllLyrics', authenticateUser, checkRole(['admin']), getAllLyrics)
+lyricsRouter.get('/getDisableLyrics', authenticateUser, checkRole(['admin']), getDisableLyrics)
+lyricsRouter.get('/getEnableLyrics', authenticateUser, checkRole(['admin']), getEnableLyrics)
 
 
 // lyricsRouter.get('/getLyricsCountByArtist',authenticateUser, checkRole(['admin']), getLyricsCountByArtist)

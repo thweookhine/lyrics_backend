@@ -354,32 +354,52 @@ const getLyricsByArtist = async (req, res) => {
   }
 }
 
-// const getLyricsCountByArtist = async (req, res) => {
-//   try {
-//     const {artistId} = req.query
-//     const query = {
-//       $or: [
-//         {singers: artistId},
-//         {writers: artistId},
-//         {featureArtists: artistId}
-//       ]
-//     }
-   
-//     const lyricsCount = await Lyrics.countDocuments(query);
-//     return res.status(200).json({
-//       lyricsCount: lyricsCount
-//     })
-//   } catch (err) {
-//     return res.status(500).json({errors: [
-//       {message: err.message}
-//     ]})
-//   }
-// }
-
 const getAllLyrics = async (req,res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
   try {
-    const lyrics = await Lyrics.find().populate('singers').populate('writers').populate('featureArtists');
-    return res.status(200).json(lyrics)
+    const lyrics = await Lyrics.find().skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const totalCount = await Lyrics.countDocuments()
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount, lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({error: err.msg})
+  }
+}
+
+const getDisableLyrics = async (req,res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  try {
+    const lyrics = await Lyrics.find({isEnable: false}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const totalCount = await Lyrics.countDocuments({isEnable: false})
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount, lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({error: err.msg})
+  }
+}
+
+const getEnableLyrics = async (req,res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  try {
+    const lyrics = await Lyrics.find({isEnable: true}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const totalCount = await Lyrics.countDocuments({isEnable: true})
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount, lyrics
+    })
   } catch (err) {
     return res.status(500).json({error: err.msg})
   }
@@ -391,5 +411,6 @@ module.exports = {
   getLyricsId, 
   deleteLyrics, searchLyrics, 
   getTopLyrics,
-  getLyricsByArtist,getAllLyrics
+  getLyricsByArtist,getAllLyrics,
+  getDisableLyrics, getEnableLyrics
 }
