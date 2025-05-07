@@ -65,7 +65,7 @@ const loginUser = async (req,res) => {
         const userObj = user.toObject();
         delete userObj.password
     
-        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "5m")})
+        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1d")})
     }catch(err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})
