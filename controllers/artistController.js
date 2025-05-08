@@ -118,7 +118,7 @@ const searchArtists = async (req, res) => {
     try {
         const artists = await Artist.find(query).skip(skip).limit(limit);
         const totalCount = await Artist.countDocuments(query);
-        const totalArtistCount = await Artist.countDocuments({...query, type: 'artist'})
+        const totalArtistCount = await Artist.countDocuments({...query, type: 'singer'})
         const totalWrtierCount = await Artist.countDocuments({...query, type: 'writer'})
         const totalBothCount = await Artist.countDocuments({...query, type: 'both'})
 
