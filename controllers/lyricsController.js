@@ -371,37 +371,89 @@ const getAllLyrics = async (req,res) => {
   }
 }
 
-const getDisableLyrics = async (req,res) => {
+const searchLyricsByAdmin = async (req, res) => {
+  const {type} = req.query
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page -1) * limit;
-  try {
-    const lyrics = await Lyrics.find({isEnable: false}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
-    const totalCount = await Lyrics.countDocuments({isEnable: false})
-    return res.status(200).json({
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
-      totalCount, lyrics
-    })
-  } catch (err) {
-    return res.status(500).json({error: err.msg})
+  const isEnable = req.query.isEnable;
+  let query;
+  if(isEnable) {
+    query = {isEnable: isEnable}
   }
-}
 
-const getEnableLyrics = async (req,res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page -1) * limit;
+  const allowdTypes = ['lyrics','singer','writer','key','all'];
+
+  if(!allowdTypes.includes(type)) {
+    return res.status(400).json({errors: [
+      {message: 'Type not allowed!' }]})
+  }
+
   try {
-    const lyrics = await Lyrics.find({isEnable: true}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
-    const totalCount = await Lyrics.countDocuments({isEnable: true})
+    if(type == "lyrics") {
+      const {keyword} = req.query
+      if(keyword) {
+        query.$or = [
+          {title: {$regex: keyword, $options: 'i'}},
+          {albumName: {$regex: keyword, $options: 'i'}}
+        ]
+      }
+    } else if (type == "singer" || type == 'writer') {
+      // Search with artist
+      const {artistId} = req.query
+      if(!artistId) {
+        return res.status(400).json({errors: [
+          {message: 'artistId is required!' }]})
+      }
+
+      const artist = await Artist.findById(artistId);
+      if(!artist) {
+        return res.status(400).json({errors: [
+          {message: 'Artist Not Found!' }]})
+      }
+      if(type == 'singer') {
+        query = {
+          $or: [
+            {singers: new mongoose.Types.ObjectId(artistId) },
+            {featureArtists: new mongoose.Types.ObjectId(artistId)}
+          ]
+        }
+      } else {
+        query.writers = new mongoose.Types.ObjectId(artistId);
+      }      
+      await addSearchCount(artistId)
+
+    } else if(type == "key") {
+      // Search with key
+      const {keyValue} = req.query;
+      if(keyValue) {
+        query.majorKey = keyValue;
+      }
+    } else if(type == "all") {
+      const {keyword} = req.query;
+
+      if(keyword) {
+        query = {
+          $or: [
+            {title: {$regex: keyword, $options: "i"}},
+            {albumName: {$regex: keyword, $options: "i"}}
+          ]
+        }
+      }
+    }
+
+    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const totalCount = await Lyrics.countDocuments(query)
+
     return res.status(200).json({
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
-      totalCount, lyrics
+      totalCount,
+      lyrics
     })
   } catch (err) {
-    return res.status(500).json({error: err.msg})
+    return res.status(500).json({errors: [
+      {message: err.message }]})
   }
 }
 
@@ -412,5 +464,5 @@ module.exports = {
   deleteLyrics, searchLyrics, 
   getTopLyrics,
   getLyricsByArtist,getAllLyrics,
-  getDisableLyrics, getEnableLyrics
+  searchLyricsByAdmin
 }
