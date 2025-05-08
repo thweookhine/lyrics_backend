@@ -377,7 +377,7 @@ const searchLyricsByAdmin = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page -1) * limit;
   const isEnable = req.query.isEnable;
-  let query;
+  let query = {}
   if(isEnable) {
     query = {isEnable: isEnable}
   }
