@@ -192,17 +192,27 @@ const disableLyrics = async (req, res) => {
         {message: "ID is required!"}]})
   }
 
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
+    await Collection.deleteMany({lyricsId: id}, {session})
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, {
       isEnable: false
     }, {
       new: true
     })
 
+    // Commit transaction
+    await session.commitTransaction();
+
     return res.status(200).json({lyrics: updatedLyrics})
   }catch (err) {
+    await session.abortTransaction();
     return res.status(500).json({errors: [
       {message: err.message}]}) 
+  } finally {
+    session.endSession();
   }
 }
 
