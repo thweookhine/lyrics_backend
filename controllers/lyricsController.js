@@ -389,9 +389,10 @@ const searchLyricsByAdmin = async (req, res) => {
       {message: 'Type not allowed!' }]})
   }
 
+  const {keyword} = req.query
+
   try {
     if(type == "lyrics") {
-      const {keyword} = req.query
       if(keyword) {
         query.$or = [
           {title: {$regex: keyword, $options: 'i'}},
@@ -400,38 +401,31 @@ const searchLyricsByAdmin = async (req, res) => {
       }
     } else if (type == "singer" || type == 'writer') {
       // Search with artist
-      const {artistId} = req.query
-      if(!artistId) {
-        return res.status(400).json({errors: [
-          {message: 'artistId is required!' }]})
-      }
-
-      const artist = await Artist.findById(artistId);
-      if(!artist) {
-        return res.status(400).json({errors: [
-          {message: 'Artist Not Found!' }]})
-      }
-      if(type == 'singer') {
-        query = {
-          $or: [
-            {singers: new mongoose.Types.ObjectId(artistId) },
-            {featureArtists: new mongoose.Types.ObjectId(artistId)}
-          ]
+      if(keyword) {
+        const artist = await Artist.findById(keyword);
+        if(!artist) {
+          return res.status(400).json({errors: [
+            {message: 'Artist Not Found!' }]})
         }
-      } else {
-        query.writers = new mongoose.Types.ObjectId(artistId);
-      }      
-      await addSearchCount(artistId)
 
+        if(type == 'singer') {
+          query = {
+            $or: [
+              {singers: new mongoose.Types.ObjectId(keyword) },
+              {featureArtists: new mongoose.Types.ObjectId(keyword)}
+            ]
+          }
+        } else {
+          query.writers = new mongoose.Types.ObjectId(keyword);
+        }      
+        await addSearchCount(keyword)
+      }
     } else if(type == "key") {
       // Search with key
-      const {keyValue} = req.query;
-      if(keyValue) {
-        query.majorKey = keyValue;
+      if(keyword) {
+        query.majorKey = keyword;
       }
     } else if(type == "all") {
-      const {keyword} = req.query;
-
       if(keyword) {
         query = {
           $or: [
