@@ -1,0 +1,80 @@
+
+const searchLyricsByAdmin = async (req, res) => {
+  const {type} = req.query
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  const isEnable = req.query.isEnable;
+  let query = {}
+  if(isEnable) {
+    query = {isEnable: isEnable}
+  }
+
+  const allowdTypes = ['lyrics','singer','writer','key','all'];
+
+  if(!allowdTypes.includes(type)) {
+    return res.status(400).json({errors: [
+      {message: 'Type not allowed!' }]})
+  }
+
+  const {keyword} = req.query
+
+  try {
+    if(type == "lyrics") {
+      if(keyword) {
+        query.$or = [
+          {title: {$regex: keyword, $options: 'i'}},
+          {albumName: {$regex: keyword, $options: 'i'}}
+        ]
+      }
+    } else if (type == "singer" || type == 'writer') {
+      // Search with artist
+      if(keyword) {
+        const artist = await Artist.findById(keyword);
+        if(!artist) {
+          return res.status(400).json({errors: [
+            {message: 'Artist Not Found!' }]})
+        }
+
+        if(type == 'singer') {
+          query = {
+            $or: [
+              {singers: new mongoose.Types.ObjectId(keyword) },
+              {featureArtists: new mongoose.Types.ObjectId(keyword)}
+            ]
+          }
+        } else {
+          query.writers = new mongoose.Types.ObjectId(keyword);
+        }      
+        await addSearchCount(keyword)
+      }
+    } else if(type == "key") {
+      // Search with key
+      if(keyword) {
+        query.majorKey = keyword;
+      }
+    } else if(type == "all") {
+      if(keyword) {
+        query = {
+          $or: [
+            {title: {$regex: keyword, $options: "i"}},
+            {albumName: {$regex: keyword, $options: "i"}}
+          ]
+        }
+      }
+    }
+
+    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const totalCount = await Lyrics.countDocuments(query)
+
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount,
+      lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]})
+  }
+}
