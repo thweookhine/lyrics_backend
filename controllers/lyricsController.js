@@ -13,6 +13,82 @@ const addSearchCount = async (id) => {
   await Artist.findByIdAndUpdate(id, {searchCount: artist.searchCount+1})
 }
 
+const searchQuery = async (query, keyword, type) => {
+    if(type == "lyrics") {
+      if(keyword) {
+        query = {
+          $and: [
+            query,
+            {
+              $or: [
+                {title: {$regex: keyword, $options: 'i'}},
+                {albumName: {$regex: keyword, $options: 'i'}}
+              ]
+            }
+        ]
+      }
+    }
+    } else if (type == "singer" || type == 'writer') {
+      // Search with artist
+      if(keyword) {
+        const artist = await Artist.findById(keyword);
+        if(!artist) {
+          return res.status(400).json({errors: [
+            {message: 'Artist Not Found!' }]})
+        }
+
+        if(type == 'singer') {
+          query = {
+            $and: [
+              query,
+              {
+                $or: [
+                  {singers: new mongoose.Types.ObjectId(keyword) },
+                  {featureArtists: new mongoose.Types.ObjectId(keyword)}
+                ]
+              }
+            ]
+            
+          }
+        } else {
+          query = {
+            $and: [
+              query,
+              {writers: new mongoose.Types.ObjectId(keyword)}
+            ]
+          }
+        }      
+      }
+    } else if(type == "key") {
+      // Search with key
+      if(keyword) {
+        query = {
+          $and: [
+            query,
+            {majorKey: keyword}
+          ]
+        }
+      }
+    } else if(type == "all") {
+      if(keyword) {
+        query = {
+          $and: [
+            query,
+            {
+              $or: [
+                {title: {$regex: keyword, $options: "i"}},
+                {albumName: {$regex: keyword, $options: "i"}}
+              ]
+            }
+          ]
+        }
+      }
+    }
+
+    return query;
+}
+
+
 const createLyrics = async (req,res) => {
 
   try{
@@ -216,49 +292,8 @@ const searchLyrics = async (req,res) => {
   const {keyword} = req.query
 
   try {
-    if(type == "lyrics") {
-      if(keyword) {
-        query.$or = [
-          {title: {$regex: keyword, $options: 'i'}},
-          {albumName: {$regex: keyword, $options: 'i'}}
-        ]
-      }
-    } else if (type == "singer" || type == 'writer') {
-      // Search with artist
-      if(keyword) {
-        const artist = await Artist.findById(keyword);
-        if(!artist) {
-          return res.status(400).json({errors: [
-            {message: 'Artist Not Found!' }]})
-        }
-
-        if(type == 'singer') {
-          query = {
-            $or: [
-              {singers: new mongoose.Types.ObjectId(keyword) },
-              {featureArtists: new mongoose.Types.ObjectId(keyword)}
-            ]
-          }
-        } else {
-          query.writers = new mongoose.Types.ObjectId(keyword);
-        }      
-        await addSearchCount(keyword)
-      }
-    } else if(type == "key") {
-      // Search with key
-      if(keyword) {
-        query.majorKey = keyword;
-      }
-    } else if(type == "all") {
-      if(keyword) {
-        query = {
-          $or: [
-            {title: {$regex: keyword, $options: "i"}},
-            {albumName: {$regex: keyword, $options: "i"}}
-          ]
-        }
-      }
-    }
+    
+    query = await searchQuery(query, keyword, type)
 
     const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
@@ -384,50 +419,8 @@ const searchLyricsByAdmin = async (req, res) => {
   }
 
   const {keyword} = req.query
-
   try {
-    if(type == "lyrics") {
-      if(keyword) {
-        query.$or = [
-          {title: {$regex: keyword, $options: 'i'}},
-          {albumName: {$regex: keyword, $options: 'i'}}
-        ]
-      }
-    } else if (type == "singer" || type == 'writer') {
-      // Search with artist
-      if(keyword) {
-        const artist = await Artist.findById(keyword);
-        if(!artist) {
-          return res.status(400).json({errors: [
-            {message: 'Artist Not Found!' }]})
-        }
-
-        if(type == 'singer') {
-          query = {
-            $or: [
-              {singers: new mongoose.Types.ObjectId(keyword) },
-              {featureArtists: new mongoose.Types.ObjectId(keyword)}
-            ]
-          }
-        } else {
-          query.writers = new mongoose.Types.ObjectId(keyword);
-        }      
-      }
-    } else if(type == "key") {
-      // Search with key
-      if(keyword) {
-        query.majorKey = keyword;
-      }
-    } else if(type == "all") {
-      if(keyword) {
-        query = {
-          $or: [
-            {title: {$regex: keyword, $options: "i"}},
-            {albumName: {$regex: keyword, $options: "i"}}
-          ]
-        }
-      }
-    }
+    query = await searchQuery(query, keyword, type)
 
     const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
@@ -454,7 +447,7 @@ const getLyricsCountByArtist = async (req, res) => {
         {message: `Artist ID ${artistId} is invalid.` }]});
     }
     
-    const lyrics = await Lyrics.find({
+    const lyricsCount = await Lyrics.countDocuments({
       $or: [
         {singers: new mongoose.Types.ObjectId(artistId)},
         {featureArtists: new mongoose.Types.ObjectId(artistId)},
@@ -462,7 +455,7 @@ const getLyricsCountByArtist = async (req, res) => {
       ]
     })
     return res.status(200).json({
-      lyrics
+      lyricsCount
     })
   } catch (err) {
     return res.status(500).json({errors: [
