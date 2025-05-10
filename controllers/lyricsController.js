@@ -356,7 +356,41 @@ const getTopLyrics = async (req, res) => {
   }
 }
 
+
 const getLyricsByArtist = async (req, res) => {
+  try {
+    const {artistId} = req.query
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page -1) * limit;
+    const query = {
+      $and: [
+        {isEnable: true},
+        {
+          $or: [
+            {singers: artistId},
+            {writers: artistId},
+            {featureArtists: artistId}
+          ]
+        }
+      ]
+    }
+    const lyrics = await Lyrics.find(query).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const totalCount = await Lyrics.countDocuments(query)
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount, lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}
+    ]})
+  }
+}
+
+
+const getLyricsByArtistByAdmin = async (req, res) => {
   try {
     const {artistId} = req.query
     const page = parseInt(req.query.page) || 1;
@@ -470,6 +504,6 @@ module.exports = {
   getLyricsId, 
   deleteLyrics, searchLyrics, 
   getTopLyrics,
-  getLyricsByArtist,getAllLyrics,
+  getLyricsByArtist, getLyricsByArtistByAdmin, getAllLyrics,
   searchLyricsByAdmin, getLyricsCountByArtist
 }
