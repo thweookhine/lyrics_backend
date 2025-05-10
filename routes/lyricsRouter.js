@@ -17,6 +17,7 @@ lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), 
 lyricsRouter.get('/searchLyrics', searchLyrics)
 lyricsRouter.get('/getAllLyrics', authenticateUser, checkRole(['admin']), getAllLyrics)
 lyricsRouter.get('/searchLyricsByAdmin', authenticateUser, checkRole(['admin']), searchLyricsByAdmin)
+lyricsRouter.get('/getLyricsCountByArtist', getLyricsCountByArtist);
 
 
 // lyricsRouter.get('/getLyricsCountByArtist',authenticateUser, checkRole(['admin']), getLyricsCountByArtist)

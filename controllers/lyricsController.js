@@ -412,7 +412,6 @@ const searchLyricsByAdmin = async (req, res) => {
         } else {
           query.writers = new mongoose.Types.ObjectId(keyword);
         }      
-        await addSearchCount(keyword)
       }
     } else if(type == "key") {
       // Search with key
@@ -445,6 +444,33 @@ const searchLyricsByAdmin = async (req, res) => {
   }
 }
 
+const getLyricsCountByArtist = async (req, res) => {
+  const {artistId} = req.query;
+  try {
+
+    const artist = await Artist.findById(artistId);
+    if(!artist) {
+      return res.status(400).json({errors: [
+        {message: `Artist ID ${artistId} is invalid.` }]});
+    }
+    
+    const lyrics = await Lyrics.find({
+      $or: [
+        {singers: new mongoose.Types.ObjectId(artistId)},
+        {featureArtists: new mongoose.Types.ObjectId(artistId)},
+        {writers: new mongoose.Types.ObjectId(artistId)}
+      ]
+    })
+    return res.status(200).json({
+      lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]})
+  }
+
+}
+
 module.exports = {
   createLyrics, updateLyricsById, 
   disableLyrics, getLyricsOverview,
@@ -452,5 +478,5 @@ module.exports = {
   deleteLyrics, searchLyrics, 
   getTopLyrics,
   getLyricsByArtist,getAllLyrics,
-  searchLyricsByAdmin
+  searchLyricsByAdmin, getLyricsCountByArtist
 }
