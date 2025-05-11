@@ -165,7 +165,7 @@ const updateLyricsById = async (req,res) => {
                 {message: "ID is required" }]});
     }
 
-    const {title, singers, featureArtists, writers, majorKey, albumName, genre} = req.body;
+    let {title, singers, featureArtists, writers, majorKey, albumName, genre} = req.body;
     
     // Collect all unique artist IDs
     let allArtists;
@@ -213,6 +213,10 @@ const updateLyricsById = async (req,res) => {
       lyricsPhoto = cloudinaryResult ? cloudinaryResult.secure_url : null
     } else {
       lyricsPhoto = existingLyrics.lyricsPhoto
+    }
+
+    if(!featureArtists) {
+       featureArtists = []
     }
 
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, 
