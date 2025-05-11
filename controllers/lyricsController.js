@@ -10,10 +10,12 @@ function getPublicIdFromUrl(url) {
 
 const addSearchCount = async (id) => {
   const artist = await Artist.findById(id);
-  await Artist.findByIdAndUpdate(id, {searchCount: artist.searchCount+1})
+  if(artist) {
+    await Artist.findByIdAndUpdate(id, {searchCount: artist.searchCount+1})
+  }
 }
 
-const searchQuery = async (query, keyword, type, res) => {
+const searchQuery = async (query, keyword, type) => {
     if(type == "lyrics") {
       if(keyword) {
         query = {
@@ -279,6 +281,27 @@ const disableLyrics = async (req, res) => {
   }
 }
 
+const enableLyrics = async (req, res) => {
+  const id = req.params.id;
+  if(!id) {
+    return res.status(400).json({errors: [
+        {message: "ID is required!"}]})
+  }
+
+  try {
+    const updatedLyrics = await Lyrics.findByIdAndUpdate(id, {
+      isEnable: true
+    }, {
+      new: true
+    })
+
+    return res.status(200).json({lyrics: updatedLyrics})
+  }catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}]}) 
+  } 
+}
+
 const deleteLyrics = async (req,res) => {
   const id = req.params.id;
 
@@ -368,6 +391,9 @@ const searchLyrics = async (req,res) => {
     
     query = await searchQuery(query, keyword, type)
 
+    if(type == 'writer' || type == 'singer') {
+      await addSearchCount(keyword)
+    }
     const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
 
@@ -573,8 +599,8 @@ const getLyricsCountByArtist = async (req, res) => {
 
 module.exports = {
   createLyrics, updateLyricsById, 
-  disableLyrics, getLyricsOverview,
-  getLyricsId, 
+  disableLyrics, enableLyrics,
+  getLyricsOverview, getLyricsId, 
   deleteLyrics, searchLyrics, 
   getTopLyrics,
   getLyricsByArtist, getLyricsByArtistByAdmin, getAllLyrics,
