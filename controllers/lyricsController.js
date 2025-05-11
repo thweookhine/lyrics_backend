@@ -98,12 +98,13 @@ const createLyrics = async (req,res) => {
     const {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre} = req.body;
 
     // Collect all unique artist IDs
-    let allArtists;
-    if(featureArtists) {
-      allArtists = [...new Set([...writers, ...singers, ...featureArtists])];
-    }else {
-      allArtists = [...new Set([...writers, ...singers])];
-    }
+    let allArtists = [
+      ...(Array.isArray(writers) ? writers : []),
+      ...(Array.isArray(singers) ? singers : []),
+      ...(Array.isArray(featureArtists) ? featureArtists : [])
+    ];
+    
+    allArtists = [...new Set(allArtists)];
     
     // Validate each artist ID
     for (const artistId of allArtists) {
@@ -166,14 +167,15 @@ const updateLyricsById = async (req,res) => {
     }
 
     let {title, singers, featureArtists, writers, majorKey, albumName, genre} = req.body;
-    
+
     // Collect all unique artist IDs
-    let allArtists;
-    if(featureArtists) {
-      allArtists = [...new Set([...writers, ...singers, ...featureArtists])];
-    }else {
-      allArtists = [...new Set([...writers, ...singers])];
-    }
+    let allArtists = [
+      ...(Array.isArray(writers) ? writers : []),
+      ...(Array.isArray(singers) ? singers : []),
+      ...(Array.isArray(featureArtists) ? featureArtists : [])
+    ];
+    
+    allArtists = [...new Set(allArtists)];
     
     // Validate each artist ID
     for (const artistId of allArtists) {
@@ -217,6 +219,10 @@ const updateLyricsById = async (req,res) => {
 
     if(!featureArtists) {
        featureArtists = []
+    }
+
+    if(!writers) {
+      writers = []
     }
 
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, 

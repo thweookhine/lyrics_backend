@@ -19,7 +19,6 @@ const LyricsSchema = new mongoose.Schema({
     writers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist',
-        required: [true, 'Writer is required!']
     }],
     majorKey: {
         type: String,
