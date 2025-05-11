@@ -23,9 +23,33 @@ const validateLyrics = [
       if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array().map(err => ({ message: err.msg })) });
       }
+
+      // Validate the file type (only after validation passed)
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (req.file && !allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ errors: [{ message: "Only PNG, JPG, and JPEG files are allowed" }] });
+      }
+      next();
+  }
+]
+
+const validateUpdateLyrics = [
+  body('title').notEmpty().withMessage('title is required!'),
+  body('singers').isArray({min: 1}).withMessage('Singers must be a non-empty array'),
+  body('singers.*').isMongoId().withMessage('Invalid Artist ID in singers'),
+  body('writers').isArray({min: 1}).withMessage('Writers must be a non-empty array'),
+  body('writers.*').isMongoId().withMessage('Invalid Artist ID in writers'),
+  body('majorKey').isIn(keyList).withMessage("Major key must be valid key!"),
+  body('genre').isIn(genreList).withMessage("Genre must be valid key!"),
+  body('featureArtists.*').isMongoId().withMessage('Invalid Artist Id in feature artists'),
+  (req, res, next) => {
+      const errors = validationResult(req);
+      if(!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array().map(err => ({ message: err.msg })) });
+      }
        // Validate file type
        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-       if (!allowedTypes.includes(req.file.mimetype)) {
+       if (req.file && !allowedTypes.includes(req.file.mimetype)) {
         return res.status(400).json({ errors: [
           {message:"Only PNG, JPG, and JPEG files are allowed"}
         ]});
@@ -34,4 +58,4 @@ const validateLyrics = [
   }
 ]
 
-module.exports = { validateLyrics}
+module.exports = { validateLyrics, validateUpdateLyrics}
