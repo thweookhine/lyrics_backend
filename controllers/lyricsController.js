@@ -13,7 +13,7 @@ const addSearchCount = async (id) => {
   await Artist.findByIdAndUpdate(id, {searchCount: artist.searchCount+1})
 }
 
-const searchQuery = async (query, keyword, type) => {
+const searchQuery = async (query, keyword, type, res) => {
     if(type == "lyrics") {
       if(keyword) {
         query = {
@@ -33,8 +33,7 @@ const searchQuery = async (query, keyword, type) => {
       if(keyword) {
         const artist = await Artist.findById(keyword);
         if(!artist) {
-          return res.status(400).json({errors: [
-            {message: 'Artist Not Found!' }]})
+          throw new Error('Artist Not Found!');
         }
 
         if(type == 'singer') {
