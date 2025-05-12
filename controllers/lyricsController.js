@@ -190,7 +190,7 @@ const updateLyricsById = async (req,res) => {
     const existingLyrics = await Lyrics.findById(id);
 
     if (!existingLyrics) {
-      return res.status(400).json({ errors: [{ message: "No Lyrics Found" }] });
+      return res.status(404).json({ errors: [{ message: "No Lyrics Found" }] });
     }
 
     if(!existingLyrics.isEnable) {
@@ -250,56 +250,25 @@ const updateLyricsById = async (req,res) => {
   }
 }
 
-const disableLyrics = async (req, res) => {
-  const id = req.params.id;
-  if(!id) {
-    return res.status(400).json({errors: [
-        {message: "ID is required!"}]})
-  }
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
+const changeEnableFlag = async (req, res) => {
+  const id = req.params.id;
 
   try {
-    await Collection.deleteMany({lyricsId: id}, {session})
-    const updatedLyrics = await Lyrics.findByIdAndUpdate(id, {
-      isEnable: false
-    }, {
-      new: true
-    })
+    const lyrics = await Lyrics.findById(id);
 
-    // Commit transaction
-    await session.commitTransaction();
+    if(!lyrics) {
+      return res.status(404).json({ errors: [{ message: "No Lyrics Found" }] });
+    }
 
-    return res.status(200).json({lyrics: updatedLyrics})
-  }catch (err) {
-    await session.abortTransaction();
-    return res.status(500).json({errors: [
-      {message: err.message}]}) 
-  } finally {
-    session.endSession();
-  }
-}
+    lyrics.isEnable = !lyrics.isEnable
+    await lyrics.save();
 
-const enableLyrics = async (req, res) => {
-  const id = req.params.id;
-  if(!id) {
-    return res.status(400).json({errors: [
-        {message: "ID is required!"}]})
-  }
-
-  try {
-    const updatedLyrics = await Lyrics.findByIdAndUpdate(id, {
-      isEnable: true
-    }, {
-      new: true
-    })
-
-    return res.status(200).json({lyrics: updatedLyrics})
+    return res.status(200).json({lyrics: lyrics})
   }catch (err) {
     return res.status(500).json({errors: [
       {message: err.message}]}) 
-  } 
+  }
 }
 
 const deleteLyrics = async (req,res) => {
@@ -599,7 +568,7 @@ const getLyricsCountByArtist = async (req, res) => {
 
 module.exports = {
   createLyrics, updateLyricsById, 
-  disableLyrics, enableLyrics,
+  changeEnableFlag,
   getLyricsOverview, getLyricsId, 
   deleteLyrics, searchLyrics, 
   getTopLyrics,

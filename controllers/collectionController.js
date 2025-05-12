@@ -73,6 +73,17 @@ const addToGroup = async (req, res) => {
         {message: `Lyrics not found!` }]});
     }
 
+    const existing = await Collection.find({
+      userId: user._id,
+      lyricsId: lyricsId,
+      group: group
+    })
+
+    if(existing) {
+      return res.status(400).json({errors: [
+        {message: `You have already added to group [${group}]!` }]});
+    }
+
     //successfully add to collection
     const collection = new Collection({
       userId: user._id,
@@ -86,6 +97,9 @@ const addToGroup = async (req, res) => {
     return res.status(500).json({errors: [
       {message: err.message }]});
   }
+}
+
+const removeFromGroup = async (req, res) => {
   
 }
 
@@ -93,7 +107,6 @@ const addToGroup = async (req, res) => {
 const removeFromCollection = async (req, res) => {
   try { 
     
-
   }catch (err) {
 
   }
