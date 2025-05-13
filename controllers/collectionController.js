@@ -79,7 +79,7 @@ const addToGroup = async (req, res) => {
       group: group
     })
 
-    if(existing) {
+    if(existing.length > 0) {
       return res.status(400).json({errors: [
         {message: `You have already added to group [${group}]!` }]});
     }
@@ -100,9 +100,27 @@ const addToGroup = async (req, res) => {
 }
 
 const removeFromGroup = async (req, res) => {
-  
-}
+  const {lyricsId, group} = req.body
+  const user = req.user;
+  try {
+    const query = {
+    userId: user._id,
+    lyricsId, group
+    }
+    const collection = await Collection.find()
 
+    if(!collection) {
+      return res.status(404).json({errors: [
+          {message: `Collection is not found!` }]});
+    }
+
+    await Collection.deleteMany(query);
+    return res.status(200).json({message: "Successfully Deleted"})
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]});
+  }
+}
 
 const removeFromCollection = async (req, res) => {
   try { 
@@ -112,6 +130,6 @@ const removeFromCollection = async (req, res) => {
   }
 }
 
-module.exports = {addToCollection, addToGroup, removeFromCollection}
+module.exports = {addToCollection, addToGroup, removeFromGroup}
  
 
