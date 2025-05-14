@@ -122,14 +122,42 @@ const removeFromGroup = async (req, res) => {
   }
 }
 
-const removeFromCollection = async (req, res) => {
-  try { 
-    
-  }catch (err) {
+const getLyricsByGroup = async (req, res) => {
+  const {group} = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+  try {
+    const collections = await Collection.find({
+      group, userId: req.user._id
+    });
 
+    if(collections.size == 0) {
+      return res.status(404).json({errors: [
+          {message: `There is no collections with Group Name [${group}]!` }]});
+    }
+
+    const lyricsIds = collections.map(collection => collection.lyricsId);
+    let query = {
+      _id: {$in: lyricsIds},
+      isEnable: true
+    }
+    const lyrics = await Lyrics.find(query).skip(skip).limit(limit);
+    const totalCount = await Lyrics.countDocuments(query);
+
+    return res.status(200).json({
+      lyrics,
+      totalCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit)
+    })
+
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]});
   }
 }
 
-module.exports = {addToCollection, addToGroup, removeFromGroup}
+module.exports = {addToCollection, addToGroup, removeFromGroup, getLyricsByGroup}
  
 
