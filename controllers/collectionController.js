@@ -1,3 +1,4 @@
+const { query } = require('express');
 const Collection = require('../models/Collection')
 const Lyrics = require('../models/Lyrics')
 
@@ -158,6 +159,42 @@ const getLyricsByGroup = async (req, res) => {
   }
 }
 
-module.exports = {addToCollection, addToGroup, removeFromGroup, getLyricsByGroup}
+const getCollectionOverview = async (req, res) => {
+  try {
+    const collections = await Collection.aggregate([
+      {
+        $match: {
+          userId: req.user._id
+        }
+      },
+      {
+        $group: {
+          _id: "$group",
+          count: {$sum: 1}
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          group: "$_id",
+          count: 1
+        }
+      }
+    ])
+
+    const totalCount = await Collection.countDocuments({userId: req.user._id});
+
+    return res.status(200).json({
+      collections,
+      totalCount
+    })
+
+  }catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]});
+  }
+}
+
+module.exports = {addToCollection, addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
  
 
