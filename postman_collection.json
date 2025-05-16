@@ -62,7 +62,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"testing\",\n    \"email\": \"testing@gmail.com\",\n    \"password\": \"testing\"\n}",
+							"raw": "{\n    \"name\": \"user1\",\n    \"email\": \"user1@gmail.com\",\n    \"password\": \"user1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -176,7 +176,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmE5N2U3OGRiODM5YzczNDE0OGIwNCIsImlhdCI6MTc0NDQ3NjE1NSwiZXhwIjoxNzQ3MDY4MTU1fQ.CnupOpIZ-y7A4wEwSNteyuHlFvVwUmZcUBL06-mQPzo",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzE0OTAzNywiZXhwIjoxNzQ3MjM1NDM3fQ.CnWzqkg9fn-h3kY4xa12BIy1VS6ZU3KHff__MBtxcV0",
 									"type": "string"
 								}
 							]
@@ -1125,7 +1125,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/getLyricsByArtist?artistId=681718b5ca9b6363352469b1&page=1&limit=12",
+							"raw": "http://localhost:3000/api/lyrics/getLyricsByArtist?artistId=6817174fca9b636335246981&page=1&limit=12",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1139,7 +1139,7 @@
 							"query": [
 								{
 									"key": "artistId",
-									"value": "681718b5ca9b6363352469b1"
+									"value": "6817174fca9b636335246981"
 								},
 								{
 									"key": "page",
@@ -1208,7 +1208,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/getLyricsCountByArtist?artistId=6803c9cf3b284cecea5a520f",
+							"raw": "http://localhost:3000/api/lyrics/getLyricsCountByArtist?artistId=6817174fca9b636335246981",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1222,7 +1222,7 @@
 							"query": [
 								{
 									"key": "artistId",
-									"value": "6803c9cf3b284cecea5a520f"
+									"value": "6817174fca9b636335246981"
 								}
 							]
 						}
@@ -1667,7 +1667,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"test@g.com\",\n    \"password\": \"test\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1675,7 +1675,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/artists/search?keyword=Bunny",
+							"raw": "http://localhost:3000/api/artists/search?",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1688,8 +1688,8 @@
 							],
 							"query": [
 								{
-									"key": "keyword",
-									"value": "Bunny"
+									"key": "",
+									"value": null
 								}
 							]
 						}
@@ -1895,7 +1895,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/artists/getArtistById/67ebffe1da73f66510116334",
+							"raw": "http://localhost:3000/api/artists/getArtistById/681718b5ca9b6363352469b1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1905,7 +1905,7 @@
 								"api",
 								"artists",
 								"getArtistById",
-								"67ebffe1da73f66510116334"
+								"681718b5ca9b6363352469b1"
 							]
 						}
 					},
@@ -2010,7 +2010,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTM3N2M0ZjMzNzI4NWJkYzRiNTRlMSIsImlhdCI6MTc0NjEwNjMwOCwiZXhwIjoxNzQ2MTA5OTA4fQ.2X4ZFzCLBsgU4WmZa-5Z6glH1U1Gy6zadeJ6nk2eqOM",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWYxYTY0MGE0MWE5NmQxOWQyNGVhNyIsImlhdCI6MTc0NzMyMzEwMSwiZXhwIjoxNzQ3NDA5NTAxfQ.ORgIZLN3j6wiZpGClVx5RqdeRwB9fXzn2XvLVurvhB8",
 									"type": "string"
 								}
 							]
@@ -2019,7 +2019,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"lyricsId\": \"68137c0a571d61b4716593c1\"\n}",
+							"raw": "{\n    \"lyricsId\": \"6820950c1e8e3d191e74db1c\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2037,6 +2037,178 @@
 								"api",
 								"collections",
 								"addToCollection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add to Group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzIzNDIxNSwiZXhwIjoxNzQ3MzIwNjE1fQ.r3CmV09aZ9VPLgJGES3jsEKhmzrKlZWx62eacmz9h1w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lyricsId\": \"681720060d33bab2f41f8cf2\",\n    \"group\": \"Testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections/addToGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections",
+								"addToGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove From Group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzE0NzE5NCwiZXhwIjoxNzQ3MjMzNTk0fQ.6gxQm5_OtwvhUjbBq08Ns7mUhscev8BVtAW6q9wVuL0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lyricsId\": \"682359f654099aaa32b027ff\",\n    \"group\": \"Testing2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections/removeFromGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections",
+								"removeFromGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Lyrics By Group",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzIzNDIxNSwiZXhwIjoxNzQ3MzIwNjE1fQ.r3CmV09aZ9VPLgJGES3jsEKhmzrKlZWx62eacmz9h1w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lyricsId\": \"682359f654099aaa32b027ff\",\n    \"group\": \"Testing2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections/getLyricsByGroup?group=Testing",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections",
+								"getLyricsByGroup"
+							],
+							"query": [
+								{
+									"key": "group",
+									"value": "Testing"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get collections overview",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzMyMjk3NCwiZXhwIjoxNzQ3NDA5Mzc0fQ.vxxttUvdLudDfyW0PQlGT50pv4wZRSfC75apcfyo7_I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lyricsId\": \"682359f654099aaa32b027ff\",\n    \"group\": \"Testing2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections/getCollectionOverview",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections",
+								"getCollectionOverview"
 							]
 						}
 					},
@@ -2104,7 +2276,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=singer&artistId=6817174fca9b636335246981",
+									"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=singer&keyword=681718b5ca9b6363352469b1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -2121,8 +2293,8 @@
 											"value": "singer"
 										},
 										{
-											"key": "artistId",
-											"value": "6817174fca9b636335246981"
+											"key": "keyword",
+											"value": "681718b5ca9b6363352469b1"
 										}
 									]
 								}
@@ -2258,7 +2430,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=writer&artistId=67ebfe4dda73f66510116310",
+									"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=writer&keyword=681718b5ca9b6363352469b1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -2275,8 +2447,8 @@
 											"value": "writer"
 										},
 										{
-											"key": "artistId",
-											"value": "67ebfe4dda73f66510116310"
+											"key": "keyword",
+											"value": "681718b5ca9b6363352469b1"
 										}
 									]
 								}
@@ -2416,7 +2588,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=key&keyValue=C%23",
+									"raw": "http://localhost:3000/api/lyrics/searchLyrics?type=key&keyword=C%23",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -2433,8 +2605,424 @@
 											"value": "key"
 										},
 										{
-											"key": "keyValue",
+											"key": "keyword",
 											"value": "C%23"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "search by admin",
+					"item": [
+						{
+							"name": "search all",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njg1NzU5NiwiZXhwIjoxNzQ2OTQzOTk2fQ.KMLHrGMTYwD7HGPsxmI086LlOOAAyVH__vCV6ImfonQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "title",
+											"type": "text"
+										},
+										{
+											"key": "artist",
+											"value": "artist",
+											"type": "text"
+										},
+										{
+											"key": "featureArtist",
+											"value": "featureArtist",
+											"type": "text"
+										},
+										{
+											"key": "writer",
+											"value": "writer",
+											"type": "text"
+										},
+										{
+											"key": "majorKey",
+											"value": "majorKey",
+											"type": "text"
+										},
+										{
+											"key": "lyricsPhoto",
+											"type": "file",
+											"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/lyrics/searchLyricsByAdmin?type=all&isEnable=true",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"lyrics",
+										"searchLyricsByAdmin"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "all"
+										},
+										{
+											"key": "isEnable",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search by writer",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njg1NzU5NiwiZXhwIjoxNzQ2OTQzOTk2fQ.KMLHrGMTYwD7HGPsxmI086LlOOAAyVH__vCV6ImfonQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "title",
+											"type": "text"
+										},
+										{
+											"key": "artist",
+											"value": "artist",
+											"type": "text"
+										},
+										{
+											"key": "featureArtist",
+											"value": "featureArtist",
+											"type": "text"
+										},
+										{
+											"key": "writer",
+											"value": "writer",
+											"type": "text"
+										},
+										{
+											"key": "majorKey",
+											"value": "majorKey",
+											"type": "text"
+										},
+										{
+											"key": "lyricsPhoto",
+											"type": "file",
+											"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/lyrics/searchLyricsByAdmin?type=writer&keyword=6817174fca9b636335246981&isEnable=false",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"lyrics",
+										"searchLyricsByAdmin"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "writer"
+										},
+										{
+											"key": "keyword",
+											"value": "6817174fca9b636335246981"
+										},
+										{
+											"key": "isEnable",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search by key",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njg1NzU5NiwiZXhwIjoxNzQ2OTQzOTk2fQ.KMLHrGMTYwD7HGPsxmI086LlOOAAyVH__vCV6ImfonQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "title",
+											"type": "text"
+										},
+										{
+											"key": "artist",
+											"value": "artist",
+											"type": "text"
+										},
+										{
+											"key": "featureArtist",
+											"value": "featureArtist",
+											"type": "text"
+										},
+										{
+											"key": "writer",
+											"value": "writer",
+											"type": "text"
+										},
+										{
+											"key": "majorKey",
+											"value": "majorKey",
+											"type": "text"
+										},
+										{
+											"key": "lyricsPhoto",
+											"type": "file",
+											"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/lyrics/searchLyricsByAdmin?type=key&keyword=A&isEnable=true",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"lyrics",
+										"searchLyricsByAdmin"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "key"
+										},
+										{
+											"key": "keyword",
+											"value": "A"
+										},
+										{
+											"key": "isEnable",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search by lyrics keyword",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njg1NzU5NiwiZXhwIjoxNzQ2OTQzOTk2fQ.KMLHrGMTYwD7HGPsxmI086LlOOAAyVH__vCV6ImfonQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "title",
+											"type": "text"
+										},
+										{
+											"key": "artist",
+											"value": "artist",
+											"type": "text"
+										},
+										{
+											"key": "featureArtist",
+											"value": "featureArtist",
+											"type": "text"
+										},
+										{
+											"key": "writer",
+											"value": "writer",
+											"type": "text"
+										},
+										{
+											"key": "majorKey",
+											"value": "majorKey",
+											"type": "text"
+										},
+										{
+											"key": "lyricsPhoto",
+											"type": "file",
+											"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/lyrics/searchLyricsByAdmin?type=lyrics&keyword=ကျေးဇူးပါကွယ်&isEnable=true",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"lyrics",
+										"searchLyricsByAdmin"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "lyrics"
+										},
+										{
+											"key": "keyword",
+											"value": "ကျေးဇူးပါကွယ်"
+										},
+										{
+											"key": "isEnable",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search by singer",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njk0Njc2OCwiZXhwIjoxNzQ3MDMzMTY4fQ.OKGYAYXSjw4AeOQXKNqSIl7fliPYUK3EiBxMax42OkM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "title",
+											"type": "text"
+										},
+										{
+											"key": "artist",
+											"value": "artist",
+											"type": "text"
+										},
+										{
+											"key": "featureArtist",
+											"value": "featureArtist",
+											"type": "text"
+										},
+										{
+											"key": "writer",
+											"value": "writer",
+											"type": "text"
+										},
+										{
+											"key": "majorKey",
+											"value": "majorKey",
+											"type": "text"
+										},
+										{
+											"key": "lyricsPhoto",
+											"type": "file",
+											"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/lyrics/searchLyricsByAdmin?type=singer&keyword=681718b5ca9b6363352469b1&isEnable=",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"lyrics",
+										"searchLyricsByAdmin"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "singer"
+										},
+										{
+											"key": "keyword",
+											"value": "681718b5ca9b6363352469b1"
+										},
+										{
+											"key": "isEnable",
+											"value": ""
 										}
 									]
 								}
@@ -2451,7 +3039,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjM0MzczMywiZXhwIjoxNzQ2NDMwMTMzfQ.K8Ht0DXa7XKfo2t1InCui6c6hLwGghTyIveiI-V1wIc",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzE0NzE5NCwiZXhwIjoxNzQ3MjMzNTk0fQ.6gxQm5_OtwvhUjbBq08Ns7mUhscev8BVtAW6q9wVuL0",
 									"type": "string"
 								}
 							]
@@ -2462,11 +3050,6 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "title",
-									"value": "အဆင်ပြေသွားပြီ",
-									"type": "text"
-								},
-								{
 									"key": "majorKey",
 									"value": "C#",
 									"type": "text"
@@ -2474,12 +3057,13 @@
 								{
 									"key": "lyricsPhoto",
 									"type": "file",
-									"src": "/home/asus/Downloads/Lyrics_sample-CKZoRCSs.png"
+									"src": "/home/asus/Downloads/download (1).jpeg"
 								},
 								{
 									"key": "writers[]",
 									"value": "681718b5ca9b6363352469b1",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "singers[]",
@@ -2493,7 +3077,7 @@
 								},
 								{
 									"key": "albumName",
-									"value": "GeinMan",
+									"value": "testData",
 									"type": "text"
 								},
 								{
@@ -2507,6 +3091,11 @@
 									"value": "68171dd18e58f022c8305d76",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "TestData",
+									"type": "text"
 								}
 							]
 						},
@@ -2534,7 +3123,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjA5NDc4NiwiZXhwIjoxNzQ2MTgxMTg2fQ.LiO1dHBSb0PiJkR2FRoo29t9D-ROEq0yqWkixG26yu0",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjkzODM4NiwiZXhwIjoxNzQ3MDI0Nzg2fQ.7IuLVTTdJ_xWeoyBaCFeq_pZpeU9BpVwC3oNlq-ZDm8",
 									"type": "string"
 								}
 							]
@@ -2546,7 +3135,7 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/deleteLyrics/68137c0a571d61b4716593c1",
+							"raw": "http://localhost:3000/api/lyrics/deleteLyrics/682034b951c935f0941850a6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2556,7 +3145,7 @@
 								"api",
 								"lyrics",
 								"deleteLyrics",
-								"68137c0a571d61b4716593c1"
+								"682034b951c935f0941850a6"
 							]
 						}
 					},
@@ -2616,7 +3205,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/getLyricsByArtist?artistId=681718b5ca9b6363352469b1&page=1&limit=12",
+							"raw": "http://localhost:3000/api/lyrics/getLyricsByArtist?artistId=681718b5ca9b6363352469b1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2631,14 +3220,6 @@
 								{
 									"key": "artistId",
 									"value": "681718b5ca9b6363352469b1"
-								},
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "12"
 								}
 							]
 						}
@@ -2653,7 +3234,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjA4NDU3NSwiZXhwIjoxNzQ2MTcwOTc1fQ.-JqJ9z03q2FgF7IUqVkWrDrrcDf4ScSbk4gM83H-ucM",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjkzODM4NiwiZXhwIjoxNzQ3MDI0Nzg2fQ.7IuLVTTdJ_xWeoyBaCFeq_pZpeU9BpVwC3oNlq-ZDm8",
 									"type": "string"
 								}
 							]
@@ -2694,27 +3275,28 @@
 								{
 									"key": "lyricsPhoto",
 									"type": "file",
-									"src": "/home/asus/Downloads/download.jpeg"
+									"src": "/home/asus/Downloads/download (3).jpeg"
 								},
 								{
 									"key": "writers[]",
-									"value": "67ebfdeeda73f66510116307",
+									"value": "681718b5ca9b6363352469b1",
 									"type": "text"
 								},
 								{
 									"key": "singers[]",
-									"value": "67ebfda5da73f66510116304",
+									"value": "681718b5ca9b6363352469b1",
 									"type": "text"
 								},
 								{
 									"key": "singers[]",
-									"value": "67ebfdeeda73f66510116307",
+									"value": "681718b5ca9b6363352469b1",
 									"type": "text"
 								},
 								{
 									"key": "featureArtists[]",
-									"value": "67ebfe4dda73f66510116310",
-									"type": "text"
+									"value": "681718b5ca9b6363352469b1",
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "genre",
@@ -2728,7 +3310,7 @@
 								},
 								{
 									"key": "featureArtists[]",
-									"value": "67dc316672487a4361bfe7ca",
+									"value": "681718b5ca9b6363352469b1",
 									"type": "text",
 									"disabled": true
 								},
@@ -2741,7 +3323,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/updateLyrics/681324c2f6e96460c12e9b8f",
+							"raw": "http://localhost:3000/api/lyrics/updateLyrics/68203837d3faaa9ebadaaa00",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2751,14 +3333,14 @@
 								"api",
 								"lyrics",
 								"updateLyrics",
-								"681324c2f6e96460c12e9b8f"
+								"68203837d3faaa9ebadaaa00"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Disable Lyrics",
+					"name": "get count by artist Copy",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2768,7 +3350,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjA4NDU3NSwiZXhwIjoxNzQ2MTcwOTc1fQ.-JqJ9z03q2FgF7IUqVkWrDrrcDf4ScSbk4gM83H-ucM",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NTA2NzAwNSwiZXhwIjoxNzQ1MTUzNDA1fQ.iw7nerbTqdzDIHg2MhRgP7UrihGRckovsleaFuLFcXc",
 									"type": "string"
 								}
 							]
@@ -2811,7 +3393,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/disableLyrics/681324c2f6e96460c12e9b8f",
+							"raw": "http://localhost:3000/api/lyrics/getLyricsCountByArtist?artistId=6817174fca9b636335246981",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2820,8 +3402,158 @@
 							"path": [
 								"api",
 								"lyrics",
-								"disableLyrics",
-								"681324c2f6e96460c12e9b8f"
+								"getLyricsCountByArtist"
+							],
+							"query": [
+								{
+									"key": "artistId",
+									"value": "6817174fca9b636335246981"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get lyrics by artist by admin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njg1NzU5NiwiZXhwIjoxNzQ2OTQzOTk2fQ.KMLHrGMTYwD7HGPsxmI086LlOOAAyVH__vCV6ImfonQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getLyricsByArtistByAdmin?artistId=681718b5ca9b6363352469b1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getLyricsByArtistByAdmin"
+							],
+							"query": [
+								{
+									"key": "artistId",
+									"value": "681718b5ca9b6363352469b1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ChangeEnableFlag",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NzIzNDIxNSwiZXhwIjoxNzQ3MzIwNjE1fQ.r3CmV09aZ9VPLgJGES3jsEKhmzrKlZWx62eacmz9h1w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/changeEnableFlag/681720060d33bab2f41f8cf2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"changeEnableFlag",
+								"681720060d33bab2f41f8cf2"
 							]
 						}
 					},
@@ -2897,6 +3629,150 @@
 					"response": []
 				},
 				{
+					"name": "get lyrics by artist",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0Njg1NzU5NiwiZXhwIjoxNzQ2OTQzOTk2fQ.KMLHrGMTYwD7HGPsxmI086LlOOAAyVH__vCV6ImfonQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getLyricsByArtist?artistId=681718b5ca9b6363352469b1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getLyricsByArtist"
+							],
+							"query": [
+								{
+									"key": "artistId",
+									"value": "681718b5ca9b6363352469b1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get disable lyrics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjA4NDU3NSwiZXhwIjoxNzQ2MTcwOTc1fQ.-JqJ9z03q2FgF7IUqVkWrDrrcDf4ScSbk4gM83H-ucM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getDisableLyrics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getDisableLyrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "getLyricsById",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -2950,7 +3826,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lyrics/getLyricsById/68133b83ce703ad626c77908",
+							"raw": "http://localhost:3000/api/lyrics/getLyricsById/68203837d3faaa9ebadaaa00",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2960,7 +3836,145 @@
 								"api",
 								"lyrics",
 								"getLyricsById",
-								"68133b83ce703ad626c77908"
+								"68203837d3faaa9ebadaaa00"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all lyrics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjU0NDMxMSwiZXhwIjoxNzQ5MTM2MzExfQ.x_RFWHbikkOsetWvV--tF7llESegJO7Zql7jzSq68vs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getAllLyrics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getAllLyrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get enable lyrics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjU0NDMxMSwiZXhwIjoxNzQ5MTM2MzExfQ.x_RFWHbikkOsetWvV--tF7llESegJO7Zql7jzSq68vs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getEnableLyrics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getEnableLyrics"
 							]
 						}
 					},
@@ -3030,6 +4044,75 @@
 								"api",
 								"lyrics",
 								"getTopLyrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get disable lyrics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmJjMDg5NDMzMGYxZTQyZGJlOWJiMCIsImlhdCI6MTc0NjU0NDMxMSwiZXhwIjoxNzQ5MTM2MzExfQ.x_RFWHbikkOsetWvV--tF7llESegJO7Zql7jzSq68vs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "artist",
+									"value": "artist",
+									"type": "text"
+								},
+								{
+									"key": "featureArtist",
+									"value": "featureArtist",
+									"type": "text"
+								},
+								{
+									"key": "writer",
+									"value": "writer",
+									"type": "text"
+								},
+								{
+									"key": "majorKey",
+									"value": "majorKey",
+									"type": "text"
+								},
+								{
+									"key": "lyricsPhoto",
+									"type": "file",
+									"src": "/home/asus/Pictures/Screenshots/Screenshot from 2024-05-27 12-30-55.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/lyrics/getDisableLyrics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"lyrics",
+								"getDisableLyrics"
 							]
 						}
 					},
