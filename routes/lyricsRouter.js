@@ -1,6 +1,6 @@
 const express = require('express');
 const { validateLyrics, validateUpdateLyrics } = require('../middleware/lyricsValidation');
-const { authenticateUser } = require('../middleware/authenticateUser');
+const { authenticateUser, optionalAuthMiddleware } = require('../middleware/authenticateUser');
 const checkRole = require('../middleware/checkRole');
 const { createLyrics, updateLyricsById, getLyricsId, addViewCount, getAllLyrics, deleteLyrics, searchLyrics, getLyricsOverview, getTopLyrics, getLyricsCountByArtist, getLyricsByArtist, disableLyrics, getDisableLyrics, getEnableLyrics, searchLyricsByAdmin, getLyricsByArtistByAdmin, enableLyrics, changeEnableFlag } = require('../controllers/lyricsController');
 const { upload } = require('../config/upload');
@@ -10,12 +10,12 @@ lyricsRouter.post('/createLyrics', upload.single('lyricsPhoto'), validateLyrics,
 lyricsRouter.put('/updateLyrics/:id', upload.single('lyricsPhoto'), validateUpdateLyrics, authenticateUser, checkRole(['admin']), updateLyricsById)
 lyricsRouter.get('/getLyricsOverview', authenticateUser, checkRole(['admin']), getLyricsOverview)
 lyricsRouter.get('/changeEnableFlag/:id', authenticateUser, checkRole(['admin']), changeEnableFlag)
-lyricsRouter.get('/getLyricsById/:id', getLyricsId)
+lyricsRouter.get('/getLyricsById/:id', optionalAuthMiddleware, getLyricsId)
 lyricsRouter.get('/getTopLyrics', getTopLyrics)
 lyricsRouter.get('/getLyricsByArtist', getLyricsByArtist)
 lyricsRouter.get('/getLyricsByArtistByAdmin', authenticateUser, checkRole(['admin']), getLyricsByArtistByAdmin )
 lyricsRouter.delete('/deleteLyrics/:id',authenticateUser, checkRole(['admin']), deleteLyrics)
-lyricsRouter.get('/searchLyrics', searchLyrics)
+lyricsRouter.get('/searchLyrics', optionalAuthMiddleware, searchLyrics)
 lyricsRouter.get('/getAllLyrics', authenticateUser, checkRole(['admin']), getAllLyrics)
 lyricsRouter.get('/searchLyricsByAdmin', authenticateUser, checkRole(['admin']), searchLyricsByAdmin)
 lyricsRouter.get('/getLyricsCountByArtist', getLyricsCountByArtist)

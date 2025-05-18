@@ -108,7 +108,8 @@ const removeFromGroup = async (req, res) => {
     userId: user._id,
     lyricsId, group
     }
-    const collection = await Collection.find()
+  
+    const collection = await Collection.find(query)
 
     if(!collection) {
       return res.status(404).json({errors: [

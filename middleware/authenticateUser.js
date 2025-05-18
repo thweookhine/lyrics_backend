@@ -31,4 +31,16 @@ const authenticateUser = async (req, res, next) => {
     }
 }
 
-module.exports={authenticateUser}
+const optionalAuthMiddleware = (req, res, next) => {
+    try {
+        const token = req.header('Authorization');
+        const decoded = jwt.verify(token.replace("Bearer ",""),process.env.JWT_SECRET_KEY);
+        req.user = decoded;
+    } catch (err) {
+        req.user = null
+    }
+
+    next();
+}
+
+module.exports={authenticateUser, optionalAuthMiddleware}

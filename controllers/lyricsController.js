@@ -321,7 +321,7 @@ const getLyricsId = async (req, res) => {
                 {message: "ID is required" }]});
     }
 
-    const lyrics = await Lyrics.findById(id).populate('singers').populate('writers').populate('featureArtists');
+    let lyrics = await Lyrics.findById(id).populate('singers').populate('writers').populate('featureArtists');
     if(!lyrics) {
       return res.status(400).json({error: "Lyrics Not Found"})
     }
@@ -334,7 +334,24 @@ const getLyricsId = async (req, res) => {
   
     await lyrics.save();
 
-    return res.status(200).json(lyrics)
+    let collections;
+    if(req.user) {
+      collections = await Collection.find({
+        lyricsId: lyrics._id,
+        userId: req.user.id
+      })
+    }
+
+    lyrics = lyrics.toObject()
+    if(collections.length > 0) {
+      lyrics.isFavourite = true;
+    } else {
+      lyrics.isFavourite = false;
+    }
+
+    return res.status(200).json({
+      lyrics
+    })
   }catch (err) {
     res.status(500).json({error: err.message})
   }
@@ -366,11 +383,36 @@ const searchLyrics = async (req,res) => {
     const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
 
+    let lyricsList = []
+    if(req.user) {
+      for(let lyricsData of lyrics) {
+        lyricsData = lyricsData.toObject();
+        let collection = await Collection.find({
+          lyricsId: lyricsData._id,
+          userId: req.user.id
+        })
+        if(collection.length > 0) {
+          lyricsData.isFavourite = true
+        } else {
+          lyricsData.isFavourite = false
+        }
+
+        lyricsList.push(lyricsData)
+      }
+    } else {
+      lyricsList = lyrics.map(lyricsData => (
+        {
+          ...lyricsData.toObject(),
+          isFavourite: false
+        }
+      ))
+    }
+
     return res.status(200).json({
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
       totalCount,
-      lyrics
+      lyrics: lyricsList
     })
   } catch (err) {
     return res.status(500).json({errors: [
@@ -535,7 +577,7 @@ const searchLyricsByAdmin = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).json({errors: [
-      {message: err.message }]})
+      {message: err.message}]})
   }
 }
 
