@@ -458,7 +458,32 @@ const getTopLyrics = async (req, res) => {
         .populate('singers')
         .populate('writers')
         .populate('featureArtists');
-    return res.status(200).json({topLyrics})
+
+    let lyricsList = [];
+    if(req.user) {
+      for(let lyricsData of topLyrics) {
+        lyricsData = lyricsData.toObject();
+        let collection = await Collection.find({
+          lyricsId: lyricsData._id,
+          userId: req.user.id
+        })
+        if(collection.length > 0) {
+          lyricsData.isFavourite = true
+        } else {
+          lyricsData.isFavourite = false
+        }
+        lyricsList.push(lyricsData)
+      }
+    } else {
+      lyricsList = topLyrics.map(lyricsData => (
+        {
+          ...lyricsData.toObject(),
+          isFavourite: false
+        }
+      ))
+    }
+
+    return res.status(200).json({topLyrics: lyricsList})
   } catch (err) {
     return res.status(500).json({errors: [
       {message: err.message}
@@ -469,11 +494,11 @@ const getTopLyrics = async (req, res) => {
 
 const getLyricsByArtist = async (req, res) => {
   try {
-    const {artistId} = req.query
+    const {artistId, keyword} = req.query
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page -1) * limit;
-    const query = {
+    let query = {
       $and: [
         {isEnable: true},
         {
@@ -485,12 +510,47 @@ const getLyricsByArtist = async (req, res) => {
         }
       ]
     }
+    if(keyword) {
+      query.$and.push({
+        $or: [
+          { title: { $regex: keyword, $options: "i" } },
+          { albumName: { $regex: keyword, $options: "i" } }
+        ]
+      })
+    }
+
     const lyrics = await Lyrics.find(query).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
+
+
+    let lyricsList = [];
+    if(req.user) {
+      for(let lyricsData of lyrics) {
+        lyricsData = lyricsData.toObject();
+        let collection = await Collection.find({
+          lyricsId: lyricsData._id,
+          userId: req.user.id
+        })
+        if(collection.length > 0) {
+          lyricsData.isFavourite = true
+        } else {
+          lyricsData.isFavourite = false
+        }
+        lyricsList.push(lyricsData)
+      }
+    } else {
+      lyricsList = lyrics.map(lyricsData => (
+        {
+          ...lyricsData.toObject(),
+          isFavourite: false
+        }
+      ))
+    }
+
     return res.status(200).json({
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
-      totalCount, lyrics
+      totalCount, lyrics: lyricsList
     })
   } catch (err) {
     return res.status(500).json({errors: [
@@ -605,7 +665,6 @@ const getLyricsCountByArtist = async (req, res) => {
     return res.status(500).json({errors: [
       {message: err.message }]})
   }
-
 }
 
 module.exports = {
