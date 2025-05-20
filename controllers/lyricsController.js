@@ -96,7 +96,7 @@ const createLyrics = async (req,res) => {
   let cloudinaryPublicId = null;
 
   try{
-    const {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre} = req.body;
+    const {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre, youTubeLink} = req.body;
 
     // Collect all unique artist IDs
     let allArtists = [
@@ -137,6 +137,7 @@ const createLyrics = async (req,res) => {
     const newLyric = new Lyrics({
       title, singers, featureArtists, writers, majorKey, albumName, genre,
       lyricsPhoto: cloudinaryResult ? cloudinaryResult.secure_url : null,
+      youTubeLink
     });
 
     await newLyric.save();
@@ -167,7 +168,7 @@ const updateLyricsById = async (req,res) => {
                 {message: "ID is required" }]});
     }
 
-    let {title, singers, featureArtists, writers, majorKey, albumName, genre} = req.body;
+    let {title, singers, featureArtists, writers, majorKey, albumName, genre, youTubeLink} = req.body;
 
     // Collect all unique artist IDs
     let allArtists = [
@@ -227,7 +228,7 @@ const updateLyricsById = async (req,res) => {
     }
 
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, 
-      {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto: lyricsPhoto, genre},
+      {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto: lyricsPhoto, genre, youTubeLink},
       {new: true}
     )
 

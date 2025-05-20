@@ -44,6 +44,9 @@ const LyricsSchema = new mongoose.Schema({
     isEnable: {
         type: Boolean,
         default: true
+    },
+    youTubeLink: {
+        type: String
     }
 
 }, {timestamps: true});
