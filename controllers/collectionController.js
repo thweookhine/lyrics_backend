@@ -100,6 +100,25 @@ const addToGroup = async (req, res) => {
   }
 }
 
+const checkHasInGroup = async (req, res) => {
+  const id = req.params.id;
+  const userId = req.user.id;
+  const collections = await Collection.find({
+    $and: [
+      {lyricsId: id},
+      {userId: userId},
+      {group: {$ne: "Default"}}
+    ]
+  })
+
+  let hasInGp = false;
+  if(collections.length > 0) {
+    hasInGp = true;
+  }
+
+  return res.status(200).json({hasInGroup: hasInGp})
+}
+
 const removeFromGroup = async (req, res) => {
   const {lyricsId, group} = req.body
   const user = req.user;
@@ -109,9 +128,9 @@ const removeFromGroup = async (req, res) => {
     lyricsId, group
     }
   
-    const collection = await Collection.find(query)
+    const collections = await Collection.find(query)
 
-    if(!collection) {
+    if(collections.length <= 0) {
       return res.status(404).json({errors: [
           {message: `Collection is not found!` }]});
     }
@@ -196,6 +215,6 @@ const getCollectionOverview = async (req, res) => {
   }
 }
 
-module.exports = {addToCollection, addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
+module.exports = {addToCollection, checkHasInGroup, addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
  
 
