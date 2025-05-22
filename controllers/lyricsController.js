@@ -335,7 +335,7 @@ const getLyricsId = async (req, res) => {
   
     await lyrics.save();
 
-    let collections;
+    let collections = [];
     if(req.user) {
       collections = await Collection.find({
         lyricsId: lyrics._id,
