@@ -2,10 +2,11 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const sendEmail = require('../config/sendEmail')
 require('dotenv').config()
 
-const generateToken = (user, expiresIn) => {
-    const payload = {id: user._id};
+const generateToken = (userId, expiresIn) => {
+    const payload = {id: userId};
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
         expiresIn: expiresIn
     })
@@ -22,21 +23,86 @@ const registerUser = async (req,res) => {
         } 
         const hashPassword = await bcrypt.hash(password, 10)
         const user = new User({
-            name, email, password: hashPassword
+            name, email, password: hashPassword,
+            isVerified: false
         })
 
+        const verificationToken = generateToken(user._id, "5m");
+
+        // user.verificationToken = verificationToken;
+        // user.verificationTokenExpiry = Date.now() + 3600000;
         await user.save();
 
-        // Remove password field
-        const userObj = user.toObject();
-        delete userObj.password
+        const verifyLink = `${process.env.API_URL}/verify-email?token=${verificationToken}`
+        await sendEmail(email, "Confirm your email address for NT_Lyrics", 
+            `<p>Please verify your email by clicking the link below:</p>
+            <a href="${verifyLink}">Verify Email</a>
+            <p>This link will expire in 1 hour.</p>`);
 
-        return res.status(201).json({user: userObj, token: generateToken(user, "1d")})
+        res.status(201).json({ message: 'Registered! Please check your email to verify your account.' });
+
     }catch (err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})
     }
 }
+
+const verifyEmail = async (req, res) => {
+    try {
+        const {token} = req.query;
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(400).json({errors: [
+                {message: 'Invalid Token'}]});
+        }
+        if( user.isVerified) {
+            return res.status(400).json({errors: [
+                {message: 'Already verified'}]});
+        }
+    
+        user.isVerified = true;
+        await user.save();
+        res.json({ message: "Email verified successfully" });
+    } catch (err) {
+
+        if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({errors: [
+                {message: "Verification link expired. Please request a new one."}]});
+        }
+        return res.status(500).json({errors: [
+                {message: err.message}]})
+    }
+
+}
+
+// const registerUser = async (req,res) => {
+//     try{
+//         const {name,email,password} = req.body;
+//         const isExist = await User.findOne({email}) 
+//         if(isExist) {
+//             return res.status(400).json({errors: [
+//                 {message:  `User with email (${email}) already exists`}]})
+//         } 
+//         const hashPassword = await bcrypt.hash(password, 10)
+//         const user = new User({
+//             name, email, password: hashPassword
+//         })
+
+//         await user.save();
+
+//         // Remove password field
+//         const userObj = user.toObject();
+//         delete userObj.password
+
+//         return res.status(201).json({user: userObj, token: generateToken(user, "1d")})
+//     }catch (err) {
+//         return res.status(500).json({errors: [
+//                 {message: err.message}]})
+//     }
+// }
 
 const loginUser = async (req,res) => {
     try{
@@ -323,6 +389,7 @@ const getUserOverview = async (req,res) => {
 
 module.exports = {
     registerUser, loginUser, 
+    verifyEmail,
     getUserProfile, updateUser, 
     doActivateAndDeactivate, changeUserRole, 
     searchUser, getUserOverview}

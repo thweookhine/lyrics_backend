@@ -26,10 +26,20 @@ const UserSchema = new mongoose.Schema({
         enum: ['admin','free-user','premium-user'],
         default: 'free-user'
     },
+    isVerified: {
+        type: Boolean
+    },
     isValid: {
         type: Boolean,
         default: 'true'
-    }
+    },
+    // verificationToken: {
+    //      type: String,
+    //      default: 'false'
+    // },
+    // verificationTokenExpiry: {
+    //     type: Date
+    // }
 },{timestamps: true});
 
 const User = mongoose.model('User', UserSchema);
