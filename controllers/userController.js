@@ -5,8 +5,8 @@ const bcrypt = require('bcryptjs')
 const sendEmail = require('../config/sendEmail')
 require('dotenv').config()
 
-const generateToken = (userId, expiresIn) => {
-    const payload = {id: userId};
+const generateToken = (user, expiresIn) => {
+    const payload = {id: user._id, email: user.email};
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
         expiresIn: expiresIn
     })
@@ -27,13 +27,13 @@ const registerUser = async (req,res) => {
             isVerified: false
         })
 
-        const verificationToken = generateToken(user._id, "5m");
+        const verificationToken = generateToken(user, "1d");
 
         // user.verificationToken = verificationToken;
         // user.verificationTokenExpiry = Date.now() + 3600000;
         await user.save();
 
-        const verifyLink = `${process.env.API_URL}/verify-email?token=${verificationToken}`
+        const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`
         await sendEmail(email, "Confirm your email address for NT_Lyrics", 
             `<p>Please verify your email by clicking the link below:</p>
             <a href="${verifyLink}">Verify Email</a>
@@ -75,9 +75,38 @@ const verifyEmail = async (req, res) => {
         return res.status(500).json({errors: [
                 {message: err.message}]})
     }
-
 }
 
+const resendVerifyEmailLink = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({email});
+        if(!user) {
+            return res.status(400).json({errors: [
+                {message: "User not found"}]})
+        }
+
+        if(user.isVerified) {
+            return res.status(400).json({errors: [
+                {message: "Already verified"}]})
+        }
+
+        const verificationToken = generateToken(user, '1d');
+        const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`
+        await sendEmail(email, "Confirm your email address for NT_Lyrics", 
+            `<p>Please verify your email by clicking the link below:</p>
+            <a href="${verifyLink}">Verify Email</a>
+            <p>This link will expire in 1 hour.</p>`);
+        res.json({ message: "Verification email resent" });
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({errors: [
+                {message: "Verification link expired. Please request a new one."}]});
+        }
+        return res.status(500).json({errors: [
+                {message: err.message}]})
+    }
+}
 // const registerUser = async (req,res) => {
 //     try{
 //         const {name,email,password} = req.body;
@@ -127,6 +156,12 @@ const loginUser = async (req,res) => {
             ]})
         }
 
+        if(!user.isVerified) {
+            return res.status(403).json({errors: [
+                {message: 'Email not verified. Please verify first.'}
+            ]})
+        }
+
         // Remove password field
         const userObj = user.toObject();
         delete userObj.password
@@ -165,6 +200,7 @@ const getUserProfile = async (req, res) => {
     }
 }
 
+
 const updateUser = async (req,res) => {
 
     try{
@@ -182,23 +218,18 @@ const updateUser = async (req,res) => {
                 {message:'User not found'}]})
         }
 
+        if(!user.isVerified) {
+            return res.status(400).json({errors: [
+                {message:'Email not verified. Please verify first.'}]})
+        }
+
         if(isOauth == true) {
             const {name} = req.body;
             user.name = name;
         }else {
-            
-            const {name,email,oldPassword, newPassword} = req.body;
-
-            if(email && email != user.email) {
-                const existingUser = await User.findOne({ email });
-                if (existingUser) {
-                    return res.status(400).json({errors: [
-                    {message:"Email already in use by another account" }]});
-                }
-            }
+            const {name,oldPassword, newPassword} = req.body;
 
             user.name = name;
-            user.email = email;
 
             if(oldPassword) {
                 const isMatch = await bcrypt.compare(oldPassword, user.password);
@@ -230,6 +261,81 @@ const updateUser = async (req,res) => {
     }
 
 }
+
+// const updateUser = async (req,res) => {
+
+//     try{
+//         const {isOauth} = req.body;
+//         const id = req.params.id
+
+//         if(id !== req.user.id) {
+//             return res.status(401).json({errors: [
+//                 {message:"You don't have permission to update this user"}]})
+//         }
+
+//         const user = await User.findById(id)
+//         if(!user) {
+//             return res.status(400).json({errors: [
+//                 {message:'User not found'}]})
+//         }
+
+//         if(isOauth == true) {
+//             const {name} = req.body;
+//             user.name = name;
+//         }else {
+//             const {name,email,oldPassword, newPassword} = req.body;
+
+//             if(email && email != user.email) {
+//                 const existingUser = await User.findOne({ email });
+//                 if (existingUser) {
+//                     return res.status(400).json({errors: [
+//                     {message:"Email already in use by another account" }]});
+//                 }
+
+//                 user.isVerified = false;
+
+//                 const verificationToken = generateToken(user._id, '1m');
+//                 const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`
+//                 await sendEmail(email, "Confirm your email address for NT_Lyrics", 
+//                     `<p>Please verify your email by clicking the link below:</p>
+//                     <a href="${verifyLink}">Verify Email</a>
+//                     <p>This link will expire in 1 hour.</p>`);
+//             }
+
+//             user.name = name;
+//             user.email = email;
+
+//             if(oldPassword) {
+//                 const isMatch = await bcrypt.compare(oldPassword, user.password);
+//                 if(!isMatch) {
+//                     return res.status(400).json({errors: [
+//                     {message:"Incorrect old password" }]});
+//                 }
+
+//                 if(!newPassword) {
+//                     return res.status(400).json({errors: [
+//                     {message:"Require to define new Password!" }]});
+//                 }
+
+//                 const hashPassword = await bcrypt.hash(newPassword, 10);
+//                 user.password = hashPassword;
+//             }
+//             }
+//             await user.save();
+
+//             // Remove password field
+//             const userObj = user.toObject();
+//             delete userObj.password
+
+//             return res.status(200).json({user: userObj})
+        
+//     }catch (err) {
+//         return res.status(500).json({errors: [
+//                 {message: err.message}]})
+//     }
+
+// }
+
 
 const doActivateAndDeactivate = async (req, res) => {
     try {
@@ -389,7 +495,7 @@ const getUserOverview = async (req,res) => {
 
 module.exports = {
     registerUser, loginUser, 
-    verifyEmail,
+    verifyEmail, resendVerifyEmailLink,
     getUserProfile, updateUser, 
     doActivateAndDeactivate, changeUserRole, 
     searchUser, getUserOverview}

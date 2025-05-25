@@ -30,7 +30,8 @@ passport.use(
           user = new User({
             name: profile.displayName,
             email: profile.emails[0].value,
-            profilePicture: profile.photos[0].value // Save the profile picture URL
+            profilePicture: profile.photos[0].value,
+            isVerified: true
           });
           await user.save();
         }

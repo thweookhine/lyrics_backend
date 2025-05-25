@@ -23,6 +23,11 @@ const authenticateUser = async (req, res, next) => {
                 {message: 'Your account has been deactivated by an admin.' }]});
         }
 
+        if(!dbUser.isVerified) {
+            return res.status(403).json({errors: [
+                {message: 'Email not verified' }]});
+        }
+
         req.user = dbUser;
         next();
     } catch(err) {
