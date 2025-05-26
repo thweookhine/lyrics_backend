@@ -15,7 +15,8 @@ const createAdminUser = async () => {
                 name: 'admin',
                 password: hashPassword,
                 email: 'admin@gmail.com',
-                role: 'admin'
+                role: 'admin',
+                isVerified: true
             })
 
             await adminUser.save();

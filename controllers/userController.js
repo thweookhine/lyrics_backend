@@ -65,7 +65,7 @@ const verifyEmail = async (req, res) => {
     
         user.isVerified = true;
         await user.save();
-        res.json({ message: "Email verified successfully" });
+        res.redirect(process.env.LOGIN_URL)
     } catch (err) {
 
         if (err.name === 'TokenExpiredError') {
