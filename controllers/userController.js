@@ -65,7 +65,7 @@ const verifyEmail = async (req, res) => {
     
         user.isVerified = true;
         await user.save();
-        res.redirect(process.env.LOGIN_URL)
+        res.redirect(`${process.env.CLIENT_URL}/login`)
     } catch (err) {
 
         if (err.name === 'TokenExpiredError') {
@@ -493,8 +493,46 @@ const getUserOverview = async (req,res) => {
     }
 }
 
+const forgotPassword = async (req, res) => {
+    const {email} = req.body;
+
+    const user = await User.find({email});
+    
+    if(!user) {
+        return res.status(500).json({errors: [
+            {message: `User doesn't exist with email ${email}` }]});
+    }
+
+    const resetToken = generateToken(user, '30m')
+    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`
+
+    await sendEmail(email, "Password Reset Request", `<html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <h2>Reset your password</h2>
+            <p>Hi Dear,</p>
+            <p>We received a request to reset your password for your account.</p>
+            <p>
+            Click the button below to choose a new password:
+            </p>
+            <p>
+            <a href="${resetLink}"
+                style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                Reset Password
+            </a>
+            </p>
+            <p>
+            If you didn't request this, you can ignore this email. This link will expire in 30 minutes.
+            </p>
+            <p>Thanks,<br/>The NT_LYRICS Team</p>
+        </body>
+        </html>`);
+
+        res.status(201).json({ message: 'We have sent Password Reset Email!' });
+}
+
 module.exports = {
     registerUser, loginUser, 
+    forgotPassword,
     verifyEmail, resendVerifyEmailLink,
     getUserProfile, updateUser, 
     doActivateAndDeactivate, changeUserRole, 
