@@ -27,7 +27,7 @@ const registerUser = async (req,res) => {
             isVerified: false
         })
 
-        const verificationToken = generateToken(user, "1d");
+        const verificationToken = generateToken(user, "30m");
 
         // user.verificationToken = verificationToken;
         // user.verificationTokenExpiry = Date.now() + 3600000;
@@ -91,7 +91,7 @@ const resendVerifyEmailLink = async (req, res) => {
                 {message: "Already verified"}]})
         }
 
-        const verificationToken = generateToken(user, '1d');
+        const verificationToken = generateToken(user, '30m');
         const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`
         await sendEmail(email, "Confirm your email address for NT_Lyrics", 
             `<p>Please verify your email by clicking the link below:</p>
