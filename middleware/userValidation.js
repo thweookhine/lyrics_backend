@@ -65,8 +65,4 @@ const validateForgotPw = [
     }
 ]
 
-const validateResetPw = [
-    body('newPassword').isEmpty()
-]
-
 module.exports = { validateUserRegister, validateUserUpdate, validateUserLogin, validateChangeUserRole, validateForgotPw };

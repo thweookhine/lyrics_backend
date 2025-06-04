@@ -36,8 +36,7 @@ const registerUser = async (req,res) => {
         const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`
         await sendEmail(email, "Confirm your email address for NT_Lyrics", 
             `<p>Please verify your email by clicking the link below:</p>
-            <a href="${verifyLink}">Verify Email</a>
-            <p>This link will expire in 1 hour.</p>`);
+            <a href="${verifyLink}">Verify Email</a>`);
 
         res.status(201).json({ message: 'Registered! Please check your email to verify your account.' });
 
@@ -95,8 +94,7 @@ const resendVerifyEmailLink = async (req, res) => {
         const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`
         await sendEmail(email, "Confirm your email address for NT_Lyrics", 
             `<p>Please verify your email by clicking the link below:</p>
-            <a href="${verifyLink}">Verify Email</a>
-            <p>This link will expire in 1 hour.</p>`);
+            <a href="${verifyLink}">Verify Email</a>`);
         res.json({ message: "Verification email resent" });
     } catch (err) {
         if (err.name === 'TokenExpiredError') {
@@ -494,17 +492,18 @@ const getUserOverview = async (req,res) => {
 }
 
 const forgotPassword = async (req, res) => {
+    try {
     const {email} = req.body;
 
-    const user = await User.find({email});
+    const users = await User.find({email});
     
-    if(!user) {
+    if(users.length == 0) {
         return res.status(500).json({errors: [
             {message: `User doesn't exist with email ${email}` }]});
     }
 
-    const resetToken = generateToken(user, '30m')
-    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`
+    const resetToken = generateToken(users[0], '30m')
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
 
     await sendEmail(email, "Password Reset Request", `<html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -528,11 +527,44 @@ const forgotPassword = async (req, res) => {
         </html>`);
 
         res.status(201).json({ message: 'We have sent Password Reset Email!' });
+    } catch(err) {
+        return res.status(500).json({errors: [
+            {message: err.message }]})
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const {newPassword} = req.body;
+    const {token} = req.params;
+
+    if(!newPassword) {
+        return res.status(500).json({errors: [
+            {message: "Require newPassword" }]});
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const user = await User.findById(decoded.id);
+        if(!user) {
+            return res.status(500).json({errors: [
+                {message: `User Not Found` }]});
+        }
+
+        const hashPassword = await bcrypt.hash(newPassword, 10)
+        user.password = hashPassword;
+        await user.save();
+
+        return res.status(200).json({message: "Password has been updated successfully!"})
+
+    } catch (err) {
+        return res.status(500).json({errors: [
+            {message: err.message }]})
+  }
 }
 
 module.exports = {
     registerUser, loginUser, 
-    forgotPassword,
+    forgotPassword, resetPassword,
     verifyEmail, resendVerifyEmailLink,
     getUserProfile, updateUser, 
     doActivateAndDeactivate, changeUserRole, 
