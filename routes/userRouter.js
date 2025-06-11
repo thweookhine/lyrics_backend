@@ -14,7 +14,7 @@ userRouter.post('/loginUser', validateUserLogin, loginUser);
 userRouter.post('/forgotPassword', validateForgotPw, forgotPassword);
 userRouter.post('/resetPassword/:token', resetPassword);
 userRouter.get('/verifyEmail', verifyEmail);
-userRouter.get('/resendVerifyEmailLink', resendVerifyEmailLink);
+userRouter.post('/resendVerifyEmailLink', resendVerifyEmailLink);
 userRouter.get('/search', authenticateUser,checkRole(['admin']) ,searchUser);
 userRouter.get('/userProfile/:id', authenticateUser ,getUserProfile);
 userRouter.delete('/:id', authenticateUser, checkRole(['admin']), doActivateAndDeactivate);

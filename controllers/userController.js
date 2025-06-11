@@ -29,8 +29,6 @@ const registerUser = async (req,res) => {
 
         const verificationToken = generateToken(user, "30m");
 
-        // user.verificationToken = verificationToken;
-        // user.verificationTokenExpiry = Date.now() + 3600000;
         await user.save();
 
         const verifyLink = `${process.env.API_URL}/api/users/verifyEmail?token=${verificationToken}`

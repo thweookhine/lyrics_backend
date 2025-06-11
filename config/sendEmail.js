@@ -11,7 +11,6 @@ const sendEmail = async (email, subject, html) => {
   };
   try {
     const result = await sendgridMail.send(message);
-    console.log('Email sent:', result);           
   } catch (error) {
       console.error('SendGrid Error:', error.response?.body || error.message);
   }
