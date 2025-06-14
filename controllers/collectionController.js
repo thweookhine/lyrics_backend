@@ -223,6 +223,27 @@ const getCollectionOverview = async (req, res) => {
   }
 }
 
-module.exports = {addToCollection, checkHasInGroup, addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
+const getGroupsByLyric = async (req, res) => {
+  const lyricsId = req.params.id;
+  const user = req.user;
+
+  try {
+    const collections = await Collection.find({
+      userId: user._id,
+      lyricsId: lyricsId,
+    }, 'group');
+
+    return res.status(200).json({
+        collections,
+        totalCount: collections.length
+      })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]});
+  }
+
+  }
+ 
+module.exports = { getGroupsByLyric, addToCollection, checkHasInGroup, addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
  
 
