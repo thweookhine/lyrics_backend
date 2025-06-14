@@ -9,7 +9,7 @@ const collectionRouter = express.Router();
 collectionRouter.post('/addToCollection', validateCollection, authenticateUser, addToCollection)
 collectionRouter.post('/addToGroup', authenticateUser, checkRole(['premium-user', 'admin']),  addToGroup)
 collectionRouter.put('/removeFromGroup', authenticateUser, removeFromGroup)
-collectionRouter.get('/getLyricsByGroup', authenticateUser, checkRole(['premium-user', 'admin']), getLyricsByGroup)
+collectionRouter.get('/getLyricsByGroup', authenticateUser, getLyricsByGroup)
 collectionRouter.get('/getCollectionOverview', authenticateUser, getCollectionOverview);
 collectionRouter.get('/checkHasInGroup/:id', authenticateUser, checkHasInGroup)
 
