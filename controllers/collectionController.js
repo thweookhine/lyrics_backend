@@ -1,6 +1,6 @@
 const { query } = require('express');
 const Collection = require('../models/Collection')
-const Lyrics = require('../models/Lyrics')
+const Lyrics = require('../models/Lyrics');
 
 const addToCollection = async (req,res) => {
   try {
@@ -163,11 +163,19 @@ const getLyricsByGroup = async (req, res) => {
       _id: {$in: lyricsIds},
       isEnable: true
     }
-    const lyrics = await Lyrics.find(query).skip(skip).limit(limit);
+    let lyrics = await Lyrics.find(query).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query);
 
+    let lyricsList = lyrics.map(lyric => {
+      lyric = lyric.toObject();
+      return {
+        ...lyric,
+        isFavourite: true
+      }
+    })
+
     return res.status(200).json({
-      lyrics,
+      lyrics: lyricsList,
       totalCount,
       currentPage: page,
       totalPages: Math.ceil(totalCount / limit)
