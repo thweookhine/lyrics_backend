@@ -231,10 +231,10 @@ const getGroupsByLyric = async (req, res) => {
     const collections = await Collection.find({
       userId: user._id,
       lyricsId: lyricsId,
-    }, 'group');
+    }, { group: 1, _id: 0 });
 
     return res.status(200).json({
-        collections,
+        groups: collections,
         totalCount: collections.length
       })
   } catch (err) {
