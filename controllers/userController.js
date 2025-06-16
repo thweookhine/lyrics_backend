@@ -431,7 +431,11 @@ const searchUser = async (req,res) => {
             }
         }
 
-        const users = await User.find(query).skip(skip).limit(limit).select('-password');
+        const users = await User.find(query)
+                    .collation({ locale: 'en', strength: 1 })
+                    .sort({ name: 1, email: 1 })
+                    .skip(skip).limit(limit)
+                    .select('-password');
         const totalCount = await User.countDocuments(query);
         const totalAdminUsersCount = await User.countDocuments({...query, role: 'admin'});
         const totalFreeUsersCount = await User.countDocuments({...query, role: 'free-user'});

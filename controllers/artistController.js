@@ -116,7 +116,10 @@ const searchArtists = async (req, res) => {
     }
 
     try {
-        const artists = await Artist.find(query).skip(skip).limit(limit);
+        const artists = await Artist.find(query)
+                    .collation({ locale: 'en', strength: 1 })
+                    .sort({ name: 1})        
+                    .skip(skip).limit(limit);
         const totalCount = await Artist.countDocuments(query);
         const totalArtistCount = await Artist.countDocuments({...query, type: 'singer'})
         const totalWrtierCount = await Artist.countDocuments({...query, type: 'writer'})
@@ -158,7 +161,11 @@ const getArtistsByType = async (req,res) => {
     try {
         const type = req.query.type;
         const query = { type: { $in: [type, "both"] } };
-        const artists = await Artist.find(query).select('name').select('type');
+        const artists = await Artist.find(query)
+                            .collation({ locale: 'en', strength: 1 })
+                            .sort({ name: 1})
+                            .select('name')
+                            .select('type');
         return res.status(200).json({artists})
     } catch (err) {
         return res.status(500).json({errors: [
@@ -196,4 +203,9 @@ const getArtistOverview = async(req, res) => {
     }
 }
 
-module.exports = {createArtist, updateArtist, deleteArtistById, searchArtists, getArtistById, getTopArtists, getArtistsByType, getArtistOverview}
+module.exports = {
+    createArtist, updateArtist, 
+    deleteArtistById, searchArtists, 
+    getArtistById, getTopArtists, 
+    getArtistsByType, getArtistOverview
+}
