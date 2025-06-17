@@ -365,6 +365,15 @@ const searchLyrics = async (req,res) => {
   const skip = (page -1) * limit;
   let query = { isEnable: true };
 
+  const sortBy = req.query.sortBy || 'viewCount';
+  
+  let sortingOrder;
+  sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+      
+  // Build sort object
+  const sortOptions = {};
+  sortOptions[sortBy] = sortingOrder;
+
   const allowdTypes = ['lyrics','singer','writer','key','all'];
 
   if(!allowdTypes.includes(type)) {
@@ -381,7 +390,7 @@ const searchLyrics = async (req,res) => {
     if(type == 'writer' || type == 'singer') {
       await addSearchCount(keyword)
     }
-    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const lyrics = await Lyrics.find(query).sort(sortOptions).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
 
     let lyricsList = []

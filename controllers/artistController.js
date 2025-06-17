@@ -104,6 +104,13 @@ const searchArtists = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
+    const sortBy = req.query.sortBy || 'name';
+    // ascending order
+    const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+        
+    // Build sort object
+    const sortOptions = {};
+    sortOptions[sortBy] = sortingOrder;
 
     let query = {}
 
@@ -118,7 +125,7 @@ const searchArtists = async (req, res) => {
     try {
         const artists = await Artist.find(query)
                     .collation({ locale: 'en', strength: 1 })
-                    .sort({ name: 1})        
+                    .sort(sortOptions)        
                     .skip(skip).limit(limit);
         const totalCount = await Artist.countDocuments(query);
         const totalArtistCount = await Artist.countDocuments({...query, type: 'singer'})

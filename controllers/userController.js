@@ -410,7 +410,14 @@ const searchUser = async (req,res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page -1) * limit;
-
+        const sortBy = req.query.sortBy || 'name';
+        // ascending order
+        const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+        
+        // Build sort object
+        const sortOptions = {};
+        sortOptions[sortBy] = sortingOrder;
+        
         let query = {}
 
         if(keyword) {
@@ -433,7 +440,7 @@ const searchUser = async (req,res) => {
 
         const users = await User.find(query)
                     .collation({ locale: 'en', strength: 1 })
-                    .sort({ name: 1, email: 1 })
+                    .sort(sortOptions)
                     .skip(skip).limit(limit)
                     .select('-password');
         const totalCount = await User.countDocuments(query);
