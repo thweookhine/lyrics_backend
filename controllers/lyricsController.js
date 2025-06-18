@@ -508,6 +508,13 @@ const getLyricsByArtist = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page -1) * limit;
+    const sortBy = req.query.sortBy || 'title';
+    // ascending order
+    const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+        
+    // Build sort object
+    const sortOptions = {};
+    sortOptions[sortBy] = sortingOrder;
     let query = {
       $and: [
         {isEnable: true},
@@ -529,7 +536,12 @@ const getLyricsByArtist = async (req, res) => {
       })
     }
 
-    const lyrics = await Lyrics.find(query).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const lyrics = await Lyrics.find(query)
+                          .collation({ locale: 'en', strength: 1 })
+                          .sort(sortOptions)
+                          .skip(skip).limit(limit)
+                          .populate('singers').populate('writers')
+                          .populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
 
 
@@ -576,6 +588,14 @@ const getLyricsByArtistByAdmin = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page -1) * limit;
+
+    const sortBy = req.query.sortBy || 'title';
+    // ascending order
+    const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+            
+    // Build sort object
+    const sortOptions = {};
+    sortOptions[sortBy] = sortingOrder;
     const query = {
       $or: [
         {singers: artistId},
@@ -583,7 +603,11 @@ const getLyricsByArtistByAdmin = async (req, res) => {
         {featureArtists: artistId}
       ]
     }
-    const lyrics = await Lyrics.find(query).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const lyrics = await Lyrics.find(query)
+                            .collation({ locale: 'en', strength: 1 })
+                            .sort(sortOptions)
+                            .skip(skip).limit(limit).populate('singers')
+                            .populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
     return res.status(200).json({
       totalPages: Math.ceil(totalCount / limit),
@@ -619,6 +643,13 @@ const searchLyricsByAdmin = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page -1) * limit;
+  const sortBy = req.query.sortBy || 'viewCount';
+  // ascending order
+  const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+      
+  // Build sort object
+  const sortOptions = {};
+  sortOptions[sortBy] = sortingOrder;
   const isEnable = req.query.isEnable;
   let query = {}
   if(isEnable) {

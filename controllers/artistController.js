@@ -167,10 +167,18 @@ const getTopArtists = async (req,res) => {
 const getArtistsByType = async (req,res) => {
     try {
         const type = req.query.type;
-        const query = { type: { $in: [type, "both"] } };
+        const sortBy = req.query.sortBy || 'name';
+        // ascending order
+        const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+            
+        // Build sort object
+        const sortOptions = {};
+        sortOptions[sortBy] = sortingOrder;
+
+        const query = { type: { $in: [type] } };
         const artists = await Artist.find(query)
                             .collation({ locale: 'en', strength: 1 })
-                            .sort({ name: 1})
+                            .sort(sortOptions)
                             .select('name')
                             .select('type');
         return res.status(200).json({artists})
