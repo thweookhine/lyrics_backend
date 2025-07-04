@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator');
-const { genreArray, keyList, genreList } = require('../utils/Constants');
+const { genreArray, keyList, genreList, tierList } = require('../utils/Constants');
 
 const LyricsSchema = new mongoose.Schema({
     title: {
@@ -47,8 +47,12 @@ const LyricsSchema = new mongoose.Schema({
     },
     youTubeLink: {
         type: String
-    }
-
+    },
+    tier: {
+        type: String,
+        enum: tierList,
+        default: 0,
+    },
 }, {timestamps: true});
 
 const Lyrics = mongoose.model('Lyrics', LyricsSchema);
