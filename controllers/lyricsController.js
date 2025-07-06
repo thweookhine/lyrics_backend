@@ -568,6 +568,9 @@ const getLyricsOverview = async (req, res) => {
     const totalCount = await Lyrics.countDocuments();
     const disabledCount = await Lyrics.countDocuments({isEnable: false})
     const enabledCount = await Lyrics.countDocuments({isEnable: true})
+    const countForPremiumTier = await Lyrics.countDocuments({tier: 2})
+    const countForFreeTier = await Lyrics.countDocuments({tier: 1})
+    const countForGuestTier = await Lyrics.countDocuments({tier: 0}) 
 
     const now = new Date();
 
@@ -582,7 +585,10 @@ const getLyricsOverview = async (req, res) => {
       totalCount,
       countDiff,
       disabledCount,
-      enabledCount
+      enabledCount,
+      countForPremiumTier,
+      countForFreeTier,
+      countForGuestTier
     })
     } catch (err) {
       return res.status(500).json({errors: [

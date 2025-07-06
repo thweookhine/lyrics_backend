@@ -55,6 +55,12 @@ const verifyEmail = async (req, res) => {
             return res.status(400).json({errors: [
                 {message: 'Invalid Token'}]});
         }
+
+        if(user.isValid === false) {
+            return res.status(403).json({errors: [
+                {message: 'Your account has been deactivated by an admin.' }]}); 
+        }
+
         if( user.isVerified) {
             return res.status(400).json({errors: [
                 {message: 'Already verified'}]});
@@ -174,10 +180,15 @@ const getUserProfile = async (req, res) => {
         const id = req.params.id;
 
         if (req.user.role == 'admin' || req.user.id === id ) {
-            const existingUser = await User.findOne({ _id: id, isValid: true });
+            const existingUser = await User.findOne({ _id: id});
             if(!existingUser) {
                 return res.status(400).json({errors: [
                 {message:'User not found!'}]})
+            }
+
+            if(!existingUser.isValid) {
+                return res.status(403).json({errors: [
+                    {message: 'This User account has been deactivated by an admin.' }]});
             }
 
             // Remove Password
@@ -511,6 +522,11 @@ const forgotPassword = async (req, res) => {
             {message: `User doesn't exist with email ${email}` }]});
     }
 
+    if(users[0].isValid === false) {
+        return res.status(403).json({errors: [
+                {message: 'Your account has been deactivated by an admin.' }]});
+    }   
+
     const resetToken = generateToken(users[0], '30m')
     const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
 
@@ -559,6 +575,11 @@ const resetPassword = async (req, res) => {
                 {message: `User Not Found` }]});
         }
 
+        if(!user.isValid) {
+            return res.status(403).json({errors: [
+                {message: 'Your account has been deactivated by an admin.' }]});   
+        }
+
         const hashPassword = await bcrypt.hash(newPassword, 10)
         user.password = hashPassword;
         await user.save();
@@ -571,10 +592,30 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const getCurrentUser = async (req, res) => { 
+    if(req.user){
+        const id = req.user.id;
+        const users = await User.find({_id: id}).select('-password');
+        if(users.length > 0) {
+
+            if(!users[0].isValid) {
+               return res.status(403).json({errors: [
+                {message: 'Your account has been deactivated by an admin.' }]});
+            }
+            return res.status(200).json(users[0]);
+        }else {
+            return res.status(401).json({message: "Unauthorized access. Please login."})
+        }
+    } else {
+        return res.status(401).json({message: "Unauthorized access. Please login."})
+    }
+}
+
 module.exports = {
     registerUser, loginUser, 
     forgotPassword, resetPassword,
     verifyEmail, resendVerifyEmailLink,
     getUserProfile, updateUser, 
     doActivateAndDeactivate, changeUserRole, 
-    searchUser, getUserOverview}
+    searchUser, getUserOverview,
+    getCurrentUser}
