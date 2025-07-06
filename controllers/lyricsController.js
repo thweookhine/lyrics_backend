@@ -15,7 +15,67 @@ const addSearchCount = async (id) => {
   }
 }
 
-const searchQuery = async (query, keyword, type) => {
+const searchQuery = async (basicFilter = {}, keyword, sortOptions, skip, limit) => {
+  const pipeLine = [
+    {
+      // Lookup for singers
+      $lookup: {
+        from: 'artists',
+        localField: 'singers',
+        foreignField: '_id',
+        as: 'singers'
+      }
+    },
+    {
+      // Lookup for writers
+      $lookup: {
+        from: 'artists',
+        localField: 'writers',
+        foreignField: '_id',
+        as: 'writers'
+      }
+    },
+    {
+      // Lookup for featureArtists
+      $lookup: {
+        from: 'artists',
+        localField: 'featureArtists',
+        foreignField: '_id',
+        as: 'featureArtists'
+      }
+    },
+    {
+      $match: {
+        ...basicFilter,
+        $or: [
+          { title: { $regex: keyword, $options: "i" } },
+          { albumName: { $regex: keyword, $options: "i" } },
+          { 'singers.name': { $regex: keyword, $options: "i" } },
+          { 'writers.name': { $regex: keyword, $options: "i" } },
+          { 'featureArtists.name': { $regex: keyword, $options: "i" } }
+        ]
+      }
+    }
+  ];
+
+
+  // Only add sort, skip, and limit if they are needed
+  if (Object.keys(sortOptions).length > 0) {
+    pipeLine.push({ $sort: sortOptions });
+  }
+
+  if (skip > 0) {
+    pipeLine.push({ $skip: skip });
+  }
+
+  if (limit > 0) {
+    pipeLine.push({ $limit: limit });
+  }
+
+  return pipeLine;
+}
+
+const searchQuery_With_Types_BK = async (query, keyword, type) => {
     if(type == "lyrics") {
       if(keyword) {
         query = {
@@ -132,7 +192,7 @@ const createLyrics = async (req,res) => {
 
       // Store the public_id from Cloudinary to delete the image if needed
       cloudinaryPublicId = cloudinaryResult.public_id;
-    }
+  }
 
     const newLyric = new Lyrics({
       title, singers, featureArtists, writers, majorKey, albumName, genre,
@@ -358,7 +418,80 @@ const getLyricsId = async (req, res) => {
   }
 }
 
+
 const searchLyrics = async (req,res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  let basicFilter = {};
+  basicFilter.isEnable = true;
+
+  const sortBy = req.query.sortBy || 'viewCount';
+  
+  let sortingOrder;
+  sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+      
+  // Build sort object
+  const sortOptions = {};
+  sortOptions[sortBy] = sortingOrder;
+
+  const {keyword} = req.query
+
+  try {
+    
+    const pipeLine = await searchQuery(basicFilter, keyword, sortOptions, skip, limit)
+    const countPipeLine = await searchQuery(basicFilter, keyword, {}, 0, 0);
+    const lyrics = await Lyrics.aggregate(pipeLine)
+    const countResults = await Lyrics.aggregate([
+      ...countPipeLine,
+      { $count: "total" }
+    ])
+
+    const totalCount = countResults[0]?.total || 0;
+
+    // if(type == 'writer' || type == 'singer') {
+    //   await addSearchCount(keyword)
+    // }
+
+    let lyricsList = []
+    if(req.user) {
+      for(let lyricsData of lyrics) {
+        // lyricsData = lyricsData.toObject();
+        let collection = await Collection.find({
+          lyricsId: lyricsData._id,
+          userId: req.user.id
+        })
+        if(collection.length > 0) {
+          lyricsData.isFavourite = true
+        } else {
+          lyricsData.isFavourite = false
+        }
+
+        lyricsList.push(lyricsData)
+      }
+    } else {
+      lyricsList = lyrics.map(lyricsData => (
+        {
+          // ...lyricsData.toObject(),
+          ...lyricsData,
+          isFavourite: false
+        }
+      ))
+    }
+
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount,
+      lyrics: lyricsList
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message }]})
+  }
+}
+
+const searchLyrics_WithTypes_BK = async (req,res) => {
   const {type} = req.query
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -639,6 +772,49 @@ const getAllLyrics = async (req,res) => {
 }
 
 const searchLyricsByAdmin = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page -1) * limit;
+  const sortBy = req.query.sortBy || 'viewCount';
+  // ascending order
+  const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+      
+  // Build sort object
+  const sortOptions = {};
+  sortOptions[sortBy] = sortingOrder;
+  const isEnable = req.query.isEnable;
+  let basicFilter = {}
+  if(typeof isEnable != undefined) {
+    basicFilter.isEnable = isEnable === 'true';
+  }
+
+  const {keyword} = req.query
+  try {
+    const pipeLine = await searchQuery(basicFilter, keyword, sortOptions, skip, limit)
+
+    const countPipeLine = await searchQuery(basicFilter, keyword, {}, 0, 0);
+    const lyrics = await Lyrics.aggregate(pipeLine)
+    const countResults = await Lyrics.aggregate([
+      ...countPipeLine,
+      { $count: "total" }
+    ])
+
+    const totalCount = countResults[0]?.total || 0;
+
+    return res.status(200).json({
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount,
+      lyrics
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}]})
+  }
+}
+
+
+const searchLyricsByAdmin_With_Type_BK = async (req, res) => {
   const {type} = req.query
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -667,7 +843,7 @@ const searchLyricsByAdmin = async (req, res) => {
   try {
     query = await searchQuery(query, keyword, type)
 
-    const lyrics = await Lyrics.find(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
+    const lyrics = await Lyrics.aggregate(query).sort({viewCount: -1}).skip(skip).limit(limit).populate('singers').populate('writers').populate('featureArtists');
     const totalCount = await Lyrics.countDocuments(query)
 
     return res.status(200).json({
