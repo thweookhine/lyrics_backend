@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Artist = require("../models/Artist");
 const Lyrics = require("../models/Lyrics");
+const User = require("../models/User");
 
 const createArtist = async(req,res) => {
     const {name, bio, photoLink, type} = req.body;
@@ -84,10 +85,16 @@ const getArtistById = async (req,res) => {
     const id = req.params.id;
 
     try {
-        const artist = await Artist.findById(id);
+        let artist =  await Artist.findById(id);
         if(!artist) {
             return res.status(400).json({errors: [
                 {message: "No Artist Found!"}]})
+        }
+
+        const user = await User.findById(req.user?.id);
+        if (!user || user.role !== 'admin') {
+            artist.searchCount += 1;
+            await artist.save();
         }
 
         return res.status(200).json(artist)
@@ -153,16 +160,6 @@ const getTopArtists = async (req,res) => {
                 {message: err.message}]})
     }
 }
-
-// const getArtistIdAndNames = async (req,res) => {
-//     try{
-//         const artists = await Artist.find().select('name');
-//         return res.status(200).json({artists});
-//     } catch(err) {
-//         return res.status(500).json({errors: [
-//                 {message: err.message}]})
-//     }
-// }
 
 const getArtistsByType = async (req,res) => {
     try {

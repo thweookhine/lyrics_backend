@@ -9,13 +9,6 @@ function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
 }
 
-const addSearchCount = async (id) => {
-  const artist = await Artist.findById(id);
-  if(artist) {
-    await Artist.findByIdAndUpdate(id, {searchCount: artist.searchCount+1})
-  }
-}
-
 const searchQuery = async (basicFilter = {}, keyword, sortOptions, skip, limit) => {
   const pipeLine = [
     {
@@ -392,9 +385,11 @@ const getLyricsId = async (req, res) => {
       return res.status(400).json({error: "This Lyrics has been disabled!"})
     }
 
-    lyrics.viewCount = lyrics.viewCount + 1;
-  
-    await lyrics.save();
+    const user = await User.findById(req.user?.id);
+    if (!user || user.role !== 'admin') {
+      lyrics.viewCount += 1;
+      await lyrics.save();
+    }
 
     let collections = [];
     if(req.user) {
@@ -444,10 +439,6 @@ const searchLyrics = async (req,res) => {
     ])
 
     const totalCount = countResults[0]?.total || 0;
-
-    // if(type == 'writer' || type == 'singer') {
-    //   await addSearchCount(keyword)
-    // }
 
     let lyricsList = []
     if(req.user) {
