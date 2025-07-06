@@ -3,6 +3,7 @@ const Lyrics = require("../models/Lyrics");
 const Artist = require("../models/Artist");
 const Collection = require('../models/Collection');
 const { default: mongoose } = require("mongoose");
+const User = require("../models/User");
 
 function getPublicIdFromUrl(url) {
   return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
@@ -425,15 +426,10 @@ const searchLyrics = async (req,res) => {
   const skip = (page -1) * limit;
   let basicFilter = {};
   basicFilter.isEnable = true;
-
-  const sortBy = req.query.sortBy || 'viewCount';
-  
-  let sortingOrder;
-  sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
       
   // Build sort object
-  const sortOptions = {};
-  sortOptions[sortBy] = sortingOrder;
+  let sortOptions = {};
+  sortOptions = await generateSortOption(req.user);
 
   const {keyword} = req.query
 
@@ -782,17 +778,16 @@ const searchLyricsByAdmin = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page -1) * limit;
   const sortBy = req.query.sortBy || 'viewCount';
-  // ascending order
-  const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
-      
+
   // Build sort object
-  const sortOptions = {};
-  sortOptions[sortBy] = sortingOrder;
+  let sortOptions = {};
+  sortOptions = await generateSortOption(req.user);
+
   const isEnable = req.query.isEnable;
   let basicFilter = {}
-  if(typeof isEnable != undefined) {
-    basicFilter.isEnable = isEnable === 'true';
-  }
+  if(isEnable != undefined) {
+    basicFilter.isEnable = (isEnable === 'true') ? true : false;
+  } 
 
   const {keyword} = req.query
   try {
@@ -888,6 +883,41 @@ const getLyricsCountByArtist = async (req, res) => {
     return res.status(500).json({errors: [
       {message: err.message }]})
   }
+}
+
+const generateSortOption = async (reqUser) => {
+
+  let sortOptions = {
+    createdAt: -1 
+  };
+  if(!reqUser) {
+    sortOptions = {
+      tier: -1,
+      createdAt: -1 
+    };;
+
+    return sortOptions;
+  }
+
+  const user = await User.findById(reqUser.id).select('role');
+
+  if(!user) {
+    return sortOptions;
+  }
+
+  if(user.role === "premium-user" || user.role === "admin") {
+    sortOptions = {
+      tier: 1,    
+      createdAt: -1
+    }
+  } else if(user.role === "free-user") {
+      sortOptions = {
+        tier: -1,    
+        createdAt: -1
+      }
+  }
+
+  return sortOptions;
 }
 
 module.exports = {

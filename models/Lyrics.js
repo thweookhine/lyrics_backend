@@ -51,7 +51,7 @@ const LyricsSchema = new mongoose.Schema({
     tier: {
         type: String,
         enum: tierList,
-        default: 2,
+        default: 0,
     },
 }, {timestamps: true});
 
