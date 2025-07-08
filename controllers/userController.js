@@ -403,6 +403,14 @@ const changeUserRole = async (req,res) => {
                 {message:'That user has been already Deleted!'}]})
         }
 
+        if(userRole == 'premium-user') {
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setFullYear(startDate.getFullYear() + 1);
+            user.premiumStartDate = startDate;
+            user.premiumEndDate = endDate;
+        }
+
         user.role = userRole;
         await user.save();
 

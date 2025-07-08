@@ -33,13 +33,14 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: 'true'
     },
-    // verificationToken: {
-    //      type: String,
-    //      default: 'false'
-    // },
-    // verificationTokenExpiry: {
-    //     type: Date
-    // }
+    premiumStartDate: {
+        type: Date,
+        default: null
+    },
+    premiumEndDate: {
+        type: Date,
+        default: null
+    }
 },{timestamps: true});
 
 const User = mongoose.model('User', UserSchema);
