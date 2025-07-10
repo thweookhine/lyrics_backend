@@ -172,8 +172,7 @@ const getArtistsByType = async (req,res) => {
         const sortOptions = {};
         sortOptions[sortBy] = sortingOrder;
 
-        const query = { type: { $in: [type] } };
-        const artists = await Artist.find(query)
+        const artists = await Artist.find({})
                             .collation({ locale: 'en', strength: 1 })
                             .sort(sortOptions)
                             .select('name')
@@ -184,6 +183,30 @@ const getArtistsByType = async (req,res) => {
             {message: err.message}]})
     }
 }
+
+// const getArtistsByType = async (req,res) => {
+//     try {
+//         const type = req.query.type;
+//         const sortBy = req.query.sortBy || 'name';
+//         // ascending order
+//         const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
+            
+//         // Build sort object
+//         const sortOptions = {};
+//         sortOptions[sortBy] = sortingOrder;
+
+//         const query = { type: { $in: [type] } };
+//         const artists = await Artist.find(query)
+//                             .collation({ locale: 'en', strength: 1 })
+//                             .sort(sortOptions)
+//                             .select('name')
+//                             .select('type');
+//         return res.status(200).json({artists})
+//     } catch (err) {
+//         return res.status(500).json({errors: [
+//             {message: err.message}]})
+//     }
+// }
 
 const getArtistOverview = async(req, res) => {
     try {
