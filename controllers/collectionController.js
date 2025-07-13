@@ -36,7 +36,8 @@ const addToCollection = async (req,res) => {
       const checkCount = await Collection.countDocuments({
         $and: [
           {userId: user._id},
-          {lyricsId: lyricsId}
+          {lyricsId: lyricsId},
+          {group: 'Default'}
         ]
       })
 
@@ -100,24 +101,24 @@ const addToGroup = async (req, res) => {
   }
 }
 
-const checkHasInGroup = async (req, res) => {
-  const id = req.params.id;
-  const userId = req.user.id;
-  const collections = await Collection.find({
-    $and: [
-      {lyricsId: id},
-      {userId: userId},
-      {group: {$ne: "Default"}}
-    ]
-  })
+// const checkHasInGroup = async (req, res) => {
+//   const id = req.params.id;
+//   const userId = req.user.id;
+//   const collections = await Collection.find({
+//     $and: [
+//       {lyricsId: id},
+//       {userId: userId},
+//       {group: {$ne: "Default"}}
+//     ]
+//   })
 
-  let hasInGp = false;
-  if(collections.length > 0) {
-    hasInGp = true;
-  }
+//   let hasInGp = false;
+//   if(collections.length > 0) {
+//     hasInGp = true;
+//   }
 
-  return res.status(200).json({hasInGroup: hasInGp})
-}
+//   return res.status(200).json({hasInGroup: hasInGp})
+// }
 
 const removeFromGroup = async (req, res) => {
   const {lyricsId, group} = req.body
@@ -244,6 +245,8 @@ const getGroupsByLyric = async (req, res) => {
 
   }
  
-module.exports = { getGroupsByLyric, addToCollection, checkHasInGroup, addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
+module.exports = { getGroupsByLyric, addToCollection, 
+  // checkHasInGroup,
+   addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
  
 

@@ -125,8 +125,12 @@ const searchArtists = async (req, res) => {
         query.name = { $regex: keyword, $options: "i" };
     } 
 
-    if(type) {
-        query.type =  { $in: [type, "both"] }
+    // if(type) {
+    //     query.type =  { $in: [type, "both"] }
+    // }
+
+      if(type) {
+        query.type =  { $in: [type] }
     }
 
     try {

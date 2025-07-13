@@ -404,6 +404,8 @@ const changeUserRole = async (req,res) => {
         }
 
         if(userRole == 'premium-user') {
+            // TODO add duration for premium user
+            const duration = req.query.duration;
             const startDate = new Date();
             const endDate = new Date();
             endDate.setFullYear(startDate.getFullYear() + 1);

@@ -11,7 +11,7 @@ collectionRouter.post('/addToGroup', authenticateUser, checkRole(['premium-user'
 collectionRouter.put('/removeFromGroup', authenticateUser, removeFromGroup)
 collectionRouter.get('/getLyricsByGroup', authenticateUser, getLyricsByGroup)
 collectionRouter.get('/getCollectionOverview', authenticateUser, getCollectionOverview);
-collectionRouter.get('/checkHasInGroup/:id', authenticateUser, checkHasInGroup)
+// collectionRouter.get('/checkHasInGroup/:id', authenticateUser, checkHasInGroup)
 collectionRouter.get('/getGroupsByLyric/:id', authenticateUser, getGroupsByLyric)
 
 module.exports = collectionRouter
