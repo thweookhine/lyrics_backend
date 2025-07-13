@@ -404,13 +404,15 @@ const changeUserRole = async (req,res) => {
         }
 
         if(userRole == 'premium-user') {
-            // TODO add duration for premium user
-            const duration = req.query.duration;
+            const duration = req.body.duration || '3';
             const startDate = new Date();
-            const endDate = new Date();
-            endDate.setFullYear(startDate.getFullYear() + 1);
+            const endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + parseInt(duration));
             user.premiumStartDate = startDate;
             user.premiumEndDate = endDate;
+        } else if (userRole == 'free-user') {
+            user.premiumStartDate = null;
+            user.premiumEndDate = null;
         }
 
         user.role = userRole;
