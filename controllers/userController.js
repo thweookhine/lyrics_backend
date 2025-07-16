@@ -610,11 +610,21 @@ const getCurrentUser = async (req, res) => {
         const users = await User.find({_id: id}).select('-password');
         if(users.length > 0) {
 
-            if(!users[0].isValid) {
+            const user = users[0];
+            if(!user.isValid) {
                return res.status(403).json({errors: [
                 {message: 'Your account has been deactivated by an admin.' }]});
             }
-            return res.status(200).json(users[0]);
+
+            const now = new Date();
+            if(user.role == 'premium-user' && user.premiumEndDate && user.premiumEndDate < now) {
+                user.role = 'free-user';
+                user.premiumStartDate = null;
+                user.premiumEndDate = null;
+                await user.save();
+            }
+
+            return res.status(200).json(user);
         }else {
             return res.status(401).json({message: "Unauthorized access. Please login."})
         }
