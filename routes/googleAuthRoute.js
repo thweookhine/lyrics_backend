@@ -33,7 +33,7 @@ googleAuthRouter.get(
 
     const encodedUser = Buffer.from(JSON.stringify(userPayload)).toString('base64');
 
-    res.redirect(`${process.env.CLIENT_URL}/NT_Lyrics/oauth/success?token=${encodeURIComponent(token)}&user=${encodeURIComponent(encodedUser)}`);
+    res.redirect(`${process.env.CLIENT_URL}/oauth/success?token=${encodeURIComponent(token)}&user=${encodeURIComponent(encodedUser)}`);
   }
 );
 
