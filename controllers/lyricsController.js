@@ -930,6 +930,50 @@ const generateSortOption = async (reqUser) => {
   return sortOptions;
 }
 
+const checkLyricsExist = async(req, res) => {
+  const keyword = req.query.keyword;
+
+  if (!keyword) {
+    return res.status(400).json({ errors: [{ message: "Name is required!" }] });
+  }
+
+  try {
+    const normalizeKeyword = keyword.replace(/\s+/g, '').toLowerCase();
+    
+    const existingLyrics = await Lyrics.aggregate([
+        {
+            $addFields: {
+                normalizeTitle: { 
+                    $toLower: {
+                        $replaceAll: {
+                            input: '$title',
+                            find: " ",
+                            replacement: ""
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $match: {
+                normalizeTitle: normalizeKeyword
+            }
+        },
+        {
+            $limit: 1
+        }
+    ])
+    if (existingLyrics.length > 0) {
+        return res.status(200).json({ isExist: true });
+    } else {
+        return res.status(200).json({ isExist: false });
+    }
+} catch (err) {
+    res.status(500).json({errors: [
+        {message: err.message }]});
+}
+}
+
 module.exports = {
   createLyrics, updateLyricsById, 
   changeEnableFlag,
@@ -937,5 +981,6 @@ module.exports = {
   deleteLyrics, searchLyrics, 
   getTopLyrics,
   getLyricsByArtist, getLyricsByArtistByAdmin, getAllLyrics,
-  searchLyricsByAdmin, getLyricsCountByArtist
+  searchLyricsByAdmin, getLyricsCountByArtist,
+  checkLyricsExist
 }

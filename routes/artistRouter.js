@@ -1,6 +1,6 @@
 
 const express = require('express');
-const { createArtist, updateArtist, deleteArtistById, getAllArtists, getTopArtists, searchArtists, addSearchCount, getArtistById, getArtistsByType, getArtistOverview } = require('../controllers/artistController');
+const { createArtist, updateArtist, deleteArtistById, getAllArtists, getTopArtists, searchArtists, addSearchCount, getArtistById, getArtistsByType, getArtistOverview, checkArtistExists } = require('../controllers/artistController');
 const { validateArtist } = require('../middleware/artistValidation');
 const { authenticateUser, optionalAuthMiddleware } = require('../middleware/authenticateUser');
 const checkRole = require('../middleware/checkRole');
@@ -16,5 +16,5 @@ artistRouter.get('/getArtistById/:id', optionalAuthMiddleware, getArtistById)
 artistRouter.get('/getTopArtists', getTopArtists)
 artistRouter.get('/getArtistsByType', getArtistsByType)
 artistRouter.get('/getArtistOverview', authenticateUser, checkRole(['admin']), getArtistOverview);
-
+artistRouter.get('/checkArtistExist', authenticateUser, checkRole(['admin']), checkArtistExists);
 module.exports = artistRouter

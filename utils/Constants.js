@@ -7,4 +7,6 @@ const keyList = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
 
 const tierList = [0,1,2]
 
-module.exports = {genreList, keyList, tierList}
+const PREMIUM_DURATION_DEFAULT = 3; 
+
+module.exports = {genreList, keyList, tierList, PREMIUM_DURATION_DEFAULT}

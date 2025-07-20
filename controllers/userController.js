@@ -3,6 +3,7 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const sendEmail = require('../config/sendEmail')
+const { PREMIUM_DURATION_DEFAULT } = require('../utils/Constants')
 require('dotenv').config()
 
 const generateToken = (user, expiresIn) => {
@@ -403,8 +404,13 @@ const changeUserRole = async (req,res) => {
                 {message:'That user has been already Deleted!'}]})
         }
 
+        if(userRole == user.role) {
+            return res.status(500).json({errors: [
+                {message: `User is already a ${userRole} role!`}]})
+        }
+
         if(userRole == 'premium-user') {
-            const duration = req.body.duration || '3';
+            const duration = req.body.duration || PREMIUM_DURATION_DEFAULT;
             const startDate = new Date();
             const endDate = new Date(startDate);
             endDate.setMonth(endDate.getMonth() + parseInt(duration));

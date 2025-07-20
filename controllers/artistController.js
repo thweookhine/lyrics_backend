@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const Artist = require("../models/Artist");
 const Lyrics = require("../models/Lyrics");
 const User = require("../models/User");
+const { normalizeEmail } = require("validator");
 
 const createArtist = async(req,res) => {
     const {name, bio, photoLink, type} = req.body;
@@ -242,9 +243,53 @@ const getArtistOverview = async(req, res) => {
     }
 }
 
+const checkArtistExists = async (req, res) => {
+    try {
+        const { keyword } = req.query;
+        if (!keyword) {
+            return res.status(400).json({ errors: [{ message: "Name is required!" }] });
+        }
+
+        const normalizeKeyword = keyword.replace(/\s+/g, '').toLowerCase();
+
+        const existingArtist = await Artist.aggregate([
+            {
+                $addFields: {
+                    normalizeName: { 
+                        $toLower: {
+                            $replaceAll: {
+                                input: '$name',
+                                find: " ",
+                                replacement: ""
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    normalizeName: normalizeKeyword
+                }
+            },
+            {
+                $limit: 1
+            }
+        ])
+        if (existingArtist.length > 0) {
+            return res.status(200).json({ isExist: true });
+        } else {
+            return res.status(200).json({ isExist: false });
+        }
+    } catch (err) {
+        res.status(500).json({errors: [
+            {message: err.message }]});
+    }
+}
+
 module.exports = {
     createArtist, updateArtist, 
     deleteArtistById, searchArtists, 
     getArtistById, getTopArtists, 
-    getArtistsByType, getArtistOverview
+    getArtistsByType, getArtistOverview,
+    checkArtistExists
 }
