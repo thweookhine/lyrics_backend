@@ -425,7 +425,7 @@ const searchLyrics = async (req,res) => {
       
   // Build sort object
   let sortOptions = {};
-  sortOptions = await generateSortOption(req.user);
+  sortOptions = await generateSortOption();
 
   const {keyword} = req.query
 
@@ -443,8 +443,10 @@ const searchLyrics = async (req,res) => {
 
     let lyricsList = []
 
-    const currentUser = await User.findById(req.user.id);
-    if(currentUser && (currentUser.role == 'premium-user' || currentUser.role == 'admin') ) {
+    let currentUser;
+    if(req.user) {
+      currentUser = await User.findById(req.user.id);
+      if(currentUser && (currentUser.role == 'premium-user' || currentUser.role == 'admin') ) {
       for(let lyricsData of lyrics) {
         // lyricsData = lyricsData.toObject();
         let collection = await Collection.find({
@@ -459,22 +461,23 @@ const searchLyrics = async (req,res) => {
 
         lyricsList.push(lyricsData)
       }
-    } else if (currentUser && currentUser.role == 'free-user') {
-      for(let lyricsData of lyrics) {
-        let collection = await Collection.find({
-          lyricsId: lyricsData._id,
-          userId: req.user.id,
-          group: "Default"
-        })
+      } else if (currentUser && currentUser.role == 'free-user') {
+        for(let lyricsData of lyrics) {
+          let collection = await Collection.find({
+            lyricsId: lyricsData._id,
+            userId: req.user.id,
+            group: "Default"
+          })
 
-        if(collection.length > 0) {
-          lyricsData.isFavourite = true
-        } else {
-          lyricsData.isFavourite = false
+          if(collection.length > 0) {
+            lyricsData.isFavourite = true
+          } else {
+            lyricsData.isFavourite = false
+          }
+
+          lyricsList.push(lyricsData)
         }
-
-        lyricsList.push(lyricsData)
-      }
+      } 
     } else {
       lyricsList = lyrics.map(lyricsData => (
         {
@@ -895,37 +898,12 @@ const getLyricsCountByArtist = async (req, res) => {
   }
 }
 
-const generateSortOption = async (reqUser) => {
+const generateSortOption = async () => {
 
   let sortOptions = {
-    createdAt: -1 
-  };
-  if(!reqUser) {
-    sortOptions = {
-      tier: -1,
+      tier: 1,
       createdAt: -1 
-    };;
-
-    return sortOptions;
-  }
-
-  const user = await User.findById(reqUser.id).select('role');
-
-  if(!user) {
-    return sortOptions;
-  }
-
-  if(user.role === "premium-user" || user.role === "admin") {
-    sortOptions = {
-      tier: 1,    
-      createdAt: -1
-    }
-  } else if(user.role === "free-user") {
-      sortOptions = {
-        tier: -1,    
-        createdAt: -1
-      }
-  }
+    };
 
   return sortOptions;
 }
