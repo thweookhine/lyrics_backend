@@ -1,14 +1,9 @@
-const { cloudinary } = require("../config/cloudinaryStorage");
 const Lyrics = require("../models/Lyrics");
 const Artist = require("../models/Artist");
 const Collection = require('../models/Collection');
 const { default: mongoose } = require("mongoose");
 const User = require("../models/User");
-const { getCurrentUser } = require("./userController");
-
-function getPublicIdFromUrl(url) {
-  return url.split('/').slice(-2).join('/').split('.')[0]; // Adjust if needed
-}
+const imagekit = require("../config/imageKit");
 
 const searchQuery = async (basicFilter = {}, keyword, sortOptions, skip, limit) => {
   const pipeLine = [
@@ -147,11 +142,9 @@ const searchQueryForAdmin = async (query, keyword, type) => {
 
 const createLyrics = async (req,res) => {
 
-  let cloudinaryResult = null;
-  let cloudinaryPublicId = null;
-
+  let imageId = null;
   try{
-    const {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto, genre, youTubeLink, tier} = req.body;
+    const {title, singers, featureArtists, writers, majorKey, albumName, genre, youTubeLink, tier} = req.body;
 
     // Collect all unique artist IDs
     let allArtists = [
@@ -171,27 +164,25 @@ const createLyrics = async (req,res) => {
       }
     }
 
-    // Upload photo to Cloudinary
+    let imageKitUrl = null;
+    // Upload photo to Image Server
     if (req.file) {
-      cloudinaryResult = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'lyrics' },
-          (error, result) => {
-            if (error) reject(error);
-            resolve(result);
-          }
-        );
-        
-        uploadStream.end(req.file.buffer);
+
+      const uploaded = await imagekit.upload({
+        file: req.file.buffer,
+        fileName: req.file.originalname,
+        folder: process.env.IMAGE_FOLDER_NAME
       });
 
-      // Store the public_id from Cloudinary to delete the image if needed
-      cloudinaryPublicId = cloudinaryResult.public_id;
-  }
+      // Store the imageID from Image Kit to delete the image if needed
+      imageId = uploaded.fileId;
+      imageKitUrl = uploaded.url;
+    }
 
     const newLyric = new Lyrics({
       title, singers, featureArtists, writers, majorKey, albumName, genre,
-      lyricsPhoto: cloudinaryResult ? cloudinaryResult.secure_url : null,
+      lyricsPhoto: imageKitUrl,
+      imageId: imageId,
       youTubeLink, tier
     });
 
@@ -199,10 +190,9 @@ const createLyrics = async (req,res) => {
     res.status(200).json({lyric: newLyric})
 
   } catch (err) {
-    // If any error occurs during the process, delete the image from Cloudinary
-    if (cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(cloudinaryPublicId)
-        .catch(deleteError => console.error('Failed to delete image from Cloudinary:', deleteError));
+    // If any error occurs during the process, delete the image from ImageKit
+    if (imageId) {
+      await imagekit.deleteFile(imageId)
     }
     return res.status(500).json({errors: [
       {message: err.msg}]})
@@ -211,8 +201,8 @@ const createLyrics = async (req,res) => {
 
 const updateLyricsById = async (req,res) => {
 
-  let cloudinaryResult = null;
-  let cloudinaryPublicId = null;
+  let imageUrl = null;
+  let imageId = null;
   let lyricsPhoto = null;
 
   try {
@@ -253,25 +243,20 @@ const updateLyricsById = async (req,res) => {
       return res.status(400).json({ errors: [{ message: "Lyrics has been disabled!" }] });
     }
 
-    // Upload photo to Cloudinary
+    // Upload photo to Image Server
     if (req.file) {
-      cloudinaryResult = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'lyrics' },
-          (error, result) => {
-            if (error) reject(error);
-            resolve(result);
-          }
-        );
-        
-        uploadStream.end(req.file.buffer);
+      const uploaded = await imagekit.upload({
+        file: req.file.buffer,
+        fileName: req.file.originalname,
+        folder: process.env.IMAGE_FOLDER_NAME
       });
 
-      // Store the public_id from Cloudinary to delete the image if needed
-      cloudinaryPublicId = cloudinaryResult.public_id;
-      lyricsPhoto = cloudinaryResult ? cloudinaryResult.secure_url : null
+      // Store the imageID from Image Kit to delete the image if needed
+      imageId = uploaded.fileId;
+      lyricsPhoto = uploaded.url;
     } else {
       lyricsPhoto = existingLyrics.lyricsPhoto
+      imageId = existingLyrics.imageId;
     }
 
     if(!featureArtists) {
@@ -283,7 +268,9 @@ const updateLyricsById = async (req,res) => {
     }
 
     const updatedLyrics = await Lyrics.findByIdAndUpdate(id, 
-      {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto: lyricsPhoto, genre, youTubeLink, tier},
+      {title, singers, featureArtists, writers, majorKey, albumName, lyricsPhoto: lyricsPhoto,
+         imageId: imageId,
+         genre, youTubeLink, tier},
       {new: true}
     )
 
@@ -291,21 +278,20 @@ const updateLyricsById = async (req,res) => {
       throw new Error({message: "Fail to update Lyrics"});
     }
 
-    const existingPublicID = getPublicIdFromUrl(existingLyrics.lyricsPhoto)
-    await cloudinary.uploader.destroy(existingPublicID);
+    if(existingLyrics.imageId) {
+      await imagekit.deleteFile(existingLyrics.imageId)
+    }
 
     return res.status(200).json({lyrics: updatedLyrics})
   } catch(err) {
-    // If any error occurs during the process, delete the image from Cloudinary
-    if (cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(cloudinaryPublicId)
-        .catch(deleteError => console.error('Failed to delete image from Cloudinary:', deleteError));
+    // If any error occurs during the process, delete the image from ImageKit
+    if (imageId) {
+      await imagekit.deleteFile(imageId);
     }
     return res.status(500).json({errors: [
       {message: err.msg}]})
   }
 }
-
 
 const changeEnableFlag = async (req, res) => {
   const id = req.params.id;
@@ -347,12 +333,12 @@ const deleteLyrics = async (req,res) => {
     }
 
     await Collection.deleteMany({ lyricsId: lyrics.id }, {session});
-    // Get public ID from lyricsPhoto of Lyrics
-    const publicID = getPublicIdFromUrl(lyrics.lyricsPhoto);
 
     await Lyrics.findByIdAndDelete(lyrics.id, {session})
 
-    await cloudinary.uploader.destroy(publicID);
+    if(lyrics.imageId) {
+      await imagekit.deleteFile(lyrics.imageId);
+    }
 
     // Commit transaction
     await session.commitTransaction();

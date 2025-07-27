@@ -53,6 +53,9 @@ const LyricsSchema = new mongoose.Schema({
         enum: tierList,
         default: 0,
     },
+    imageId: {
+        type: String
+    }
 }, {timestamps: true});
 
 const Lyrics = mongoose.model('Lyrics', LyricsSchema);

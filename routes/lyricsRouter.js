@@ -2,7 +2,7 @@ const express = require('express');
 const { validateLyrics, validateUpdateLyrics } = require('../middleware/lyricsValidation');
 const { authenticateUser, optionalAuthMiddleware } = require('../middleware/authenticateUser');
 const checkRole = require('../middleware/checkRole');
-const { createLyrics, updateLyricsById, getLyricsId, addViewCount, getAllLyrics, deleteLyrics, searchLyrics, getLyricsOverview, getTopLyrics, getLyricsCountByArtist, getLyricsByArtist, disableLyrics, getDisableLyrics, getEnableLyrics, searchLyricsByAdmin, getLyricsByArtistByAdmin, enableLyrics, changeEnableFlag, checkLyricsExist } = require('../controllers/lyricsController');
+const { createLyrics, updateLyricsById, getLyricsId, getAllLyrics, deleteLyrics, searchLyrics, getLyricsOverview, getTopLyrics, getLyricsCountByArtist, getLyricsByArtist, disableLyrics, getDisableLyrics, getEnableLyrics, searchLyricsByAdmin, getLyricsByArtistByAdmin, enableLyrics, changeEnableFlag, checkLyricsExist } = require('../controllers/lyricsController');
 const { upload } = require('../config/upload');
 const lyricsRouter = express.Router();
 
