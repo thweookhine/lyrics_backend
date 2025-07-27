@@ -656,13 +656,9 @@ const getLyricsByArtist = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page -1) * limit;
-    const sortBy = req.query.sortBy || 'title';
-    // ascending order
-    const sortingOrder = req.query.sortingOrder === 'desc' ? -1 : 1
-        
-    // Build sort object
-    const sortOptions = {};
-    sortOptions[sortBy] = sortingOrder;
+    // Sort options
+    const sortOptions = await generateSortOption();
+
     let query = {
       $and: [
         {isEnable: true},
