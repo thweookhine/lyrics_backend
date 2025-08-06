@@ -884,6 +884,7 @@ const generateSortOption = async () => {
 
   let sortOptions = {
       tier: 1,
+      title: 1,
       createdAt: -1 
     };
 
