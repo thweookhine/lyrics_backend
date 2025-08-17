@@ -65,4 +65,6 @@ const validateForgotPw = [
     }
 ]
 
-module.exports = { validateUserRegister, validateUserUpdate, validateUserLogin, validateChangeUserRole, validateForgotPw };
+module.exports = { validateUserRegister, validateUserUpdate, 
+    validateUserLogin, validateChangeUserRole, 
+    validateForgotPw };

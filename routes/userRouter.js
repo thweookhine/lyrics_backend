@@ -22,5 +22,4 @@ userRouter.put('/:id', validateUserUpdate, authenticateUser, updateUser);
 userRouter.post('/changeUserRole', validateChangeUserRole, authenticateUser, checkRole(['admin']), changeUserRole);
 userRouter.get('/getUserOverview', authenticateUser, checkRole(['admin']), getUserOverview);
 userRouter.get('/getCurrentUser', optionalAuthMiddleware, getCurrentUser);
-
 module.exports = userRouter

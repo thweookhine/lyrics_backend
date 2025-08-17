@@ -9,6 +9,7 @@ const session = require('express-session');
 const lyricsRouter = require('./routes/lyricsRouter');
 const artistRouter = require('./routes/artistRouter');
 const collectionRouter = require('./routes/collectionRouter');
+const { paymentReqRouter } = require('./routes/paymentReqRouter');
 
 require("dotenv").config()
 const app = express();
@@ -30,6 +31,7 @@ app.use('/auth', googleAuthRouter)
 app.use('/api/lyrics', lyricsRouter)
 app.use('/api/artists', artistRouter)
 app.use('/api/collections', collectionRouter)
+app.use('/api/paymentRequests', paymentReqRouter);
 
 // Run server
 const PORT = process.env.PORT || 3000;
