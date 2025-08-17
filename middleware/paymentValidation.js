@@ -1,10 +1,12 @@
 const { body, param, validationResult } = require("express-validator");
+const { paymentTypes } = require("../utils/Constants");
 
 const validatePaymentRequest = [
   body('durationInMonths')
     .notEmpty().withMessage('durationInMonths must be entered')
     .isInt({ min: 1 }).withMessage('durationInMonths must be at least 1 month')
     .toInt(),
+  body('paymentType').isIn(paymentTypes).withMessage("Payment Type must be valid type!"),
   body('paymentImage')
     .custom((value, { req }) => {
         if (req.file) {

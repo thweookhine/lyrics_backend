@@ -13,6 +13,10 @@ const keyList = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"
 
 const tierList = [0,1,2]
 
+const paymentTypes = ['KPay', 'AYAPay', 'WaveMoney']
+
 const PREMIUM_DURATION_DEFAULT = 3; 
 
-module.exports = {genreList, keyList, tierList, PREMIUM_DURATION_DEFAULT}
+module.exports = {genreList, keyList, 
+    tierList, PREMIUM_DURATION_DEFAULT,
+    paymentTypes}

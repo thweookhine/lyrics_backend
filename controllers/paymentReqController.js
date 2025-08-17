@@ -8,7 +8,7 @@ const createPaymentRequest = async (req, res) => {
 
   try {
 
-    const { durationInMonths } = req.body;
+    const { durationInMonths, paymentType } = req.body;
     const userId = req.user.id;
 
     if (req.file) {
@@ -26,7 +26,8 @@ const createPaymentRequest = async (req, res) => {
       userId,
       durationInMonths,
       paymentImage: imageKitUrl,
-      imageId: imageId
+      imageId: imageId,
+      paymentType
     })
 
     await paymentRequest.save();

@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+const { paymentTypes } = require("../utils/Constants");
 
 const PaymentRequestSchema = new mongoose.Schema({
     userId: {
@@ -21,6 +22,11 @@ const PaymentRequestSchema = new mongoose.Schema({
     imageId: {
         type: String,
         required: true, 
+    },
+    paymentType: {
+        type: String,
+        enum: paymentTypes,
+        required: true
     }
   }, {
     timestamps: true
