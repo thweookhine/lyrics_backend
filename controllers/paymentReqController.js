@@ -48,4 +48,23 @@ const createPaymentRequest = async (req, res) => {
   }
 }
 
-module.exports = { createPaymentRequest }
+const getAllPaymentRequests = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  const paymentRequests = await PaymentRequest.find()
+                  .collation({ locale: 'en', strength: 1 })       
+                  .skip(skip).limit(limit);
+  const totalCount = await PaymentRequest.countDocuments();
+
+  return res.status(200).json({
+      paymentRequests,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalCount
+  })
+
+}
+
+module.exports = { createPaymentRequest, getAllPaymentRequests }
