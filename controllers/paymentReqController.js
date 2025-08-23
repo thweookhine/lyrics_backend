@@ -54,6 +54,7 @@ const getAllPaymentRequests = async (req, res) => {
   const skip = (page - 1) * limit;
 
   const paymentRequests = await PaymentRequest.find()
+                   .sort({ requestedAt: 1 })
                   .collation({ locale: 'en', strength: 1 })       
                   .skip(skip).limit(limit);
   const totalCount = await PaymentRequest.countDocuments();

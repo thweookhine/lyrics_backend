@@ -11,10 +11,6 @@ const PaymentRequestSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    requestedAt: {
-        type: Date,
-        default: Date.now
-    },
     paymentImage: {
         type: String,
         required: true
@@ -29,7 +25,10 @@ const PaymentRequestSchema = new mongoose.Schema({
         required: true
     }
   }, {
-    timestamps: true
+    timestamps: {
+        createdAt: "requestedAt",
+        updatedAt: "updatedAt"
+    }
 });
 
 const PaymentRequest = mongoose.model('PaymentRequest', PaymentRequestSchema);
