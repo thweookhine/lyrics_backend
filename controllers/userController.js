@@ -417,18 +417,6 @@ const changeUserRole = async (req,res) => {
             user.premiumStartDate = startDate;
             user.premiumEndDate = endDate;
 
-            // Start Transaction
-
-            // Get latest PaymentRequest by userId
-
-            // Write Payment Request Data to Google Sheet
-
-            // Delete photo from imageKit.
-
-            // Deletee from Database
-            
-            // End Transaction
-
         } else if (userRole == 'free-user') {
             user.premiumStartDate = null;
             user.premiumEndDate = null;

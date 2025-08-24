@@ -1,5 +1,8 @@
+const { google } = require("googleapis");
 const imagekit = require("../config/imageKit");
 const PaymentRequest = require("../models/PaymentRequest");
+const User = require("../models/User");
+const { default: mongoose } = require("mongoose");
 
 const createPaymentRequest = async (req, res) => {
 
@@ -10,6 +13,15 @@ const createPaymentRequest = async (req, res) => {
 
     const { durationInMonths, paymentType, phone } = req.body;
     const userId = req.user.id;
+
+    const paymentData = await PaymentRequest.find({
+      userId
+    })
+
+    if(paymentData.length > 0) {
+      return res.status(400).json({errors: [
+        {message: "You have already requested payment!"}]})
+    }
 
     if (req.file) {
       const uploaded = await imagekit.upload({
@@ -68,4 +80,130 @@ const getAllPaymentRequests = async (req, res) => {
   })
 }
 
-module.exports = { createPaymentRequest, getAllPaymentRequests }
+const approvePayment = async (req, res) => {
+  
+  const {paymentId, durationInMonths} = req.body;
+
+  let session = null;
+  try {
+    // Get latest PaymentRequest by userId
+    const paymentData = await PaymentRequest.findById(paymentId);
+
+    if (!paymentData) {
+      return res.status(400).json({errors: [
+        {message: "Payment Not Found"}]})
+    }
+
+    await writeToSheet(paymentData);
+
+    //Start Transaction
+    session = await mongoose.startSession();
+    session.startTransaction();
+
+    // TODO calculate premium start date and end date
+    const user = await User.findByIdAndUpdate(paymentData.userId, {
+      role: 'premium-user'
+    }, session)
+
+    // Delete from Database and Update User
+    await PaymentRequest.findByIdAndDelete(paymentData._id, session);
+
+    // Delete photo from imageKit.
+    if(paymentData.imageId) {
+      await imagekit.deleteFile(paymentData.imageId);
+    }
+    
+    // End Transaction
+    // Commit transaction
+    await session.commitTransaction();
+
+    return res.status(200).json({message: "Approved Successfully!"})
+  }catch (err) {
+    // Rollback transaction
+    if(session != null) {
+      await session.abortTransaction();
+    }
+    return res.status(500).json({errors: [
+      {message: err.message}]}) 
+  } finally {
+    if(session != null) {
+       session.endSession();
+    }
+  }
+  
+
+}
+
+const writeToSheet = async (paymentData) => {
+
+  // const values = 
+  const sheetId = process.env.SHEET_ID;
+  const sheetName = process.env.SHEET_NAME;
+
+    // Google Sheets authentication
+  const auth = new google.auth.GoogleAuth({
+    keyFile: process.env.CREDENTIALS_PATH,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  // Get current sheet info
+  const sheetInfo = await sheets.spreadsheets.get({ spreadsheetId: sheetId });
+  let sheetExists = sheetInfo.data.sheets.some(s => s.properties.title === sheetName);
+
+  // Create sheet if it does not exist
+  if (!sheetExists) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: sheetId,
+      requestBody: {
+        requests: [
+          {
+            addSheet: { properties: { title: sheetName } }
+          }
+        ]
+      }
+    });
+    console.log(`Sheet "${sheetName}" created`);
+  }
+
+  // Check if sheet has data
+  const sheetData = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: `${sheetName}!A1:Z1`
+  });
+
+  // Prepare column headers dynamically from MongoDB schema
+  const columns = Object.keys(PaymentRequest.schema.paths).filter(col => col !== '__v' && col !== 'paymentImage' && col !== 'imageId');
+
+  if (!sheetData.data.values) {
+    
+    // Add headers if no data
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: sheetId,
+      range: `${sheetName}!A1`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [columns],
+      },
+    });
+    console.log('Headers added to sheet');
+  }
+
+  // Wrap single record in an array
+  const values = [columns.map(col => paymentData[col])];
+
+  // Write Payment Request Data to Google Sheet
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range: `${sheetName}!A2`,
+    valueInputOption: 'RAW',
+    insertDataOption: 'INSERT_ROWS',
+    requestBody: { values }
+  });
+
+  console.log('Data written to Google Sheet successfully!');
+
+}
+module.exports = { createPaymentRequest, getAllPaymentRequests, approvePayment}
