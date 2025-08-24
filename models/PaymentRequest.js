@@ -23,6 +23,10 @@ const PaymentRequestSchema = new mongoose.Schema({
         type: String,
         enum: paymentTypes,
         required: true
+    },
+    phone: {
+        type: String,
+        required: true
     }
   }, {
     timestamps: {

@@ -7,6 +7,7 @@ const validatePaymentRequest = [
     .isInt({ min: 1 }).withMessage('durationInMonths must be at least 1 month')
     .toInt(),
   body('paymentType').isIn(paymentTypes).withMessage("Payment Type must be valid type! "+ "Only "+ paymentTypes.toString() + " are accepted"),
+  body('phone').notEmpty().withMessage('Phone must be entered'),
   body('paymentImage')
     .custom((value, { req }) => {
         if (req.file) {

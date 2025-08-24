@@ -8,7 +8,7 @@ const createPaymentRequest = async (req, res) => {
 
   try {
 
-    const { durationInMonths, paymentType } = req.body;
+    const { durationInMonths, paymentType, phone } = req.body;
     const userId = req.user.id;
 
     if (req.file) {
@@ -27,7 +27,8 @@ const createPaymentRequest = async (req, res) => {
       durationInMonths,
       paymentImage: imageKitUrl,
       imageId: imageId,
-      paymentType
+      paymentType,
+      phone
     })
 
     await paymentRequest.save();
@@ -65,7 +66,6 @@ const getAllPaymentRequests = async (req, res) => {
       currentPage: page,
       totalCount
   })
-
 }
 
 module.exports = { createPaymentRequest, getAllPaymentRequests }
