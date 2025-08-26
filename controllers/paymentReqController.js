@@ -101,9 +101,35 @@ const approvePayment = async (req, res) => {
     session.startTransaction();
 
     // TODO calculate premium start date and end date
-    const user = await User.findByIdAndUpdate(paymentData.userId, {
-      role: 'premium-user'
-    }, session)
+
+    const user = await User.findById(paymentData.userId)
+
+    let premiumStartDate;
+    let premiumEndDate;
+    let currentDate = new Date();
+
+    if(!user.premiumEndDate) {
+      premiumStartDate = new Date();
+      premiumEndDate = new Date(premiumStartDate);
+      premiumEndDate.setMonth(premiumEndDate.getMonth() + parseInt(durationInMonths))
+
+      user.premiumStartDate = premiumStartDate;
+      user.premiumEndDate = premiumEndDate;
+    } else if(user.premiumEndDate && user.premiumEndDate > currentDate) {
+      premiumEndDate = new Date();
+      premiumEndDate.setMonth(user.premiumEndDate.getMonth() + parseInt(durationInMonths))
+      user.premiumEndDate = premiumEndDate;
+    } else if(user.premiumEndDate < currentDate) {
+      premiumStartDate = new Date();
+      premiumEndDate = new Date();
+      premiumEndDate.setMonth(premiumStartDate.getMonth() + parseInt(durationInMonths))
+
+      user.premiumStartDate = premiumStartDate;
+      user.premiumEndDate = premiumEndDate
+    }
+
+    user.role = 'premium-user'
+    await user.save(session);
 
     // Delete from Database and Update User
     await PaymentRequest.findByIdAndDelete(paymentData._id, session);
