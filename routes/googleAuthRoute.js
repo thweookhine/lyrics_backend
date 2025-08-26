@@ -21,7 +21,7 @@ googleAuthRouter.get(
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: '1d' }
+      { expiresIn: '30d' }
     );
 
     const userPayload = {
