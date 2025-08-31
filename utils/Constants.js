@@ -17,6 +17,8 @@ const paymentTypes = ['KPay', 'AYAPay', 'WaveMoney']
 
 const PREMIUM_DURATION_DEFAULT = 3; 
 
+const PREMIUM_DURATION_0 = 0;
+
 module.exports = {genreList, keyList, 
     tierList, PREMIUM_DURATION_DEFAULT,
-    paymentTypes}
+    paymentTypes, PREMIUM_DURATION_0}

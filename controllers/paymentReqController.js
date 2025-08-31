@@ -3,6 +3,7 @@ const imagekit = require("../config/imageKit");
 const PaymentRequest = require("../models/PaymentRequest");
 const User = require("../models/User");
 const { default: mongoose } = require("mongoose");
+const { PREMIUM_DURATION_0 } = require("../utils/Constants");
 
 const createPaymentRequest = async (req, res) => {
 
@@ -82,7 +83,8 @@ const getAllPaymentRequests = async (req, res) => {
 
 const approvePayment = async (req, res) => {
   
-  const {paymentId, durationInMonths} = req.body;
+  const {durationInMonths} = req.body;
+  const {paymentId} = req.params;
 
   let session = null;
   try {
@@ -94,13 +96,11 @@ const approvePayment = async (req, res) => {
         {message: "Payment Not Found"}]})
     }
 
-    await writeToSheet(paymentData);
+    await writeToSheet(process.env.REQ_SHEET_NAME, paymentData, durationInMonths);
 
     //Start Transaction
     session = await mongoose.startSession();
     session.startTransaction();
-
-    // TODO calculate premium start date and end date
 
     const user = await User.findById(paymentData.userId)
 
@@ -116,8 +116,9 @@ const approvePayment = async (req, res) => {
       user.premiumStartDate = premiumStartDate;
       user.premiumEndDate = premiumEndDate;
     } else if(user.premiumEndDate && user.premiumEndDate > currentDate) {
-      premiumEndDate = new Date();
-      premiumEndDate.setMonth(user.premiumEndDate.getMonth() + parseInt(durationInMonths))
+      premiumStartDate = user.premiumStartDate;
+      premiumEndDate = user.premiumEndDate;
+      premiumEndDate.setMonth(premiumEndDate.getMonth() + parseInt(durationInMonths))
       user.premiumEndDate = premiumEndDate;
     } else if(user.premiumEndDate < currentDate) {
       premiumStartDate = new Date();
@@ -129,10 +130,19 @@ const approvePayment = async (req, res) => {
     }
 
     user.role = 'premium-user'
-    await user.save(session);
+
+    await User.updateOne(
+      { _id: user._id },             
+      { $set: { 
+        role: "premium-user",
+        premiumStartDate,
+        premiumEndDate
+       } }, 
+      { session }                  
+    );
 
     // Delete from Database and Update User
-    await PaymentRequest.findByIdAndDelete(paymentData._id, session);
+    await PaymentRequest.findByIdAndDelete(paymentData._id, {session});
 
     // Delete photo from imageKit.
     if(paymentData.imageId) {
@@ -156,15 +166,45 @@ const approvePayment = async (req, res) => {
        session.endSession();
     }
   }
-  
+}
+
+const rejectPayment = async (req, res) => {
+
+  const {paymentId} = req.params;
+
+  let session = null;
+  try {
+    // Get latest PaymentRequest by userId
+    const paymentData = await PaymentRequest.findById(paymentId);
+
+    if (!paymentData) {
+      return res.status(400).json({errors: [
+        {message: "Payment Not Found"}]})
+    }
+
+    await writeToSheet(process.env.REJECT_SHEET_NAME, paymentData, PREMIUM_DURATION_0);
+
+    // Delete from Database and Update User
+    await PaymentRequest.findByIdAndDelete(paymentData._id);
+
+    // Delete photo from imageKit.
+    if(paymentData.imageId) {
+      await imagekit.deleteFile(paymentData.imageId);
+    }
+
+    return res.status(200).json({message: "Rejected Successfully!"})
+  }catch (err) {
+    
+    return res.status(500).json({errors: [
+      {message: err.message}]}) 
+  }
 
 }
 
-const writeToSheet = async (paymentData) => {
+const writeToSheet = async (sheetName, paymentData, durationInMonths) => {
 
   // const values = 
   const sheetId = process.env.SHEET_ID;
-  const sheetName = process.env.SHEET_NAME;
 
     // Google Sheets authentication
   const auth = new google.auth.GoogleAuth({
@@ -203,6 +243,7 @@ const writeToSheet = async (paymentData) => {
   // Prepare column headers dynamically from MongoDB schema
   const columns = Object.keys(PaymentRequest.schema.paths).filter(col => col !== '__v' && col !== 'paymentImage' && col !== 'imageId');
 
+  columns.push("DurationSetByAdmin")
   if (!sheetData.data.values) {
     
     // Add headers if no data
@@ -218,7 +259,9 @@ const writeToSheet = async (paymentData) => {
   }
 
   // Wrap single record in an array
-  const values = [columns.map(col => paymentData[col])];
+  let row = columns.map(col => paymentData[col]);
+  row.push(durationInMonths)
+  const values = [row];
 
   // Write Payment Request Data to Google Sheet
   await sheets.spreadsheets.values.append({
@@ -229,7 +272,9 @@ const writeToSheet = async (paymentData) => {
     requestBody: { values }
   });
 
-  console.log('Data written to Google Sheet successfully!');
+  console.info('Data written to Google Sheet successfully!');
 
 }
-module.exports = { createPaymentRequest, getAllPaymentRequests, approvePayment}
+module.exports = { createPaymentRequest, getAllPaymentRequests,
+  approvePayment, rejectPayment
+}
