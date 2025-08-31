@@ -289,6 +289,7 @@ const checkPaymentExists = async (req, res) => {
   if(paymentData.length > 0) {
     return res.status(200).json({
       isExist: true,
+      payment: paymentData[0],
       message: "Payment exists!"
     })
   } 
