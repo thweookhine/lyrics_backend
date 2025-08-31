@@ -5,6 +5,82 @@ const User = require("../models/User");
 const { default: mongoose } = require("mongoose");
 const { PREMIUM_DURATION_0 } = require("../utils/Constants");
 
+
+const writeToSheet = async (sheetName, paymentData, durationInMonths) => {
+
+  // const values = 
+  const sheetId = process.env.SHEET_ID;
+
+    // Google Sheets authentication
+  const auth = new google.auth.GoogleAuth({
+    keyFile: process.env.CREDENTIALS_PATH,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  // Get current sheet info
+  const sheetInfo = await sheets.spreadsheets.get({ spreadsheetId: sheetId });
+  let sheetExists = sheetInfo.data.sheets.some(s => s.properties.title === sheetName);
+
+  // Create sheet if it does not exist
+  if (!sheetExists) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: sheetId,
+      requestBody: {
+        requests: [
+          {
+            addSheet: { properties: { title: sheetName } }
+          }
+        ]
+      }
+    });
+    console.log(`Sheet "${sheetName}" created`);
+  }
+
+  // Check if sheet has data
+  const sheetData = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: `${sheetName}!A1:Z1`
+  });
+
+  // Prepare column headers dynamically from MongoDB schema
+  const columns = Object.keys(PaymentRequest.schema.paths).filter(col => col !== '__v' && col !== 'paymentImage' && col !== 'imageId');
+
+  columns.push("DurationSetByAdmin")
+  if (!sheetData.data.values) {
+    
+    // Add headers if no data
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: sheetId,
+      range: `${sheetName}!A1`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [columns],
+      },
+    });
+    console.log('Headers added to sheet');
+  }
+
+  // Wrap single record in an array
+  let row = columns.map(col => paymentData[col]);
+  row.push(durationInMonths)
+  const values = [row];
+
+  // Write Payment Request Data to Google Sheet
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range: `${sheetName}!A2`,
+    valueInputOption: 'RAW',
+    insertDataOption: 'INSERT_ROWS',
+    requestBody: { values }
+  });
+
+  console.info('Data written to Google Sheet successfully!');
+
+}
+
 const createPaymentRequest = async (req, res) => {
 
     let imageKitUrl = null;
@@ -198,83 +274,38 @@ const rejectPayment = async (req, res) => {
     return res.status(500).json({errors: [
       {message: err.message}]}) 
   }
-
 }
 
-const writeToSheet = async (sheetName, paymentData, durationInMonths) => {
+const checkPaymentExists = async (req, res) => {
 
-  // const values = 
-  const sheetId = process.env.SHEET_ID;
+  const userId = req.user.id;
+  try {
+    const paymentData = await PaymentRequest.find({
+    userId
+  })
 
-    // Google Sheets authentication
-  const auth = new google.auth.GoogleAuth({
-    keyFile: process.env.CREDENTIALS_PATH,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+  let isExist;
 
+  if(paymentData.length > 0) {
+    return res.status(200).json({
+      isExist: true,
+      message: "Payment exists!"
+    })
+  } 
 
-  const sheets = google.sheets({ version: 'v4', auth });
-
-  // Get current sheet info
-  const sheetInfo = await sheets.spreadsheets.get({ spreadsheetId: sheetId });
-  let sheetExists = sheetInfo.data.sheets.some(s => s.properties.title === sheetName);
-
-  // Create sheet if it does not exist
-  if (!sheetExists) {
-    await sheets.spreadsheets.batchUpdate({
-      spreadsheetId: sheetId,
-      requestBody: {
-        requests: [
-          {
-            addSheet: { properties: { title: sheetName } }
-          }
-        ]
-      }
-    });
-    console.log(`Sheet "${sheetName}" created`);
-  }
-
-  // Check if sheet has data
-  const sheetData = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: `${sheetName}!A1:Z1`
-  });
-
-  // Prepare column headers dynamically from MongoDB schema
-  const columns = Object.keys(PaymentRequest.schema.paths).filter(col => col !== '__v' && col !== 'paymentImage' && col !== 'imageId');
-
-  columns.push("DurationSetByAdmin")
-  if (!sheetData.data.values) {
+  return res.status(200).json({
+    isExist: false,
+    message: "Payment doesn't exist"
+  })  
+  }catch (err) {
     
-    // Add headers if no data
-    await sheets.spreadsheets.values.update({
-      spreadsheetId: sheetId,
-      range: `${sheetName}!A1`,
-      valueInputOption: 'RAW',
-      requestBody: {
-        values: [columns],
-      },
-    });
-    console.log('Headers added to sheet');
+    return res.status(500).json({errors: [
+      {message: err.message}]}) 
   }
-
-  // Wrap single record in an array
-  let row = columns.map(col => paymentData[col]);
-  row.push(durationInMonths)
-  const values = [row];
-
-  // Write Payment Request Data to Google Sheet
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: sheetId,
-    range: `${sheetName}!A2`,
-    valueInputOption: 'RAW',
-    insertDataOption: 'INSERT_ROWS',
-    requestBody: { values }
-  });
-
-  console.info('Data written to Google Sheet successfully!');
-
 }
-module.exports = { createPaymentRequest, getAllPaymentRequests,
-  approvePayment, rejectPayment
+
+module.exports = { 
+  createPaymentRequest, getAllPaymentRequests,
+  approvePayment, rejectPayment,
+  checkPaymentExists
 }
