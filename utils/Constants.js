@@ -19,6 +19,14 @@ const PREMIUM_DURATION_DEFAULT = 3;
 
 const PREMIUM_DURATION_0 = 0;
 
+const APPROVE_SHEET_NAME = 'Approved'
+const REJECT_SHEET_NAME = 'Rejected'
+
+const ADMIN_ROLE = 'admin'
+
 module.exports = {genreList, keyList, 
     tierList, PREMIUM_DURATION_DEFAULT,
-    paymentTypes, PREMIUM_DURATION_0}
+    paymentTypes, PREMIUM_DURATION_0,
+    APPROVE_SHEET_NAME, REJECT_SHEET_NAME,
+    ADMIN_ROLE
+}

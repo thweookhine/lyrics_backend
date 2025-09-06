@@ -3,8 +3,34 @@ const imagekit = require("../config/imageKit");
 const PaymentRequest = require("../models/PaymentRequest");
 const User = require("../models/User");
 const { default: mongoose } = require("mongoose");
-const { PREMIUM_DURATION_0 } = require("../utils/Constants");
+const { PREMIUM_DURATION_0, REQ_SHEET_NAME, REJECT_SHEET_NAME, APPROVE_SHEET_NAME } = require("../utils/Constants");
 
+const getGoogleSheetAuth = () => {
+  // Google Sheets authentication
+  const auth = new google.auth.GoogleAuth({
+    keyFile: process.env.CREDENTIALS_PATH,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  return auth;
+}
+
+const getRowCount = async (spreadsheetId, sheetName) => {
+  const auth = getGoogleSheetAuth();
+  const authClient = await auth.getClient()
+  const sheets = google.sheets({ version: "v4", auth: authClient });
+
+  const range = `${sheetName}!A2:A`;
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range,
+  });
+
+  const rows = response.data.values || [];
+  console.log(`Row count (excluding header): ${rows.length}`);
+  return rows.length;
+}
 
 const writeToSheet = async (sheetName, paymentData, durationInMonths) => {
 
@@ -12,10 +38,7 @@ const writeToSheet = async (sheetName, paymentData, durationInMonths) => {
   const sheetId = process.env.SHEET_ID;
 
     // Google Sheets authentication
-  const auth = new google.auth.GoogleAuth({
-    keyFile: process.env.CREDENTIALS_PATH,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+  const auth = getGoogleSheetAuth();
 
 
   const sheets = google.sheets({ version: 'v4', auth });
@@ -172,7 +195,7 @@ const approvePayment = async (req, res) => {
         {message: "Payment Not Found"}]})
     }
 
-    await writeToSheet(process.env.REQ_SHEET_NAME, paymentData, durationInMonths);
+    await writeToSheet(REQ_SHEET_NAME, paymentData, durationInMonths);
 
     //Start Transaction
     session = await mongoose.startSession();
@@ -258,7 +281,7 @@ const rejectPayment = async (req, res) => {
         {message: "Payment Not Found"}]})
     }
 
-    await writeToSheet(process.env.REJECT_SHEET_NAME, paymentData, PREMIUM_DURATION_0);
+    await writeToSheet(REJECT_SHEET_NAME, paymentData, PREMIUM_DURATION_0);
 
     // Delete from Database and Update User
     await PaymentRequest.findByIdAndDelete(paymentData._id);
@@ -305,8 +328,27 @@ const checkPaymentExists = async (req, res) => {
   }
 }
 
+const paymentOverview = async (req, res) => {
+  
+  try {
+
+    const requestCount = await PaymentRequest.countDocuments();
+    const approveCount = await getRowCount(process.env.SHEET_ID, APPROVE_SHEET_NAME);
+    const rejectCount = await  getRowCount(process.env.SHEET_ID, REJECT_SHEET_NAME);
+    const totalCount = requestCount + approveCount + rejectCount;
+    return res.status(200).json({
+      totalCount,
+      requestCount, approveCount,
+      rejectCount
+    })
+  } catch (err) {
+    return res.status(500).json({errors: [
+      {message: err.message}]}) 
+  }
+}
+
 module.exports = { 
   createPaymentRequest, getAllPaymentRequests,
   approvePayment, rejectPayment,
-  checkPaymentExists
+  checkPaymentExists, paymentOverview
 }
