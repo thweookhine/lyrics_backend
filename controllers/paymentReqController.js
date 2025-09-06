@@ -3,7 +3,7 @@ const imagekit = require("../config/imageKit");
 const PaymentRequest = require("../models/PaymentRequest");
 const User = require("../models/User");
 const { default: mongoose } = require("mongoose");
-const { PREMIUM_DURATION_0, REQ_SHEET_NAME, REJECT_SHEET_NAME, APPROVE_SHEET_NAME } = require("../utils/Constants");
+const { PREMIUM_DURATION_0, REJECT_SHEET_NAME, APPROVE_SHEET_NAME } = require("../utils/Constants");
 
 const getGoogleSheetAuth = () => {
   // Google Sheets authentication
@@ -195,7 +195,7 @@ const approvePayment = async (req, res) => {
         {message: "Payment Not Found"}]})
     }
 
-    await writeToSheet(REQ_SHEET_NAME, paymentData, durationInMonths);
+    await writeToSheet(APPROVE_SHEET_NAME, paymentData, durationInMonths);
 
     //Start Transaction
     session = await mongoose.startSession();
