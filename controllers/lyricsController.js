@@ -336,17 +336,20 @@ const deleteLyrics = async (req,res) => {
 
     await Lyrics.findByIdAndDelete(lyrics.id, {session})
 
+    // Commit transaction
+    await session.commitTransaction();
+
     if(lyrics.imageId) {
       await imagekit.deleteFile(lyrics.imageId);
     }
 
-    // Commit transaction
-    await session.commitTransaction();
-
     return res.status(200).json({message: "Lyrics deleted successfully!"})
   }catch (err) {
     // Rollback transaction
-    await session.abortTransaction();
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+    
     return res.status(500).json({errors: [
       {message: err.message}]}) 
   } finally {
