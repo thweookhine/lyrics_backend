@@ -1,8 +1,6 @@
-const { default: mongoose } = require("mongoose");
 const Artist = require("../models/Artist");
 const Lyrics = require("../models/Lyrics");
 const User = require("../models/User");
-const { normalizeEmail } = require("validator");
 
 const createArtist = async(req,res) => {
     const {name, bio, photoLink, type} = req.body;
@@ -126,11 +124,7 @@ const searchArtists = async (req, res) => {
         query.name = { $regex: keyword, $options: "i" };
     } 
 
-    // if(type) {
-    //     query.type =  { $in: [type, "both"] }
-    // }
-
-      if(type) {
+    if(type) {
         query.type =  { $in: [type] }
     }
 

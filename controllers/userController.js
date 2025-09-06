@@ -1,9 +1,8 @@
-
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const sendEmail = require('../config/sendEmail')
-const { PREMIUM_DURATION_DEFAULT } = require('../utils/Constants')
+const { PREMIUM_DURATION_DEFAULT, LOGIN_REMEMBER_DAYS_30, LOGIN_REMEMBER_DAYS_1 } = require('../utils/Constants')
 require('dotenv').config()
 
 const generateToken = (user, expiresIn) => {
@@ -169,7 +168,7 @@ const loginUser = async (req,res) => {
         const userObj = user.toObject();
         delete userObj.password
     
-        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? "30d" : "1d")})
+        return res.status(200).json({user: userObj, token: generateToken(user, rememberMe? LOGIN_REMEMBER_DAYS_30 : LOGIN_REMEMBER_DAYS_1)})
     }catch(err) {
         return res.status(500).json({errors: [
                 {message: err.message}]})

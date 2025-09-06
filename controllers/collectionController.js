@@ -1,6 +1,6 @@
-const { query } = require('express');
 const Collection = require('../models/Collection')
 const Lyrics = require('../models/Lyrics');
+const { FREE_USER_COLLECTION_LIMIT, LYRICS_PER_COLLECTION_LIMIT, COLLECTION_COUNT_LIMIT } = require('../utils/Constants');
 
 const addToCollection = async (req,res) => {
   try {
@@ -24,10 +24,10 @@ const addToCollection = async (req,res) => {
       if(user.role == 'free-user') {
         const count = await Collection.countDocuments({userId: user._id});
         // 1.1. If count is 20, send response with 400 status code
-        if(count >= 20) {
+        if(count >= FREE_USER_COLLECTION_LIMIT) {
           return res.status(400).json({errors: [
             {
-              message: 'You can add only 20 collections'
+              message: `You can add only ${FREE_USER_COLLECTION_LIMIT} collections`
             }
           ]})
         }
@@ -73,6 +73,25 @@ const addToGroup = async (req, res) => {
     if(!lyrics) {
       return res.status(400).json({errors: [
         {message: `Lyrics not found!` }]});
+    }
+
+    const countInGrp = await Collection.countDocuments({
+      userId: user._id,
+      group: group
+    })
+
+    if(countInGrp >= LYRICS_PER_COLLECTION_LIMIT) {
+      return res.status(400).json({errors: [
+        {message: `Collection Limit Reached in Group ${group}` }]});
+    }
+
+    const grpCount = await Collection.countDocuments({
+      userId: user._id
+    })
+
+    if(grpCount >= COLLECTION_COUNT_LIMIT) {
+      return res.status(400).json({errors: [
+        {message: `Group Limit Reached` }]});
     }
 
     const existing = await Collection.find({

@@ -28,7 +28,7 @@ const getRowCount = async (spreadsheetId, sheetName) => {
   });
 
   const rows = response.data.values || [];
-  console.log(`Row count (excluding header): ${rows.length}`);
+
   return rows.length;
 }
 
