@@ -3,7 +3,7 @@ const imagekit = require("../config/imageKit");
 const PaymentRequest = require("../models/PaymentRequest");
 const User = require("../models/User");
 const { default: mongoose } = require("mongoose");
-const { PREMIUM_DURATION_0, REJECT_SHEET_NAME, APPROVE_SHEET_NAME } = require("../utils/Constants");
+const { PREMIUM_DURATION_0, REJECT_SHEET_NAME, APPROVE_SHEET_NAME, USER_STATUS_PAYMENT_ACCEPTED, USER_ROLE_PREMIUM, USER_STATUS_PAYMENT_REJECTED } = require("../utils/Constants");
 
 const getGoogleSheetAuth = () => {
   // Google Sheets authentication
@@ -106,8 +106,8 @@ const writeToSheet = async (sheetName, paymentData, durationInMonths) => {
 
 const createPaymentRequest = async (req, res) => {
 
-    let imageKitUrl = null;
-    let imageId = null;
+  let imageKitUrl = null;
+  let imageId = null;
 
   try {
 
@@ -212,30 +212,23 @@ const approvePayment = async (req, res) => {
       premiumEndDate = new Date(premiumStartDate);
       premiumEndDate.setMonth(premiumEndDate.getMonth() + parseInt(durationInMonths))
 
-      user.premiumStartDate = premiumStartDate;
-      user.premiumEndDate = premiumEndDate;
     } else if(user.premiumEndDate && user.premiumEndDate > currentDate) {
       premiumStartDate = user.premiumStartDate;
       premiumEndDate = user.premiumEndDate;
       premiumEndDate.setMonth(premiumEndDate.getMonth() + parseInt(durationInMonths))
-      user.premiumEndDate = premiumEndDate;
     } else if(user.premiumEndDate < currentDate) {
       premiumStartDate = new Date();
       premiumEndDate = new Date();
       premiumEndDate.setMonth(premiumStartDate.getMonth() + parseInt(durationInMonths))
-
-      user.premiumStartDate = premiumStartDate;
-      user.premiumEndDate = premiumEndDate
     }
-
-    user.role = 'premium-user'
 
     await User.updateOne(
       { _id: user._id },             
       { $set: { 
-        role: "premium-user",
+        role: USER_ROLE_PREMIUM,
         premiumStartDate,
-        premiumEndDate
+        premiumEndDate,
+        status: USER_STATUS_PAYMENT_ACCEPTED
        } }, 
       { session }                  
     );
@@ -281,21 +274,46 @@ const rejectPayment = async (req, res) => {
         {message: "Payment Not Found"}]})
     }
 
-    await writeToSheet(REJECT_SHEET_NAME, paymentData, PREMIUM_DURATION_0);
+    //Start Transaction
+    session = await mongoose.startSession();
+    session.startTransaction();
 
     // Delete from Database and Update User
-    await PaymentRequest.findByIdAndDelete(paymentData._id);
+    await PaymentRequest.findByIdAndDelete(paymentData._id, {session});
+    await User.updateOne(
+      {_id: paymentData.userId},
+      {
+        $set: {
+          status: USER_STATUS_PAYMENT_REJECTED
+        }
+      },
+      {session}
+    )
+
+    await writeToSheet(REJECT_SHEET_NAME, paymentData, PREMIUM_DURATION_0);
 
     // Delete photo from imageKit.
     if(paymentData.imageId) {
       await imagekit.deleteFile(paymentData.imageId);
     }
 
+    // Commit transaction
+    await session.commitTransaction();
+    
     return res.status(200).json({message: "Rejected Successfully!"})
   }catch (err) {
     
+    // Rollback transaction
+    if(session != null) {
+      await session.abortTransaction();
+    }
+
     return res.status(500).json({errors: [
       {message: err.message}]}) 
+  } finally {
+    if(session != null) {
+       session.endSession();
+    }
   }
 }
 

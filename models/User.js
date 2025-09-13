@@ -40,6 +40,13 @@ const UserSchema = new mongoose.Schema({
     premiumEndDate: {
         type: Date,
         default: null
+    },
+    status: {
+        type: Number,
+        default: 0
+        // 0 => default
+        // 1 => payment accepted
+        // 2 => payment rejected
     }
 },{timestamps: true});
 

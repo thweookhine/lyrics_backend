@@ -3,15 +3,15 @@ const { createPaymentRequest, getAllPaymentRequests, approvePayment, rejectPayme
 const { authenticateUser } = require('../middleware/authenticateUser');
 const checkRole = require('../middleware/checkRole');
 const { validatePaymentRequest } = require('../middleware/paymentValidation');
-const { ADMIN_ROLE } = require('../utils/Constants');
+const { USER_ROLE_ADMIN } = require('../utils/Constants');
 
 const paymentReqRouter = require('express').Router();
 // For Payment Requests
 paymentReqRouter.post("/create", upload.single('paymentImage'), authenticateUser, validatePaymentRequest, createPaymentRequest);
-paymentReqRouter.get("/getAll", authenticateUser, checkRole([ADMIN_ROLE]), getAllPaymentRequests);
-paymentReqRouter.post("/approvePayment/:paymentId", authenticateUser, checkRole([ADMIN_ROLE]), approvePayment);
-paymentReqRouter.post("/rejectPayment/:paymentId", authenticateUser, checkRole([ADMIN_ROLE]), rejectPayment)
+paymentReqRouter.get("/getAll", authenticateUser, checkRole([USER_ROLE_ADMIN]), getAllPaymentRequests);
+paymentReqRouter.post("/approvePayment/:paymentId", authenticateUser, checkRole([USER_ROLE_ADMIN]), approvePayment);
+paymentReqRouter.post("/rejectPayment/:paymentId", authenticateUser, checkRole([USER_ROLE_ADMIN]), rejectPayment)
 paymentReqRouter.get("/checkPaymentExists", authenticateUser, checkPaymentExists)
-paymentReqRouter.get('/paymentOverview', authenticateUser, checkRole([ADMIN_ROLE]), paymentOverview)
+paymentReqRouter.get('/paymentOverview', authenticateUser, checkRole([USER_ROLE_ADMIN]), paymentOverview)
 
 module.exports = {paymentReqRouter};
