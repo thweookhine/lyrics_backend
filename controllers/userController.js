@@ -2,7 +2,7 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const sendEmail = require('../config/sendEmail')
-const { PREMIUM_DURATION_DEFAULT, LOGIN_REMEMBER_DAYS_30, LOGIN_REMEMBER_DAYS_1 } = require('../utils/Constants')
+const { PREMIUM_DURATION_DEFAULT, LOGIN_REMEMBER_DAYS_30, LOGIN_REMEMBER_DAYS_1, USER_STATUS_DEFAULT } = require('../utils/Constants')
 require('dotenv').config()
 
 const generateToken = (user, expiresIn) => {
@@ -639,6 +639,27 @@ const getCurrentUser = async (req, res) => {
     }
 }
 
+const changeToDefaultStatus = async (req, res) => {
+    const userId = req.user.id;
+    
+    try {
+        const user = await User.findById(userId);
+        if (user == null) {
+            return res.status(404).json({message: "User Not Found!"})
+        }
+
+        await User.findByIdAndUpdate(userId, {
+            status: USER_STATUS_DEFAULT
+        })
+
+        return res.status(200).json({"message": "User Status Changed to default"});
+    } catch (err) {
+        return res.status(500).json({errors: [
+            {message: err.message }]})
+    }
+
+}
+
 module.exports = {
     registerUser, loginUser, 
     forgotPassword, resetPassword,
@@ -646,4 +667,5 @@ module.exports = {
     getUserProfile, updateUser, 
     doActivateAndDeactivate, changeUserRole, 
     searchUser, getUserOverview,
-    getCurrentUser}
+    getCurrentUser, changeToDefaultStatus
+}
