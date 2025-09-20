@@ -29,7 +29,7 @@ export const USER_ROLE_FREE = 'free-user'
 export const LOGIN_REMEMBER_DAYS_30 = '30d'
 export const LOGIN_REMEMBER_DAYS_1 = '1d'
 
-export const DEFAULT_COLLECTION_NAME = 'default'
+export const DEFAULT_COLLECTION_NAME = 'Default'
 export const FREE_USER_LIMIT_DEFAULT_COLLECTION = 3;
 export const COLLECTION_COUNT_LIMIT = 3;
 export const LYRICS_PER_COLLECTION_LIMIT = 3;
