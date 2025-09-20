@@ -91,7 +91,7 @@ const addToGroup = async (req, res) => {
 
     const grpCount = await Collection.distinct("group", {userId: user._id});
 
-    if(grpCount.length >= COLLECTION_COUNT_LIMIT) {
+    if(grpCount.length > COLLECTION_COUNT_LIMIT) {
       return res.status(400).json({errors: [
         {message: `Group Limit Reached` }]});
     }
