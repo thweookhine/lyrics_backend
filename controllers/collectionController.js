@@ -275,8 +275,26 @@ const getGroupsByLyric = async (req, res) => {
 
   }
  
+  const removeCollection = async (req, res) => {
+    const {collectionName} = req.body;
+    const user = req.user;
+
+    try {
+      await Collection.deleteMany({userId: user._id, group: collectionName})
+      return res.status(200).json({
+        "message": `${collectionName} has been deleted successfully`
+      })
+    } catch (err) {
+      return res.status(500).json({errors: [
+        {message: err.message }]});
+    }
+  }
+
 module.exports = { getGroupsByLyric, addToCollectionForFreeUser, 
   // checkHasInGroup,
-   addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
+   addToGroup, removeFromGroup,
+   getLyricsByGroup, getCollectionOverview,
+   removeCollection
+}
  
 

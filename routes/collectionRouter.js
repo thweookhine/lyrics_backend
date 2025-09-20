@@ -1,7 +1,7 @@
 
 const express = require('express');
 const { authenticateUser } = require('../middleware/authenticateUser');
-const { addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview, checkHasInGroup, getGroupsByLyric, addToCollectionForFreeUser } = require('../controllers/collectionController');
+const { addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview, checkHasInGroup, getGroupsByLyric, addToCollectionForFreeUser, removeCollection } = require('../controllers/collectionController');
 const { validateCollection } = require('../middleware/collectionValidation');
 const checkRole = require('../middleware/checkRole');
 const collectionRouter = express.Router();
@@ -13,5 +13,6 @@ collectionRouter.get('/getLyricsByGroup', authenticateUser, getLyricsByGroup);
 collectionRouter.get('/getCollectionOverview', authenticateUser, getCollectionOverview);
 // collectionRouter.get('/checkHasInGroup/:id', authenticateUser, checkHasInGroup)
 collectionRouter.get('/getGroupsByLyric/:id', authenticateUser, getGroupsByLyric);
+collectionRouter.delete('/removeCollection/:collectionName', authenticateUser, removeCollection)
 
 module.exports = collectionRouter
