@@ -2,7 +2,7 @@ const Collection = require('../models/Collection')
 const Lyrics = require('../models/Lyrics');
 const {LYRICS_PER_COLLECTION_LIMIT, COLLECTION_COUNT_LIMIT, USER_ROLE_FREE, DEFAULT_COLLECTION_NAME, FREE_USER_LIMIT_DEFAULT_COLLECTION } = require('../utils/Constants');
 
-const addToDefaultCollection = async (req,res) => {
+const addToCollectionForFreeUser = async (req,res) => {
   try {
       // Get userId and lyricsId from req
       const {lyricsId} = req.body;
@@ -75,14 +75,23 @@ const addToGroup = async (req, res) => {
         {message: `Lyrics not found!` }]});
     }
 
-    const countInGrp = await Collection.countDocuments({
-      userId: user._id,
-      group: group
-    })
+    let countInGrp = 0;
 
-    if(countInGrp >= LYRICS_PER_COLLECTION_LIMIT) {
-      return res.status(400).json({errors: [
-        {message: `Collection Limit Reached in Group ${group}` }]});
+    if(group != DEFAULT_COLLECTION_NAME) {
+      countInGrp = await Collection.countDocuments({
+        userId: user._id,
+        group: group
+      })
+
+      if(countInGrp >= LYRICS_PER_COLLECTION_LIMIT) {
+        return res.status(400).json({errors: [
+          {message: `Collection Limit Reached in Group ${group}` }]});
+      }
+    } else {
+      countInGrp = await Collection.countDocuments({
+        userId: user._id,
+        group: DEFAULT_COLLECTION_NAME
+      })
     }
 
     // const grpCount = await Collection.countDocuments({
@@ -91,7 +100,7 @@ const addToGroup = async (req, res) => {
 
     const grpCount = await Collection.distinct("group", {userId: user._id});
 
-    if(grpCount.length > COLLECTION_COUNT_LIMIT) {
+    if(countInGrp == 0 && grpCount.length >= COLLECTION_COUNT_LIMIT) {
       return res.status(400).json({errors: [
         {message: `Group Limit Reached` }]});
     }
@@ -266,7 +275,7 @@ const getGroupsByLyric = async (req, res) => {
 
   }
  
-module.exports = { getGroupsByLyric, addToDefaultCollection, 
+module.exports = { getGroupsByLyric, addToCollectionForFreeUser, 
   // checkHasInGroup,
    addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
  

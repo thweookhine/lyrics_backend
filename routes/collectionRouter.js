@@ -1,12 +1,12 @@
 
 const express = require('express');
 const { authenticateUser } = require('../middleware/authenticateUser');
-const { addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview, checkHasInGroup, getGroupsByLyric, addToDefaultCollection } = require('../controllers/collectionController');
+const { addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview, checkHasInGroup, getGroupsByLyric, addToCollectionForFreeUser } = require('../controllers/collectionController');
 const { validateCollection } = require('../middleware/collectionValidation');
 const checkRole = require('../middleware/checkRole');
 const collectionRouter = express.Router();
 
-collectionRouter.post('/addToCollection', validateCollection, authenticateUser, addToDefaultCollection);
+collectionRouter.post('/addToCollection', validateCollection, authenticateUser, addToCollectionForFreeUser);
 collectionRouter.post('/addToGroup', authenticateUser, checkRole(['premium-user', 'admin']),  addToGroup);
 collectionRouter.put('/removeFromGroup', authenticateUser, removeFromGroup);
 collectionRouter.get('/getLyricsByGroup', authenticateUser, getLyricsByGroup);
