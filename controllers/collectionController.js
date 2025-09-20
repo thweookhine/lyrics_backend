@@ -1,8 +1,8 @@
 const Collection = require('../models/Collection')
 const Lyrics = require('../models/Lyrics');
-const { FREE_USER_COLLECTION_LIMIT, LYRICS_PER_COLLECTION_LIMIT, COLLECTION_COUNT_LIMIT } = require('../utils/Constants');
+const {LYRICS_PER_COLLECTION_LIMIT, COLLECTION_COUNT_LIMIT, USER_ROLE_FREE, DEFAULT_COLLECTION_NAME } = require('../utils/Constants');
 
-const addToCollection = async (req,res) => {
+const addToDefaultCollection = async (req,res) => {
   try {
       // Get userId and lyricsId from req
       const {lyricsId} = req.body;
@@ -21,13 +21,13 @@ const addToCollection = async (req,res) => {
       }
 
       // 1. If user type is free-user, need to check count of existing collections
-      if(user.role == 'free-user') {
-        const count = await Collection.countDocuments({userId: user._id});
+      if(user.role == USER_ROLE_FREE) {
+        const count = await Collection.countDocuments({userId: user._id, group: DEFAULT_COLLECTION_NAME});
         // 1.1. If count is 20, send response with 400 status code
-        if(count >= FREE_USER_COLLECTION_LIMIT) {
+        if(count >= FREE_USER_LIMIT_DEFAULT_COLLECTION) {
           return res.status(400).json({errors: [
             {
-              message: `You can add only ${FREE_USER_COLLECTION_LIMIT} collections`
+              message: `You can add only ${FREE_USER_LIMIT_DEFAULT_COLLECTION} collections`
             }
           ]})
         }
@@ -37,7 +37,7 @@ const addToCollection = async (req,res) => {
         $and: [
           {userId: user._id},
           {lyricsId: lyricsId},
-          {group: 'Default'}
+          {group: DEFAULT_COLLECTION_NAME}
         ]
       })
 
@@ -264,7 +264,7 @@ const getGroupsByLyric = async (req, res) => {
 
   }
  
-module.exports = { getGroupsByLyric, addToCollection, 
+module.exports = { getGroupsByLyric, addToDefaultCollection, 
   // checkHasInGroup,
    addToGroup, removeFromGroup, getLyricsByGroup, getCollectionOverview}
  

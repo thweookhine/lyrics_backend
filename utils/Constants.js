@@ -24,25 +24,16 @@ export const REJECT_SHEET_NAME = 'Rejected';
 
 export const USER_ROLE_ADMIN = 'admin';
 export const USER_ROLE_PREMIUM = 'premium-user'
+export const USER_ROLE_FREE = 'free-user'
 
 export const LOGIN_REMEMBER_DAYS_30 = '30d'
 export const LOGIN_REMEMBER_DAYS_1 = '1d'
 
-export const FREE_USER_COLLECTION_LIMIT = 20;
-export const COLLECTION_COUNT_LIMIT = 20;
-export const LYRICS_PER_COLLECTION_LIMIT = 20;
+export const DEFAULT_COLLECTION_NAME = 'default'
+export const FREE_USER_LIMIT_DEFAULT_COLLECTION = 3;
+export const COLLECTION_COUNT_LIMIT = 3;
+export const LYRICS_PER_COLLECTION_LIMIT = 3;
 
 export const USER_STATUS_DEFAULT = 0;
 export const USER_STATUS_PAYMENT_ACCEPTED = 1;
 export const USER_STATUS_PAYMENT_REJECTED = 2;
-
-// module.exports = {genreList, keyList, 
-//     tierList, PREMIUM_DURATION_DEFAULT,
-//     paymentTypes, PREMIUM_DURATION_0,
-//     APPROVE_SHEET_NAME, REJECT_SHEET_NAME,
-//     USER_ROLE_ADMIN, LOGIN_REMEMBER_DAYS_30,
-//     LOGIN_REMEMBER_DAYS_1,
-//     FREE_USER_COLLECTION_LIMIT,
-//     COLLECTION_COUNT_LIMIT,
-//     LYRICS_PER_COLLECTION_LIMIT
-// }
