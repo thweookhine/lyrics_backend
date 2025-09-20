@@ -1,6 +1,6 @@
 const Collection = require('../models/Collection')
 const Lyrics = require('../models/Lyrics');
-const {LYRICS_PER_COLLECTION_LIMIT, COLLECTION_COUNT_LIMIT, USER_ROLE_FREE, DEFAULT_COLLECTION_NAME } = require('../utils/Constants');
+const {LYRICS_PER_COLLECTION_LIMIT, COLLECTION_COUNT_LIMIT, USER_ROLE_FREE, DEFAULT_COLLECTION_NAME, FREE_USER_LIMIT_DEFAULT_COLLECTION } = require('../utils/Constants');
 
 const addToDefaultCollection = async (req,res) => {
   try {
