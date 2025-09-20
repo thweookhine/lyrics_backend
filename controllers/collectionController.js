@@ -27,7 +27,7 @@ const addToDefaultCollection = async (req,res) => {
         if(count >= FREE_USER_LIMIT_DEFAULT_COLLECTION) {
           return res.status(400).json({errors: [
             {
-              message: `You can add only ${FREE_USER_LIMIT_DEFAULT_COLLECTION} collections`
+              message: `You can only add ${FREE_USER_LIMIT_DEFAULT_COLLECTION} collections`
             }
           ]})
         }
@@ -85,9 +85,11 @@ const addToGroup = async (req, res) => {
         {message: `Collection Limit Reached in Group ${group}` }]});
     }
 
-    const grpCount = await Collection.countDocuments({
-      userId: user._id
-    })
+    // const grpCount = await Collection.countDocuments({
+    //   userId: user._id
+    // })
+
+    const grpCount = await Collection.distinct("group", {userId: user._id});
 
     if(grpCount >= COLLECTION_COUNT_LIMIT) {
       return res.status(400).json({errors: [
